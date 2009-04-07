@@ -1,0 +1,64 @@
+\documentclass[a4paper]{book}
+\usepackage{ctex} %% 中文支持
+%\usepackage[procnames,noindent]{lgrind}  %% 对源代码的支持
+%\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% 用geometry宏包设置页边距
+\usepackage[T1]{fontenc} % 对字符的支持 < > 等等
+\usepackage[caption=false,font=footnotesize]{subfig} % 对子插图的支持
+\usepackage{amsmath} % 对公式的扩展支持
+\usepackage{listings} % 代码支持
+\usepackage{xcolor} % 使用颜色宏包
+
+%\usepackage[dvips]{graphicx}
+%\graphicspath{{./eps/}}
+%\DeclareGraphicsExtensions{.eps}
+
+\usepackage{threeparttable}% 表格内脚注支持
+
+%------ 书签代码-----------
+%\usepackage[CJKbookmarks=true,dvipdfm,
+\usepackage[CJKbookmarks=true,dvips,
+          hyperindex=true,
+          pdfstartview=FitH,
+          bookmarksnumbered=true,
+          bookmarksopen=true,
+          %colorlinks=true, %注释掉此项则交叉引用为彩色边框(将colorlinks和pdfborder同时注释掉)
+          %pdfborder=001,   %注释掉此项则交叉引用为彩色边框
+          citecolor=blue%
+          ]{hyperref}
+\AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
+%--------分割线----------
+
+\usepackage{pgf,tikz} % 画图支持
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit}
+
+\newtheorem{exmp}{例}[chapter]
+\newtheorem{defin}{定义}[chapter]
+\newtheorem{lemma}{引理}[chapter]
+\newtheorem{problem}{问题}[chapter]
+\newtheorem{algorithm}{算法}[chapter]
+
+%-------Begin    document
+\begin{document}
+\lstset{keywordstyle=\color{blue!70},
+commentstyle=\color{red!50!green!50!blue!50}, frame=shadowbox,
+rulesepcolor=\color{red!20!green!20!blue!20}, escapeinside=``}
+
+\frontmatter
+\title{计算机算法}
+%\maketitle
+\tableofcontents
+\mainmatter
+\include{chap01/chap01}
+\include{chap02/chap02}
+\include{chap03/chap03}
+\include{chap04/chap04}
+\include{chap05/chap05}
+\include{chap06/chap06}
+\include{chap07/chap07}
+\include{chap08/chap08}
+\include{chap09/chap09}
+\include{chap10/chap10}
+\include{chap11/chap11}
+\include{chap12/chap12}
+\include{chap13/chap13}
+\end{document}

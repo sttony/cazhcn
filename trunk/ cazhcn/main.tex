@@ -1,34 +1,33 @@
 \documentclass[a4paper]{book}
 \usepackage{ctex} %% ÖĞÎÄÖ§³Ö
-%\usepackage[procnames,noindent]{lgrind}  %% å¯¹æºä»£ç çš„æ”¯æŒ
 %\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% ç”¨geometryå®åŒ…è®¾ç½®é¡µè¾¹è·
-\usepackage[T1]{fontenc} % å¯¹å­—ç¬¦çš„æ”¯æŒ < > ç­‰ç­‰
-\usepackage[caption=false,font=footnotesize]{subfig} % å¯¹å­æ’å›¾çš„æ”¯æŒ
-\usepackage{amsmath} % å¯¹å…¬å¼çš„æ‰©å±•æ”¯æŒ
-\usepackage{listings} % ä»£ç æ”¯æŒ
-\usepackage{xcolor} % ä½¿ç”¨é¢œè‰²å®åŒ…
+\usepackage[T1]{fontenc} % ¶Ô×Ö·ûµÄÖ§³Ö < > µÈµÈ
+\usepackage[caption=false,font=footnotesize]{subfig} % ¶Ô×Ó²åÍ¼µÄÖ§³Ö
+\usepackage{amsmath} % ¶Ô¹«Ê½µÄÀ©Õ¹Ö§³Ö
+\usepackage{listings} % Ô´´úÂëÖ§³Ö
+\usepackage{xcolor} % Ê¹ÓÃÑÕÉ«ºê°ü
 
 %\usepackage[dvips]{graphicx}
 %\graphicspath{{./eps/}}
 %\DeclareGraphicsExtensions{.eps}
 
-\usepackage{threeparttable}% è¡¨æ ¼å†…è„šæ³¨æ”¯æŒ
+\usepackage{threeparttable}% ±í¸ñÄÚ½Å×¢Ö§³Ö
 
-%------ ä¹¦ç­¾ä»£ç -----------
+%------ ÊéÇ©´úÂë-----------
 %\usepackage[CJKbookmarks=true,dvipdfm,
 \usepackage[CJKbookmarks=true,dvips,
           hyperindex=true,
           pdfstartview=FitH,
           bookmarksnumbered=true,
           bookmarksopen=true,
-          %colorlinks=true, %æ³¨é‡Šæ‰æ­¤é¡¹åˆ™äº¤å‰å¼•ç”¨ä¸ºå½©è‰²è¾¹æ¡†(å°†colorlinkså’ŒpdfborderåŒæ—¶æ³¨é‡Šæ‰)
-          %pdfborder=001,   %æ³¨é‡Šæ‰æ­¤é¡¹åˆ™äº¤å‰å¼•ç”¨ä¸ºå½©è‰²è¾¹æ¡†
+          %colorlinks=true, %×¢ÊÍµô´ËÏîÔò½»²æÒıÓÃÎª²ÊÉ«±ß¿ò(½«colorlinksºÍpdfborderÍ¬Ê±×¢ÊÍµô)
+          %pdfborder=001,   %×¢ÊÍµô´ËÏîÔò½»²æÒıÓÃÎª²ÊÉ«±ß¿ò
           citecolor=blue%
           ]{hyperref}
 \AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
-%--------åˆ†å‰²çº¿----------
+%------ ÊéÇ©´úÂë-----------
 
-\usepackage{pgf,tikz} % ç”»å›¾æ”¯æŒ
+\usepackage{pgf,tikz} % »­Í¼Ö§³Ö
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit}
 
 \newtheorem{exmp}{Àı}[chapter]
@@ -44,7 +43,7 @@ commentstyle=\color{red!50!green!50!blue!50}, frame=shadowbox,
 rulesepcolor=\color{red!20!green!20!blue!20}, escapeinside=``}
 
 \frontmatter
-\title{è®¡ç®—æœºç®—æ³•}
+\title{¼ÆËã»úËã·¨}
 %\maketitle
 \tableofcontents
 \mainmatter

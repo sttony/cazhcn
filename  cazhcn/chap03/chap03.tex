@@ -1,0 +1,52 @@
+\chapter{递归与归纳}\label{Sec:Chapter:RecursionAndInduction}
+\section{概述}
+公认Massachusetts Institute of Technology 的John McCarthy
+教授（后就职与StanfordUniversity）是最早意识到程序设计语言中递归重要性的人。
+他在设计Algol60（Pascal，PL/I和C的先驱时）贯彻了他的结论，他还开发了Lisp。Lisp
+引入了递归数据结构，递归过程 和函数。本节中的概念都是在Lisp
+中定型的。递归的价值在20 世纪70 年代intense 算法
+开发期间得到了认同，今天几乎所有流行的预言都支持递归。
+
+递归和归纳是密切相关的。为了使关系更清楚，本章中归纳的表述是形式化的。在字面
+上讲，一个归纳证明就是一个递归证明。由于结构上的相似性，通过归纳证明递归过程是
+很简单的。（和前一章一样，在本章中，我们使用“函数”更一般的名字“过程”，Java
+的 术语是“方法”。）
+
+递归树在3.7节引入，提供了一个通用的分析递归过程的时间消耗的framework。我们
+将解决许多通用的递归模式，结论以定理的形式总结。
+
+\section{递归过程}
+对递归在计算机中到底是如何工作的清晰的理解，对于递归的思考，手动执行递归代码
+以及分析递归过程的时间消耗都是很有帮助的。我们将首先回顾如何在\emph{活动帧}
+（\emph{activation frames}）中实现过程调用，以及这个过程是怎么支持递归的。
+但是，对于大多数涉及递归过程的设计和分析的活动，我们都想在比活动帧框架要高的
+层次上来考虑。为了帮助读者达到这个目的，我们引入Method99，这实际上是一个帮助
+我们设计递归方案的思考上的技巧。
+
+\subsection{活动帧框架和递归过程调用}
+
+\subsection{递归的提示－Method 99}
+
+\subsection{递归过程的包装器}
+经常的一个任务有一部分仅在开始或结束的时候做一次。在这种情况下，你需要将非递归
+过程独立出来，再调用递归过程。我们称这个非递归过程是递归过程的包装器。有时候
+包装器只是简单的初始化递归过程的参数。例如二分查找（算法\ref{Algo:BinrarySearch}）
+需要一个包装器使第一次递归有范围。包装器可能简单如下：
+
+
+
+
+\section{什么是证明}\label{Sec:WhatIsTheProof}
+再开始介绍证明之前，让我们对什么是证明做一个回顾。在\ref{Sec:LogicElement}小节
+提到了，逻辑是一个规范化自然语言的系统，通过逻辑我们推理的更精确。证明是用逻辑
+语句推理的结果。
+\section{归纳证明}
+\subsection{归纳证明的模式}
+\subsection{归纳证明一个递归过程}
+\section{证明过程的正确性}
+\subsection{定义和术语}
+\subsection{基本控制结构}
+\subsection{单赋值范例}\label{Sec:ParadigmOfSingleAssignment}
+\section{递归等式}
+\section{递归树}
+\subsection{分而治之， 一般情况}

@@ -1,17 +1,18 @@
 \documentclass[a4paper]{book}
-\usepackage{ctex} %% ÖĞÎÄÖ§³Ö
-%\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% ç”¨geometryå®åŒ…è®¾ç½®é¡µè¾¹è·
-\usepackage[T1]{fontenc} % ¶Ô×Ö·ûµÄÖ§³Ö < > µÈµÈ
+\usepackage{ctex} %ÖĞÎÄÖ§³Ö
+%\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% ÓÃgeometryºê°üÉèÖÃÒ³±ß¾à
+%\usepackage[top=4.5cm,bottom=3.5cm]{geometry} %% ÓÃgeometryºê°üÉèÖÃÒ³±ß¾à
+\usepackage[T1]{fontenc} %¶Ô×Ö·ûµÄÖ§³Ö < > µÈµÈ
 \usepackage[caption=false,font=footnotesize]{subfig} % ¶Ô×Ó²åÍ¼µÄÖ§³Ö
-\usepackage{amsmath} % ¶Ô¹«Ê½µÄÀ©Õ¹Ö§³Ö
-\usepackage{listings} % Ô´´úÂëÖ§³Ö
-\usepackage{xcolor} % Ê¹ÓÃÑÕÉ«ºê°ü
+\usepackage{amsmath} %¶Ô¹«Ê½µÄÀ©Õ¹Ö§³Ö
+\usepackage{listings} %Ô´´úÂëÖ§³Ö
+\usepackage{xcolor} %Ê¹ÓÃÑÕÉ«ºê°ü
 
 %\usepackage[dvips]{graphicx}
 %\graphicspath{{./eps/}}
 %\DeclareGraphicsExtensions{.eps}
 
-\usepackage{threeparttable}% ±í¸ñÄÚ½Å×¢Ö§³Ö
+\usepackage{threeparttable}%±í¸ñÄÚ½Å×¢Ö§³Ö
 
 %------ ÊéÇ©´úÂë-----------
 %\usepackage[CJKbookmarks=true,dvipdfm,
@@ -25,14 +26,17 @@
           citecolor=blue%
           ]{hyperref}
 \AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
-%------ ÊéÇ©´úÂë-----------
+%--------·Ö¸îÏß----------
 
-\usepackage{pgf,tikz} % »­Í¼Ö§³Ö
-\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit}
+\usepackage{pgf,tikz} %»­Í¼Ö§³Ö
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning}
 
-\newtheorem{exmp}{Àı}[chapter]
-\newtheorem{defin}{¶¨Òå}[chapter]
-\newtheorem{lemma}{ÒıÀí}[chapter]
+\newtheorem{example}{Àı}[chapter]
+\newtheorem{definition}{¶¨Òå}[chapter]
+\newtheorem{theorem}{¶¨Àí}[chapter]
+\newtheorem{lemma}[theorem]{ÒıÀí}
+\newtheorem{corollary}[theorem]{ÍÆÂÛ}
+\newtheorem{proposition}[theorem]{ÃüÌâ}
 \newtheorem{problem}{ÎÊÌâ}[chapter]
 \newtheorem{algorithm}{Ëã·¨}[chapter]
 
@@ -60,4 +64,5 @@ rulesepcolor=\color{red!20!green!20!blue!20}, escapeinside=``}
 \include{chap11/chap11}
 \include{chap12/chap12}
 \include{chap13/chap13}
+\include{chap14/chap14}
 \end{document}

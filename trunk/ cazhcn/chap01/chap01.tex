@@ -116,7 +116,7 @@ Java只有很少的\emph{原生类型}，其他所有类型都叫classes。原生类型是逻辑（\textbf{
 
 
 
-\begin{exmp}\label{Exmp:CreateAndAccessAClass}
+\begin{example}\label{Example:CreateAndAccessAClass}
     创建和存取一个Java 对象
 
     在这个例子，让我们假设数据信息遵循下面的嵌套逻辑结构：
@@ -171,18 +171,20 @@ Java只有很少的\emph{原生类型}，其他所有类型都叫classes。原生类型是逻辑（\textbf{
     \end{lstlisting}
     \noindent
     参见\ref{Fig:DataClasswithYear}节，对这个问题有另外的讨论。
-\end{exmp}
+\end{example}
 
 Java中的控制语句\textbf{if} , \textbf{else} , \textbf{while} ,
 \textbf{for} 和
 \textbf{break}和他们在C（和C++）中的意义相同，本书中将用到。还有许多其他的控制语句，但不用他们。
 while和for的语法是
+\begin{figure}
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     while("continuation condition")
         body;
     for("initializer"; "continuation condition"; "incrementer")
         body;
 \end{lstlisting}
+\end{figure}
 \noindent 这里“初始化”和“增量”都是简单语句（不带\{
 \}），“body”是任意语句，“继续条件”是\textbf{boolean}表达式。\textbf{break}语句导致立即从
 最近的\textbf{for}或\textbf{while}循环中
@@ -292,7 +294,7 @@ Java允许\emph{重载}
 其他类中定义组织者类；由于这个原因，在Java 术语中组织者类叫内部类。
 
 一个组织者类仅有一个方法，叫copy。既然Java中的变量都是对象的引用，赋值语句
-仅拷贝引用，而不是对象的实例域，就像我们在例\ref{Exmp:CreateAndAccessAClass}中看到的。如果这些变量在一个叫
+仅拷贝引用，而不是对象的实例域，就像我们在例\ref{Example:CreateAndAccessAClass}中看到的。如果这些变量在一个叫
 Date的组织者类中定义，我们可以使用语句
 \begin{figure}
 \begin{lstlisting}[language={Java}]
@@ -303,7 +305,7 @@ Date的组织者类中定义，我们可以使用语句
 \noindent
 来拷贝dueDate对象的实例域到noticDate所引用的新对象中，之后修改的只是noticDate的day域。
 
-\begin{defin}
+\begin{definition}
     组织者类的拷贝函数
 
     组织者类将实例域赋值到一个新对象的copy函数（方法）的一般规则如下
@@ -348,7 +350,7 @@ Date的组织者类中定义，我们可以使用语句
         \end{lstlisting}
         \caption{带内部组织者类 Year的组织者类 Date}\label{Fig:OrgDataClasswithOrgYear}
     \end{figure}
-\end{defin}
+\end{definition}
 
 程序员必须保证在定义组织者类时不能发生循环引用，否则copy函数将陷入递归
 不能结束。当然，组织者类中新对象可以由一般方法创建：
@@ -363,14 +365,14 @@ Date的组织者类中定义，我们可以使用语句
 一个组织者类包含唯一一个\textbf{public} 实例域。如果\textbf{static}
 关键字也出现在域的申明中，该域不与任何实际对象相关，它实质上是一个全局变量了。
 
-\begin{exmp}
+\begin{example}
     典型组织者类
 
-    在图\ref{Fig:OrgDataClasswithOrgYear}中，为例\ref{Exmp:CreateAndAccessAClass}的
+    在图\ref{Fig:OrgDataClasswithOrgYear}中，为例\ref{Example:CreateAndAccessAClass}的
     类增加了copy 函数，所以他们有成为组织者类的资格。就像我们看到的，
     copy的定义是机械的，而且单调的。在后面的例子中将省略实现的细节。
     为了更加完整，我们包含了全局变量defaultCentury，而一般情况组织者类是不包含全局变量的。
-\end{exmp}
+\end{example}
 
 总结，我们创造了术语组织者类，他指那些只是简单将实例域组织起来，为他们定义一个拷贝函数的类。
 
@@ -498,7 +500,7 @@ P$的子集。
 有许多令我们感兴趣的特性。因为标准的关系是一个中间符号（比如x<y），符号xRy常用于表示$(x,
 y) \in R$。
 
-\begin{defin} \label{Def:RelationAndAttribute}
+\begin{definition} \label{Def:RelationAndAttribute}
     关系的重要属性
 
     令$R \subseteq S \times S$ ，下面是一些特性以及特性的条件。
@@ -512,7 +514,7 @@ y) \in R$。
 
     如果一个关系是\emph{自反}、\emph{对称}  和\emph{可传递}的，则称关系为\emph{等价关系}，
     记做$\equiv$ 。
-\end{defin}
+\end{definition}
 
 注意，“小于”关系是传递和反对称的，而“小于或等于”是传递和自反的，但不反对称（因为$x
 \leq x$）。
@@ -548,11 +550,11 @@ x\rfloor$（x的floor）是大于或等于x的最大整数。$\lceil x \rceil$x
 对数函数，通常以2为底，是本书中经常用到的数学工具。尽管在自然科学中对数不总
 是使用，他们在计算机科学中很流行。
 
-\begin{defin} \label{Def:Logarithms}
+\begin{definition} \label{Def:Logarithms}
     对数函数和对数底
 
     对于$b>1$，$x>0$，$\log_b x$ （读作以b为底x底对数）是一个实数L，满足$b^L=x$。
-\end{defin}
+\end{definition}
 下列对数的属性可以从对数的定义简单的得到。
 \begin{lemma}\label{Lemma:LogFunction}
     令x和y是任一非负实数，令a是任一实数，令$b>1$，$c>1$的实数。
@@ -659,7 +661,7 @@ S_2)$，是$S_1$和$S_2$的并集。
 
 我们经常需要分析分析一些带权的概率，权值是基于试验的知识确定的。这叫\emph{条件概率}。
 
-\begin{defin} \label{Def:ConditionalProbability}
+\begin{definition} \label{Def:ConditionalProbability}
 条件概率
 
 给出事件T的情况下事件S条件概率定义为
@@ -667,9 +669,9 @@ S_2)$，是$S_1$和$S_2$的并集。
     Pr(S|T)= \frac{Pr(S and T)}{Pr(T)}= \frac{\sum_{s_i\in S\bigcap T}Pr(s_i)}{\sum_{s_i\in T}Pr(s_j)}
 \end{equation}
 这里$s_i$和$s_j$包括基本事件。
-\end{defin}
+\end{definition}
 
-\begin{exmp}\label{Exmp:CondtionalProbabilityOfTwoDice}
+\begin{example}\label{Example:CondtionalProbabilityOfTwoDice}
 两个骰子的条件概率
 
 假设在试验中投掷两个骰子，A和B。我们定义3个事件：
@@ -700,7 +702,7 @@ $S_3$：“A和B数字的和小于等于4”
     Pr(S_1|S_3)=\frac{3/36}{6/36}=1/2
 \end{displaymath}
 注意，给出$S_3$时$S_2$发生的概率是0，即$Pr(S_2|S_3)=0$。
-\end{exmp}
+\end{example}
 
 一般情况，给出特定事件S计算条件概率的过程是以同样的因子消去所有基本事件，
 于是概率和重新调节到1。\footnote{原文：In general, the procedure for
@@ -708,12 +710,12 @@ calculating conditional probabilities given some specified event S
 is to eliminate all the elementary events by the same factor so that
 the rescale the probabilities sum to 1.}要求的因子是1/Pr(S)。
 
-事件的条件概率可能比事件的非条件概率要大或是小。在例\ref{Exmp:CondtionalProbabilityOfTwoDice}
+事件的条件概率可能比事件的非条件概率要大或是小。在例\ref{Example:CondtionalProbabilityOfTwoDice}
 中$S_1$的非条件概率是1/6，在给出$S_3$的情况下条件概率是1/2。另一方面，“A的数字能被3整除”
-的非条件概率是1/3。但是在例\ref{Exmp:CondtionalProbabilityOfTwoDice}中，我们看到给出$S_3$
+的非条件概率是1/3。但是在例\ref{Example:CondtionalProbabilityOfTwoDice}中，我们看到给出$S_3$
 的情况下“A的数字能被3整除”的条件概率是1/6。
 
-\begin{defin}
+\begin{definition}
 相互独立
 
 给出两个事件S和T，如果
@@ -721,30 +723,30 @@ the rescale the probabilities sum to 1.}要求的因子是1/Pr(S)。
         Pr(S and T) = Pr(S)Pr(T)
     \end{displaymath}
 则S和T是\emph{相互独立事件}，或者简称\emph{相互独立}。
-\end{defin}
+\end{definition}
 
 如果S和T是相互独立事件，则$Pr(S|T)=Pr(S)$（参见练习1.8）。就是说，事件T的
 发生不以任何方式影响事件S发生的概率。当独立属性存在时它非常有用，因为它使得可以
 分开分析两个不同事件的概率。但是，当错误的假设了独立属性时，将产生许多错误的分析结果。
 
-\begin{exmp}
+\begin{example}
 相互独立事件
 
-继续我们在例\ref{Exmp:CondtionalProbabilityOfTwoDice}中的事件定义，事件
+继续我们在例\ref{Example:CondtionalProbabilityOfTwoDice}中的事件定义，事件
 $S_1$和$S_2$是相互独立的，因为每一个的概率都是1/6，而且（$S_1$ and
 $S_2$）组成一个基本事件，它的概率是1/36。注意，$Pr(S_1|S_2)=(1/36)(6/36)=1/6=Pr(S_1)$
 。
 
-从例\ref{Exmp:CondtionalProbabilityOfTwoDice}的讨论，我们可以看出$S_1$
+从例\ref{Example:CondtionalProbabilityOfTwoDice}的讨论，我们可以看出$S_1$
 和$S_3$不是相互独立事件，$S_2$和$S_3$也不是相互独立的。
 
-\end{exmp}
+\end{example}
 
 随机变量和他们的期望值在涉及概率的许多情况下都是很重要的。一个随机变量是一个
 与事件是否发生相关的实数函数；就是说，他是一个为事件定义的函数。例如，如果一个算法
 行操作的数目倚赖于输入，每一个可能的输入都是一个事件，而操作的数目是随机变量。
 
-\begin{defin}
+\begin{definition}
 期望和条件期望
 
 令$f(e)$是定义在一套基本事件$e\in U$
@@ -759,7 +761,7 @@ $S_2$）组成一个基本事件，它的概率是1/36。注意，$Pr(S_1|S_2)=(1/36)(6/36)=1/6=Pr(
     \end{displaymath}
 
 因而任何不再S中的事件的条件概率是0。
-\end{defin}
+\end{definition}
 
 期望常常比随机变量本身容易处理，特别是当涉及几个相互联系的随机变量时。
 得出下面的一条重要规则，它可以从定义上简单的得到证明。
@@ -772,7 +774,7 @@ $S_2$）组成一个基本事件，它的概率是1/36。注意，$Pr(S_1|S_2)=(1/36)(6/36)=1/6=Pr(
     \end{eqnarray*}
 \end{lemma}
 
-\begin{exmp}\label{Exmp:ConditionalProbabilityAndSequence}
+\begin{example}\label{Example:ConditionalProbabilityAndSequence}
 条件概率和顺序
 
 在第四章我们将把通过比较得到的顺序信息和概率连起来考虑。让我们看一个这种类型的例子，
@@ -808,17 +810,17 @@ C出现在D之前共有6次，所以Pr(C<D|A<B)=1/2。因此事件A<B和C<D是相互独立的。这正是我
 比较A或B也不比较C或D。这是否意味着事件A<C、A<D、B<C和B<D的条件概率不变都是1/2？
 答案在练习1.10给出。
 
-\end{exmp}
+\end{example}
 
-\begin{exmp}
+\begin{example}
 逆序数的期望数值
 
-考虑象例\ref{Exmp:ConditionalProbabilityAndSequence}那样的概率空间。让我们定义随机变量
+考虑象例\ref{Example:ConditionalProbabilityAndSequence}那样的概率空间。让我们定义随机变量
 $I(e)$为一组元素中关联顺序与他们的字母顺序相反的字母的个数。这个叫做结果的逆序数。
 例如，$I(ABCD)=0$，$I(ABDC)=1$因为D<C但C的字母顺序大于D，$I(DCBA)=6$等等。通过检查我们
 看到$E(I)=3$。现在考虑$E(I|A<B)$和E$(I|B<A)$。通过直接计数我们发现他们分别是2.5和3.5。
 既然Pr(A<B)=Pr(B<A)=1/2。引理\ref{Lemma:ExceptionLaw}告诉我们$E(I)=1/2(2.5+3.5)$，这是真命题。
-\end{exmp}
+\end{example}
 
 总结，条件概率反映了在我们知道部分知识的情况下的不确定性。他们的计算步骤是：
 消去确认在当前情况下不可能在的基本事件来计算，然后调整剩下的基本事件的概率使他们的和为1。
@@ -894,7 +896,7 @@ $I(e)$为一组元素中关联顺序与他们的字母顺序相反的字母的个数。这个叫做结果的逆序数
 \end{displaymath}
 
 \emph{Fibonacci数列：}Fibonacci 数列以递归方式定义：
-\begin{equation}
+\begin{equation}\label{Equa:FibonacciSeries}
     \begin{aligned}
         &F_n=F_{n-1}+F_{n-2}, \qquad  n\geq 2\\  &F_0=0, F_1=1
     \end{aligned}
@@ -909,12 +911,12 @@ x <
 \infty$，其中a一般是0，但涉及$\log$时为1。所有点都在这个区间之内，f
 定义为在这个区间上。域可以是实数也可以是整数。
 
-\begin{defin}
+\begin{definition}
 单调函数和非单调函数
 
 一个函数$f(x)$，如果对于任意$x\leq y$ 都有$f(x)\leq f(y)$
 ，则说函数f是单调递增或非递减的。如果函数-f(x)是单调递增的，则函数f(x)是单调递减，或非递增的。
-\end{defin}
+\end{definition}
 
 最熟悉的单调递增函数是$x$，$x^2(x\geq 0)$，$\log(x)(x>0)$和$e^x$
 。不太熟悉的单调函数是$\lfloor x \rfloor$和$\lceil x \rceil$
@@ -959,7 +961,7 @@ x>0$。
     \label{Fig:ConvexFunction }
 \end{figure*}
 
-\begin{defin}
+\begin{definition}
 线性插值函数
 
 给定函数$f(x)$，它两点u和v之间间的\emph{线性插值}定义为如下函数：
@@ -971,14 +973,14 @@ x>0$。
     \end{aligned}
 \end{equation}
 是在f(u)和f(v)之间的直线（参见图\ref{Fig:ConvexFunction_A}）。
-\end{defin}
+\end{definition}
 
-\begin{defin}
+\begin{definition}
 凸函数
 
 一个函数$f(x)$如果是凸的，则对于所有的$u<v$，区间（u,v）中所有的$f(x)\leq
 L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
-\end{defin}
+\end{definition}
 
 因而象$x$，$x^2$，1/x，$e^x$这样的函数是凸的。图\ref{Fig:ConvexFunction_B}中的函数是凸的
 （但不是单调的），不管它是在实数上还是在整数上；图\ref{Fig:ConvexFunction_A}中的函数是单调的，
@@ -986,7 +988,7 @@ L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
 凸函数的实用方法。简单的看（可以证明的）不连续（discontinuous）函数不能是凸的。
 引理\ref{Lemma:ConvexLemma1}介绍了一种只需比较几个空间点就能判断凸的简单方法。证明在练习1.16中。
 
-\begin{lemma}\label{Lemma:ConvexLemma1}
+\begin{lemma}\label{Lemma:ConvexLemma1}\hspace{1ex}
 \begin{enumerate}
     \item 令$f(x)$是一个定义在实数上的连续函数。则当且仅当对于任意两点x、y都有
           $f(\frac{1}{2}(x+y))\leq \frac{1}{2}(f(x)+f(y))$时，$f(x)$是凸的。
@@ -1002,7 +1004,7 @@ L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
 的函数通过线性插值扩展到实数上，而且保留了单调和凸的性质。也说明了一些涉及到导数的
 性质。证明在练习1.17到1.19。
 
-\begin{lemma}\label{Lemma:ConvexLemma2}
+\begin{lemma}\label{Lemma:ConvexLemma2}\hspace{1ex}
 \begin{enumerate}
     \item f(n)仅定义在整数上。令$f^*(x)$是f通过线性插值扩展到实数上的函数（见图\ref{Fig:ConvexFunction_B}）。
             \begin{enumerate}
@@ -1076,7 +1078,7 @@ L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
 \end{figure*}
 
 
-\begin{exmp}
+\begin{example}
 估计$\sum_{i=1}^n \frac{1}{i}$
 
 \begin{displaymath}
@@ -1089,9 +1091,9 @@ L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
     \sum_{i=1}^n \frac{1}{i} \geq \ln(n+1)
 \end{displaymath}
 参见等式\ref{Equa:HarmonicSeries}取得的更接近的近似。
-\end{exmp}
+\end{example}
 
-\begin{exmp}
+\begin{example}
 $\sum_{i=1}^n \lg i$ 的下界
 
 \begin{displaymath}
@@ -1110,7 +1112,7 @@ $\sum_{i=1}^n \lg i$ 的下界
 \begin{equation}
     \sum_{i=1}^n \lg i \geq n\lg n -1.443n
 \end{equation}
-\end{exmp}
+\end{example}
 
 使用前面例子的思想，但是使用更精确的数学方法，就可以推导出Stirling's
 formula给出的n!的边界：
@@ -1391,7 +1393,7 @@ invariants），可能会用来验证部分程序。3.3节扩展了这个话题。
 即使输入规模固定，比如n，操作执行的数量还是依赖于到底输入了什么。那么到底
 如何表示算法分析的结果呢？我们经常用\emph{最坏情况复杂性}来描述算法的行为。
 
-\begin{defin}
+\begin{definition}
 最坏情况复杂性
 
 令$D_x$ 是所考虑问题的规模为n的输入集合，I是$D_x$
@@ -1400,7 +1402,7 @@ invariants），可能会用来验证部分程序。3.3节扩展了这个话题。
     W(n)=max{t(I)|I\in D_n}
 \end{displaymath}
 函数$W(n)$叫做算法的最坏复杂性。$W(n)$是算法对于规模为n的输入所要做基本操作的最大数量。
-\end{defin}
+\end{definition}
 
 通常计算$W(n)$是很复杂的。\ref{Sec:AsymptoticGrowthRate}节介绍了一种当精确计算
 十分困难时常用的技术。最坏复杂性是很有价值得，它给出了算法所作工作量的上限。最坏分析
@@ -1410,14 +1412,14 @@ invariants），可能会用来验证部分程序。3.3节扩展了这个话题。
 似乎更有用、更自然的描述算法行为的方法是指出他的平均工作量；就是说，计算规模为n的
 所有输入的基本操作执行的数量，然后取平均。实际中一些输入出现的频率要高于其他输入，所以
 带权平均更有用。
-\begin{defin}
+\begin{definition}
 平均复杂性
 
 令$Pr(I)$是输入I出现的概率。则算法的平均行为定义为
 \begin{displaymath}
     A(n)=\sum_{I\in D_n}Pr(I)t(I)
 \end{displaymath}
-\end{defin}
+\end{definition}
 
 我们通过分析算法来决定$t(I)$，但是$Pr(I)$不能通过分析计算。函数$Pr(I)$
 取决于经验以及具体使用算法的应用，或者只能通过简单的假设（例如，所有情况等概率）。如果$Pr(I)$
@@ -1426,7 +1428,7 @@ invariants），可能会用来验证部分程序。3.3节扩展了这个话题。
 
 下面的例子展示了最坏和平均分析。
 
-\begin{exmp}\label{Exmp:SearchInUnSortedArray}
+\begin{example}\label{Example:SearchInUnSortedArray}
 在无序数组中查找
 
 \emph{问题：}令E是包含n个元素的数组（关键字），$E[0],E[1] \cdots
@@ -1436,12 +1438,12 @@ E[n-1]$，其中元素是无序的。查找关键字为K的元素，如果K在数组中，返回索引号；
 
 \emph{策略：}依次将数组的元素与K比较，直到找到一个匹配的，或者到
 达数组尾。如果K不再数组中返回－1，否则算法返回索引号。
-\end{exmp}
+\end{example}
 
 有一大类过程和这个类似，我们叫这些过程为\emph{普通查找例程}。通常他们作为
 复杂过程的子程序。
 
-\begin{defin}\label{Def:GeneralSearch}
+\begin{definition}\label{Def:GeneralSearch}
 普通查找例程
 
 \emph{普通查找例程}是一个处理不确定数量数据的过程，一直到数据处理完
@@ -1465,7 +1467,7 @@ E[n-1]$，其中元素是无序的。查找关键字为K的元素，如果K在数组中，返回索引号；
 
 之所以叫\emph{普通}查找例程，是因为例程经常执行诸如查找、移动元素、增加
 删除元素之类的简单操作。
-\end{defin}
+\end{definition}
 
 \begin{algorithm}\label{Algo:SequentialSearch}
 顺序查找，无序的
@@ -1526,11 +1528,11 @@ A_{succ}(n)=\sum_{i=0}^{n-1}Pr(I_i|succ)t(I_i)=\sum_{i=0}^{n-1}(\frac{1}{n})(i+1
 \end{displaymath}
 
 如果$q=1$，即$K$总在数组中，则$A(n)=(n+1)/2$，和前面一样。如果$q=1/2$，即50\%的
-机会$K$不在数组中，则$A(n)=3n/4+1/4$；大概要检查3/4的数组元素。这是例\ref{Exmp:SearchInUnSortedArray}
+机会$K$不在数组中，则$A(n)=3n/4+1/4$；大概要检查3/4的数组元素。这是例\ref{Example:SearchInUnSortedArray}
 的结论。
 \end{algorithm}
 
-例\ref{Exmp:SearchInUnSortedArray}展示了我们如何解释规模为n的输入集合$D_n$。
+例\ref{Example:SearchInUnSortedArray}展示了我们如何解释规模为n的输入集合$D_n$。
 我们仅考虑了影响算法行为的输入，即$K$在不在数组中以及K出现的位置，而不是所有可
 能的名字和数组大小。$D_n$中的一个元素$I$可以认为是一个K在指定位置出现的数组
 的集合（或等价类）。则$t(I)$是对于输入$I$的基本操作执行的次数。
@@ -1540,12 +1542,12 @@ A_{succ}(n)=\sum_{i=0}^{n-1}Pr(I_i|succ)t(I_i)=\sum_{i=0}^{n-1}(\frac{1}{n})(i+1
 从$index=\,=n-1$开始），当K出现在数组最前面时发生最坏的情况。（另一种最坏情况发生的条件
 是$K$不在数组中。）
 
-最后，例\ref{Exmp:SearchInUnSortedArray}展示了在进行查找和排序的平均分析时经常
+最后，例\ref{Example:SearchInUnSortedArray}展示了在进行查找和排序的平均分析时经常
 用到的假设；所有的元素都是不同的。对不同元素的平均分析给出了对重复元素较少情况的
 比较接近的平均行为。如果这里有很多重复元素，就很难对K第一次出现在数组的什么地方做
 出合理的假设。
 
-\begin{exmp}\label{Exmp:MatrixMultiplication}
+\begin{example}\label{Example:MatrixMultiplication}
 矩阵乘法
 
 \emph{问题：}令$A=(a_{ij})$是一个$m\times
@@ -1559,7 +1561,7 @@ p$矩阵，两者都是实数矩阵。计算矩阵$C=AB$。（这个问题在第十二章中大量讨论。在许多
     j<p
 \end{displaymath}
 
-\end{exmp}
+\end{example}
 
 \begin{algorithm}\label{Algo:MatrixMultiplication}
 矩阵乘法
@@ -1589,12 +1591,12 @@ matMult(A, B, C, m, n, p)
     A(m, n, p)= W(m, n, p) = mnp
 \end{displaymath}
 
-对于$m=n=p$时，$A(n)=W(n)=n^3$。这是例\ref{Exmp:MatrixMultiplication}的结论。
+对于$m=n=p$时，$A(n)=W(n)=n^3$。这是例\ref{Example:MatrixMultiplication}的结论。
 
 
 \end{algorithm}
 
-例\ref{Exmp:MatrixMultiplication}展示了有些算法只是执行指令，因此工作量
+例\ref{Example:MatrixMultiplication}展示了有些算法只是执行指令，因此工作量
 不依赖于具体的输入细节；仅依赖于输入的规模。这种情况下，最坏和平均都是一样的。
 对于其他算法，就不一定了。
 
@@ -1654,13 +1656,13 @@ matMult(A, B, C, m, n, p)
 在本书中，我们对于那些最优算法已知的问题，以及那些在所知的最低限和所知的最好算法
 之间仍有差距得问题。下面是这两者简单的例子。
 
-在最坏情况下算法低限的概念对于计算复杂性是十分重要的。例\ref{Exmp:FindMaxValueInArrary}
+在最坏情况下算法低限的概念对于计算复杂性是十分重要的。例\ref{Example:FindMaxValueInArrary}
 和\ref{Sec:SearchInOrderArray}节研究的问题以及第\ref{Sec:Chapter:Sort}章和
 第\ref{Sec:Chapter:SelectionandAdversaryArguments}章将帮助你理解
 低限的概念，并展示一些建立低限的技术。你必须紧记“F是一类算法的低限”的定义意味着
 属于这一类的\emph{所有}算法，对于规模为n的\emph{所有}输入，算法都至少执行F(n)步基本操作。
 
-\begin{exmp}\label{Exmp:FindMaxValueInArrary}
+\begin{example}\label{Example:FindMaxValueInArrary}
 查找数组中最大的元素
 
 问题：在n个元素的数组中找到最大的元素。（假设类型为\textbf{float}；
@@ -1672,7 +1674,7 @@ matMult(A, B, C, m, n, p)
 或是存储变量中。
 
 上限：假设数组E中存在要找到值。下面的算法找出最大值。
-\end{exmp}
+\end{example}
 
 \begin{algorithm}\label{Algo:FindMaxValue}
 查找最大值
@@ -1708,10 +1710,10 @@ n-1是最坏情况下所作比较操作的上限值。有算法可以更少吗？
 是不是最大。因此$F(n)=n-1$是要做比较次数的底限。
 
 结论：算法\ref{Algo:FindMaxValue}是最优的，这是
-例\ref{Exmp:FindMaxValueInArrary}的结论。
+例\ref{Example:FindMaxValueInArrary}的结论。
 \end{algorithm}
 
-在建立例\ref{Exmp:FindMaxValueInArrary}的低限中我们可能需要一些稍微不同的
+在建立例\ref{Example:FindMaxValueInArrary}的低限中我们可能需要一些稍微不同的
 观点。如果我们给出一个算法和n个元素的数组，于是算法终止并且在做少于n-1次
 比较之后给出了一个结果，则我们可以证明对于某些形式的输入算法给出了\emph{错误}的
 结果。如果不做多于n-2次的比较，就会有两个元素永远不会被筛选掉；也就是说
@@ -1725,7 +1727,7 @@ n-1是最坏情况下所作比较操作的上限值。有算法可以更少吗？
 示了一种对建立底限十分有效的技术，即，如果算法不做足够的工作，就可以
 找到一种输入使算法得到错误的结果。
 
-\begin{exmp}
+\begin{example}
 矩阵乘法
 
 问题：令$A=(a_{ij})$，$B=(b_{ij})$是两个$n \times
@@ -1735,7 +1737,7 @@ n$实数矩阵。计算矩阵$C=AB$；
 
 基本操作：乘法
 
-上限：常用的算法（参见例\ref{Exmp:MatrixMultiplication}）做$n^3$
+上限：常用的算法（参见例\ref{Example:MatrixMultiplication}）做$n^3$
 次乘法，因此至多需要$n^3$。
 
 低限：有文献证明至少需要$n^2$次乘法。
@@ -1745,7 +1747,7 @@ n$实数矩阵。计算矩阵$C=AB$；
 的；有算法可以达到近似$n^2.376$次乘法。这个算法是最优的吗？目前低限还没有进
 一步提高，所以我们不知道是否还有算法可以更低。
 
-\end{exmp}
+\end{example}
 
 到现在为止，我们都在讨论低限和最坏情况的行为。平均行为如何呢？我们可以使用和
 最坏行为一样的方法。选择一个看上去比较好的算法，位算法找到一个函数A(n)，即
@@ -1822,14 +1824,15 @@ n$实数矩阵。计算矩阵$C=AB$；
 目的可能导致另一个标准，可能合适的工作和文化氛围是选择城市的标准，或者使用了多少
 额外空间是选择算法的标准。
 
-有一天Anchorage会比El Paso暖和吗？这是肯定的；当寒流传到El Paso时，Anchorage很
+有一天Anchorage会比El Paso暖和吗？这是肯定的；当寒流传到El Paso时，
+Anchorage很
 可能有一个温暖的春天。这并不是说“一般情况下，Anchorage比El Paso要冷”是错误的。在
 定义里我们将给出对于$O$，$\Theta$和其他“阶集合”函数行为的比较，将忽略n的小值。
 忽略小参数（对于算法是输入规模）类似于忽略Anchorage比El Paso或Yuma要冷的少数几天。
 
-\subsection{渐近阶的定义和符号}\label{Sec:AsymptoticOrderDefineAndSymbols}
+\subsection{渐近阶的定义和符号}\label{Sec:AsymptoticOrderDefinitionAndSymbols}
 我们将使用一些自然数和实数的常用记号。
-\begin{defin}
+\begin{definition}
 自然数和实数的符号
 \begin{enumerate}
     \item \emph{自然数集合}表示为$N=\{0, 1, 2, 3, \cdots\}$。
@@ -1838,7 +1841,7 @@ n$实数矩阵。计算矩阵$C=AB$；
     \item 正实数集合为$R^+$
     \item 非负实数的集合表示为$R^*$
 \end{enumerate}
-\end{defin}
+\end{definition}
 
 \begin{figure*}[!t]
     \centering
@@ -1857,13 +1860,13 @@ n$实数矩阵。计算矩阵$C=AB$；
 令$f$和$g$是从$N$到$R^*$的函数。图\ref{Fig:OmegaThetaO}非正式的描述了我们使用
 集合和函数阶之间的关系。记住这幅图，非正式的定义将帮助验证下面的正式定义和属性。
 
-\begin{defin}
+\begin{definition}
 集合$O(g)$
 
 令$g$是一个从非负整数到正实数的函数。则$O(g)$是函数$f$的集合，也是从非负整数
 到正实数的，存在实数常量$c>0$和非负整数常量$n_0$，对于$n\geq n_0$，有
 $f(n)\leq cg(n)$ 。
-\end{defin}
+\end{definition}
 
 \begin{figure*}[!t]
     \centering
@@ -1911,7 +1914,7 @@ $f$可能在$O(g)$内，即使对于所有$f(n)>g(n)$。重要的一点是$f$是所有$g$
 
 就是说，如果$f/g$的极限存在且不是无穷，则f增长的不如g快。如果极限是无穷，f比g增长的快。
 
-\begin{exmp}
+\begin{example}
 有不同渐进阶的函数
 
 令$f(n)=n^3/2$，$g(n)=37n^2+120n+17$。我们将看到$g\in O(f)$，但是$f\notin O(g)$。
@@ -1936,7 +1939,7 @@ $n_0$ 使得对于所有的$n\geq n_0$，
 既然c是一个常数，n可以任意的大，所以不可能对于所有的$n\geq n_0$，
 都有$\frac{n}{2}\leq 174c$ 。
 
-\end{exmp}
+\end{example}
 
 当f和g在实数上是连续的不相同函数，  下面的定理对于求极限十分有用。
 
@@ -1952,7 +1955,7 @@ $n_0$ 使得对于所有的$n\geq n_0$，
 
 \end{lemma}
 
-\begin{exmp}
+\begin{example}
 使用L'H\^{o}pital法则
 
 令$f(n)=n^2$，$g(n)=n\lg n$。我们将得出$f\notin O(g)$但$g\in O(f)$。首先易得
@@ -1970,20 +1973,20 @@ L'H\^{o}pital的条件：
 \end{displaymath}
 因此$f\notin O(g)$。但$g\in O(f)$，因为无穷的倒数为0。
 
-\end{exmp}
+\end{example}
 
 $\Omega(g)$的定义：至少增长的和g一样快的函数，这个定义是Ο(g)
 \footnote{原注：计划考虑其他书和文章的读者将会注意到$\Omega$的定义有一些
 小变化：短语“对于所有的”可能弱化成“对于无限多的”。$\Theta$的定义也
 有类似的变化。}定义的对偶。
 
-\begin{defin}
+\begin{definition}
 $\Omega(g)$集合
 
 令g是从非负整数到正实数的函数。则$\Omega(g)$是函数f的集合，也是从
 非负整数到正实数的函数，存在常数c>0，和非负整数常量$n_0$，对于所有$n\geq n_0$
 都有$f(n)\geq cg(n)$
-\end{defin}
+\end{definition}
 
 另一个可选择的判断f在$\Omega(g)$方法是：
 
@@ -1992,13 +1995,13 @@ $\Omega(g)$集合
 包含极限为$\infty$。
 \end{lemma}
 
-\begin{defin}
+\begin{definition}
 $\Theta(g)$，g的渐进阶
 
 令g是从非负整数到正实数的函数。则$\Theta(g)=O(g)\bigcap\Omega(g)$ ，就是说，
 函数集合即属于$O(g)$又属于$\Omega(g)$。“$f\in \Theta(g)$”最普通的读法是
 “f是g的阶（f is order g）”。我们经常使用短语“渐进阶”，也使用术语“渐近阶复杂度”。
-\end{defin}
+\end{definition}
 
 我们也有：
 
@@ -2007,14 +2010,14 @@ $\Theta(g)$，g的渐进阶
 则函数$f\in \Theta(g)$。
 \end{lemma}
 
-\begin{defin}
+\begin{example}
 某些算法的渐进阶
 
 算法\ref{Algo:SequentialSearch}（顺序查找，无序时），和算法
 \ref{Algo:FindMaxValue}（查找最多的元素时）的最坏情况复杂度都是$\Theta(n)$。
 算法\ref{Algo:MatrixMultiplication}（最坏和平均时）矩阵乘法的复杂度在$m=n=p$时
 是$\Theta(n^3)$。
-\end{defin}
+\end{example}
 
 讨论阶集合的术语通常是不精确的。例如：“这是一个阶$n^2$算法”实际上意味着描述
 这个算法行为的函数在$\Theta(n^2)$中。练习中列举了常用的几个阶集合，以及他们之间
@@ -2022,7 +2025,7 @@ $\Theta(g)$，g的渐进阶
 
 有时我们希望指出一个函数的渐进阶精确的比一个函数小或大。我们可以使用下面的定义。
 
-\begin{defin}
+\begin{definition}\label{Def:LittleoAndomega}
 集合$o(g)$和$\omega(g)$
 
 令g是一个从非负整数到正实数的函数。
@@ -2032,7 +2035,7 @@ $\lim\limits_{n\rightarrow \infty}\frac{g(n)}{f(n)}=0$。
 \item $\omega(g)$是函数f的集合，也是从非负整数到正实数的函数，
 $\lim\limits_{n\rightarrow \infty}\frac{g(n)}{f(n)}=\infty$。
 \end{enumerate}
-\end{defin}
+\end{definition}
 
 一般情况，“$o(g)$”和“$\omega(g)$”读作“g的小oh”和“g的小omega”。
 这常常记忆为在函数$o(g)$中的函数“小于”在$O(g)$中的函数。但是，
@@ -2171,7 +2174,7 @@ $n\geq max(n_1, n_2)$，$f(n)\leq c_1c_2h(n)$。所以$f\in O(h)$
 。对于$\Omega$、$\Theta$、$O$和$\omega$的证明类似
 \end{lemma}
 
-\begin{lemma}
+\begin{lemma}\vspace{1ex}
 \begin{enumerate}
 \item 当且仅当$g \in \Omega(f)$时，$f\in O(g)$。
 \item 如果$f\in \Theta(g)$，则$g\in \Theta(f)$。
@@ -2190,7 +2193,7 @@ $n\geq max(n_1, n_2)$，$f(n)\leq c_1c_2h(n)$。所以$f\in O(h)$
 我们说f是立方的\footnote{原注：注意术语线性、平方和立方比他们在数学上的用法要宽松}。
 $O(1)$表示函数以常量为边界（对于大的n）。
 
-这里有两个有用的定例。他们的证明用到了在\ref{Sec:AsymptoticOrderDefineAndSymbols}
+这里有两个有用的定例。他们的证明用到了在\ref{Sec:AsymptoticOrderDefinitionAndSymbols}
 小节中提到的技术，特别是L'H\^{o}pital法则；证明留到练习中了。
 
 \begin{lemma}
@@ -2242,7 +2245,7 @@ $n^k$对于任意$k>0$都在$o(2^n)$内。就是说，幂函数比指数函数$2^n$要慢。
     \label{Fig:MatrixOfUpDownBound}
 \end{figure*}
 
-\begin{lemma}
+\begin{theorem}
 令d非负常量且令r是一个不对于1的正常量。
 \begin{enumerate}
 \item \emph{多项式级数}的和将指数增加1。度为d的\emph{多项式级数}的和有
@@ -2270,7 +2273,7 @@ $\sum\limits_{i=1}^nf(i)$的形式，这里$f(i)$是单调的。很显然，高为$f(n)$，宽为n的
 是类似的，但是这个技术不能用于几何级数。几何序列的规则可以直接由\ref{Sec:Calculous}
 节的等式\ref{Equa:ArithmeticGeometrySeries}得出。
 
-\end{lemma}
+\end{theorem}
 
 \section{在有序数组中查找}\label{Sec:SearchInOrderArray}
 为了阐明前面章节中展现的观点，我们将学习一个熟悉例子。
@@ -2302,7 +2305,7 @@ Search），就像我们第一次可看到这个问题一样。我们将考虑不同的算法，分析
 对于平均情况分析，我们必须知道K在两个数组元素\emph{之间}的可能性由多大。假设
 我们定义一个间断（gap）$g_i$，是y的集合，$E[i-1]<y<E[i](i= 1, \cdots,n)$。
 令$g_0$是所有比E[0]小的元素的集合，$g_n$是所有比E[n-1]大的元素的集合。
-我们假定，就像我们在例\ref{Exmp:SearchInUnSortedArray}中做的，K在数组
+我们假定，就像我们在例\ref{Example:SearchInUnSortedArray}中做的，K在数组
 中的概率是q。如果K在E中，我们假定K在所有位置的概率都是一样的（也就是有
 条件概率$1/n$）。如果K不在数组中，我们假定所有的间断都是相等的（也就是有
 条件概率$1/(n+1)$）。对于$0\leq i <n$，需要进行i+1次比较来决定K=E[i]或
@@ -2315,9 +2318,9 @@ Search），就像我们第一次可看到这个问题一样。我们将考虑不同的算法，分析
 \end{aligned}
 \end{displaymath}
 \noindent
-第一个等式展示了K在数组中的情况，与例\ref{Exmp:SearchInUnSortedArray}中的
+第一个等式展示了K在数组中的情况，与例\ref{Example:SearchInUnSortedArray}中的
 相同。第二个等式展示了K不在数组中的情况。估计和很简单，留到了练习中。
-就像在例\ref{Exmp:SearchInUnSortedArray}中一样，最后的结果通过等式
+就像在例\ref{Example:SearchInUnSortedArray}中一样，最后的结果通过等式
 $A(n)=qA_{succ}(n)+(1-q)A_{fail}(n)$计算。A(n)粗略的结果是n/2，不管q是
 多少。当q=1/2时算法\ref{Algo:SequentialSearch}平均要比较3n/4的元素，
 所以修改后的算法有改进，尽管它的平均行为还是线性的。
@@ -2425,11 +2428,11 @@ d的最大值？求解d：$2^d\leq n$和$d\leq \lg(n)$。因此在递归调用之后我们能
 $W(n)=\lfloor\lg(n)\rfloor+1$次比较。练习1.5给出这个表达式更简明的表达式，
 而且对于n=0的情况也能很好的适应，$\lceil\lg(n+1)\rceil$。我们有：
 
-\begin{lemma}
+\begin{theorem}
 在最坏情况下二分查找算法需要将K与数组的元素进行$W(n)=\lceil\lg(n+1)\rceil$
 次比较（这里$n\geq 0$，是数组元素的数目）。由于每个函数调用做一次比较，
 运行时间在$\Theta(\log n)$。
-\end{lemma}
+\end{theorem}
 
 在最坏情况下，二分查找平均要比顺序查找做的比较少。
 
@@ -2513,10 +2516,10 @@ A_1(n)=\frac{(k-1)(n+1)+1}{n}=\lg(n+1)-1+O\left(\frac{\log n}{n}\right)
 \end{displaymath}
 就像提及的，$A_0(n)=\lg(n+1)$是K不在数组中的情况。因而我们总结出下列的引理：
 
-\begin{lemma}
+\begin{theorem}
 二分查找（算法\ref{Algo:BinrarySearch}）对于有n个元素的数组要做大约$\lg(n+1)-q$
 次比较，这里q是查找成功的概率，所有的成功位置都是相等的。
-\end{lemma}
+\end{theorem}
 
 \subsection{优化}
 在前一节里，我们将一个$\Theta (n)$算法改进成了一个$\Theta
@@ -2552,16 +2555,16 @@ A_1(n)=\frac{(k-1)(n+1)+1}{n}=\lg(n+1)-1+O\left(\frac{\log n}{n}\right)
         \draw (5,1) -- (5.5, 0);
         \draw (7,1) -- (8, 0);
 
-        \filldraw[fill=red!40!green!40!blue!40] (4,3) circle(8pt) node{4};
-        \filldraw[fill=red!40!green!40!blue!40] (2, 2) circle (8pt) node{1};
-        \filldraw[fill=red!40!green!40!blue!40] (6, 2) circle (8pt) node{7};
-        \filldraw[fill=red!40!green!40!blue!40] (1,1) circle (8pt) node{0};
-        \filldraw[fill=red!40!green!40!blue!40] (3,1) circle (8pt) node{2};
-        \filldraw[fill=red!40!green!40!blue!40] (5,1) circle (8pt) node{5};
-        \filldraw[fill=red!40!green!40!blue!40] (7,1) circle (8pt) node{8};
-        \filldraw[fill=red!40!green!40!blue!40] (3.5,0) circle (8pt) node{3};
-        \filldraw[fill=red!40!green!40!blue!40] (5.5,0) circle (8pt) node{6};
-        \filldraw[fill=red!40!green!40!blue!40] (8,0) circle (8pt) node{9};
+        \filldraw[fill=black!20!white] (4,3) circle(8pt) node{4};
+        \filldraw[fill=black!20!white] (2, 2) circle (8pt) node{1};
+        \filldraw[fill=black!20!white] (6, 2) circle (8pt) node{7};
+        \filldraw[fill=black!20!white] (1,1) circle (8pt) node{0};
+        \filldraw[fill=black!20!white] (3,1) circle (8pt) node{2};
+        \filldraw[fill=black!20!white] (5,1) circle (8pt) node{5};
+        \filldraw[fill=black!20!white] (7,1) circle (8pt) node{8};
+        \filldraw[fill=black!20!white] (3.5,0) circle (8pt) node{3};
+        \filldraw[fill=black!20!white] (5.5,0) circle (8pt) node{6};
+        \filldraw[fill=black!20!white] (8,0) circle (8pt) node{9};
     \end{tikzpicture}
     \caption{n=10时二分查找算法的决策树}
     \label{Fig:BinrarySearchDecisionTreeFor10}
@@ -2597,12 +2600,12 @@ N\leq 1+2+4+\cdots+2^{p-1}
 因为$2^p \geq (N+1) \geq (n+1)$，这里p是决策树树上最长路径的比较次数。现在我们
 取对数，得到$p \geq \lg(n+1)$。既然A是这一类算法的一个抽象算法，我们证明下列引理。
 
-\begin{lemma}
+\begin{theorem}
 任何在n个元素数组中查找K（通过将K与数组元素比较）对于任何输入至少做
 $\lceil\lg(n+1)\rceil$次比较。
-\end{lemma}
+\end{theorem}
 
-\begin{lemma}
+\begin{corollary}
 既然算法\ref{Algo:BinrarySearch}在最坏情况下做$\lceil\lg(n+1)\rceil$次比较，
 它是最优的。
-\end{lemma}
+\end{corollary}

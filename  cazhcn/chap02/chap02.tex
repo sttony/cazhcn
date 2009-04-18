@@ -46,7 +46,7 @@
         \filldraw (5.8,-2) rectangle (6.2, 2);
     \end{tikzpicture}
     \caption{ADT规范提供了client和实现者之间的界面。在这个例子中实现ADT1时使用了ADT2}
-    \label{Fig:ExmpleOfADT}
+    \label{Fig:ExampleOfADT}
 \end{figure*}
 
 一种程序设计语言支持数据抽象的程度在于它是否允许程序员限制client对抽象数据类型
@@ -54,7 +54,7 @@
 \emph{数据封装}或叫\emph{信息隐藏}。这提供给程序员一个工具，程序员可以确保ADT
 对象保持某种\emph{恒定}的状态。就是说，如果client唯一的存取ADT实例的方法是通过
 一套比较小的由ADT 的接口定义的操作，则实现操作的程序员就可以（至少在理论上）
-确保数据结构各个部分之间的关系符合ADT 的规范。图\ref{Fig:ExmpleOfADT}展示了
+确保数据结构各个部分之间的关系符合ADT 的规范。图\ref{Fig:ExampleOfADT}展示了
 这种情况。这些考虑解释了为什么在软件工程中ADT的重要。
 
 我们选择Java作为实现算法的语言，主要是因为它简单，自然的支持数据抽象。在Java中
@@ -103,7 +103,7 @@ Java提供了一种特殊的用于class文档的注释格式，包含方法的preconditions
 因为Java自动进行“垃圾收集”机制，析构函数不是必须的。垃圾收集定位
 不引用的对象，回收他们的空间。
 
-\begin{exmp}
+\begin{example}
 ADT操作的类型
 
 ADT操作的三种类型如下：
@@ -116,7 +116,7 @@ ADT操作的三种类型如下：
 
 因而，在对象创建之后，一个操作可以修改对象，或者可以返回对象的信息，
 但是不能同时进行两项操作。
-\end{exmp}
+\end{example}
 
 注意ADT的构造函数不是Java中的构造函数，和其他类型的ADT操作一样，它是独立于
 程序设计语言的。在Java中构造函数通过\textbf{new}关键字来调用，它使用的语法和其
@@ -190,7 +190,7 @@ ADT可以在设计使用他们的逻辑优点（比如分析正确性简单），但是在最后实现的
         \node at(-3, 1)[place]{K};
     \end{tikzpicture}
     \caption{递归ADT中的对象必须是结构可以到达的所有部分，而不是只能直接存取得那一部分元素。}
-    \label{Fig:ExmpleOfRecursiveADT}
+    \label{Fig:ExampleOfRecursiveADT}
 \end{figure*}
 
 如果ADT的任何一个存取函数返回的都是自己的同类，则这个ADT是递归的。换句
@@ -203,7 +203,7 @@ ADT常有一个拷贝构造函数，即构造函数的参数只有一个且类型为ADT的类型。
 
 最好的理解递归数据结构类型对象的方法是将他看作一个结构，这个结构不仅包括
 立即可存取得域，还包括只能通过ADT存取函数间接存取的域，存取函数返回一个
-和ADT类型一样的对象。例如，在图\ref{Fig:ExmpleOfADT}中，最好的理解根为A
+和ADT类型一样的对象。例如，在图\ref{Fig:ExampleOfADT}中，最好的理解根为A
 的二叉树的方式是将它看作整个阴影的，尽管可以直接存取元素的只有根A。
 
 \subsection{List ADT}\label{Sec:ListADT}
@@ -439,7 +439,7 @@ $x'$而不是$x$以外，其他都一样）来进行递归重建。就像我们在下一个例子中看到的，
     \label{Fig:PartialRebuild}
 \end{figure*}
 
-\begin{exmp}
+\begin{example}
 通过局部重建在一个有序表中插入
 
 图\ref{Fig:PartialRebuild}展示的Java代码通过局部重建的方法在一个已存在
@@ -492,7 +492,7 @@ rest(newList)与rest(oldList)不同，rest(newList)在合适的地方包含newElement。
 和堆栈（\ref{Sec:StackADT}节）。其他将需要一个List ADT作为可更新的列表，
 比如in-trees（\ref{Sec:In-treeADT}节）和队列（\ref{Sec:QueueADT}节）。
 
-\end{exmp}
+\end{example}
 
 \subsection{二叉树ADT}\label{Sec:BinaryTreeADT}
 我们可以认为二叉树是一个最简单的非线性列表的一般形式；与线性表一个元素只有
@@ -530,7 +530,7 @@ rest(newList)与rest(oldList)不同，rest(newList)在合适的地方包含newElement。
         \filldraw[fill=black!20!white] (5.5,-1) circle (8pt) node{F};
         \filldraw[fill=black!20!white] (6.5,-1) circle (8pt) node{H};
         \end{tikzpicture}
-        \label{Fig:BinraryTreeEx01_A}
+        \label{Fig:BinaryTreeEx01_A}
     }
     \hfil
     \subfloat[完全]{
@@ -554,13 +554,13 @@ rest(newList)与rest(oldList)不同，rest(newList)在合适的地方包含newElement。
         \foreach \x in {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5}
             \filldraw[fill=black!20!white] (\x,0) circle (8pt);
         \end{tikzpicture}
-        \label{Fig:BinraryTreeEx01_B}
+        \label{Fig:BinaryTreeEx01_B}
     }
     \caption{二叉树}
-    \label{Fig:BinraryTreeEx01}
+    \label{Fig:BinaryTreeEx01}
 \end{figure*}
 
-二叉树在纸上通常以图\ref{Fig:BinraryTreeEx01}那样的图例来表示。如果节点
+二叉树在纸上通常以图\ref{Fig:BinaryTreeEx01}那样的图例来表示。如果节点
 $\nu$是二叉树T的\emph{根}，且节点$\omega$
 是T的左（右）子树的根，则$\omega$叫做$\nu$的\emph{左（右）}孩子，
 而$\nu$叫做$\omega$的\emph{parent}；在图中从$\nu$到
@@ -571,11 +571,11 @@ $\omega$有一条直接的边。（边虽然没有箭头，但约定是向下的。）
 
 根的深度是0，其他节点的深度是其双亲节点深度+1
 \footnote{原注：小心，有的著作将根的深度定义为1}。一颗完全二叉树的所有
-内节点的度是2，所有的叶子节点都在同一深度。图\ref{Fig:BinraryTreeEx01}右边
+内节点的度是2，所有的叶子节点都在同一深度。图\ref{Fig:BinaryTreeEx01}右边
 的树就是完全二叉树。
 
 二叉树的\emph{高度}（有时候也叫做深度）是它的叶子最深的深度。任意二叉树节点
-的\emph{高度}是以它为根的子树的深度。图\ref{Fig:BinraryTreeEx01_A}中，I的深度
+的\emph{高度}是以它为根的子树的深度。图\ref{Fig:BinaryTreeEx01_A}中，I的深度
 是1，I的高度是3；D的深度是0，高度是4。
 
 下面的事实在后面经常用到。证明他们很容易，在这里省略证明。
@@ -625,10 +625,10 @@ $\omega$有一条直接的边。（边虽然没有箭头，但约定是向下的。）
     \caption{BinTree ADT的规范。函数buildTree是构造函数；root，
             leftSubtree和rightSubtree是存取函数。类中比\textbf{Object}
             一般的节点的规范以类似的方法定义。}
-    \label{Fig:BinraryTreeSpecification}
+    \label{Fig:BinaryTreeSpecification}
 \end{figure*}
 
-图\ref{Fig:BinraryTreeSpecification}给出了BinTree ADT的规范。这显然是\ref{Sec:ListADT}
+图\ref{Fig:BinaryTreeSpecification}给出了BinTree ADT的规范。这显然是\ref{Sec:ListADT}
 节表ADT的类推。存取root的函数是List.first的类推；它存取立即有效的数据。当然，
 List.rest在这里分成了两个存取函数，leftSubtree和rightSubtree，使得client可以
 存取树剩下的部分。
@@ -738,10 +738,10 @@ List.rest在这里分成了两个存取函数，leftSubtree和rightSubtree，使得client可以
         \draw[->, thick] (3.6,4) --(3.6, 3.1);
     \end{tikzpicture}
     \caption{二叉树遍历如同围绕树的旅行。}
-    \label{Fig:BinraryTreeTraverse}
+    \label{Fig:BinaryTreeTraverse}
 \end{figure*}
 我们可以用图的方式表示二叉树的标准遍历，如同在树上进行从根开始的乘船旅行一样，
-如图\ref{Fig:BinraryTreeTraverse}所示。我们将每一个节点想像成岛，每一个边是桥，
+如图\ref{Fig:BinaryTreeTraverse}所示。我们将每一个节点想像成岛，每一个边是桥，
 而桥太低以至船无法通过。为了使我们的想像总是正确，假设在没有子树的地方有桥墩
 伸出。）小船从根节点开始沿着边航行，访问沿线的节点。节点第一次被访问（白色点），
 叫做它的\emph{preorder time}，它第二次被访问到（灰色点，从左孩子返回的那一次）
@@ -765,7 +765,7 @@ List.rest在这里分成了两个存取函数，leftSubtree和rightSubtree，使得client可以
 traverse的返回类型将随应用的不同而变化，它也可能需要额外的参数。前面的过程
 展示了一个框架。
 
-对于图\ref{Fig:BinraryTreeTraverse}中的二叉树，遍历树的顺序如下：
+对于图\ref{Fig:BinaryTreeTraverse}中的二叉树，遍历树的顺序如下：
 
     Preorder(白点):  D B A C I E G F H
 
@@ -984,12 +984,12 @@ List来存放子树。ADT的构造函数buildTree合并一个根节点和树的list，来创建更大的树。
 
 in-tree树的一个重要概念是\emph{祖先（ancestor）}，可以由下面的递归形式定义。
 
-\begin{defin}
+\begin{definition}
 
 
 节点$v$是它自己的祖先。如果$p$是$v$的双亲，则每一个$p$的祖先都是$v$的祖先。
 祖先的反转是\emph{后代（descendant）}。
-\end{defin}
+\end{definition}
 
 在in-tree中，一个节点可以访问它的祖先，但是不能访问它的后代。不像普通
 的\emph{Tree ADT}，在Tree ADT中对象是整个树；在in-tree的一个对象是一个节点

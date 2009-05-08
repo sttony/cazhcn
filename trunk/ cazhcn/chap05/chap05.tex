@@ -81,13 +81,104 @@ argument的技术来为selection问题建立更好的低限。这种技术喜爱下面描述。
 
 事实上，“设计对抗对手”在解决基于比较的问题时通常是一个有效的技术。
 
-\subsection{竞标赛}
+\subsection{锦标赛}
 在本章剩下的部分我们解决selection问题的算法，并用adversary
 arguments来讨论各种情况的低限，包括median。在大多数算法和arguments
-中，我们使用比赛或是竞标赛，来描述比较的结果。比较找到的大的称为\emph{胜者}，
+中，我们使用比赛或是锦标赛，来描述比较的结果。比较找到的大的称为\emph{胜者}，
 小的称为\emph{败者}。
 
 \section{查找max和min}
+这小节中，我们分别用max和min来代表n个元素中的最大关键字和最小关键字。
+
+我们采用算法\ref{Algo:FindMaxValue}来找到max，从集合中去处max。再次使用相反
+的算法\ref{Algo:FindMaxValue}在剩下的n-1个元素中找到min，这样就找到了max和min。
+因此max和min可以在(n-1)+(n-2)次比较完成。这不是最优的。尽管我们知道
+（第\ref{Sec:Chapter:FirstChap}章）独立的查找max和min都至少需要n-1次比较，
+但是两个一起找的时候有些工作可以“共享”。练习1.25要求给出了一个查找max和min的
+只需要约3n/2次关键字比较的算法。一个解决方法（）n是偶数是将关键字两两比较，
+做n/2次比较，然后在胜者中查找max，在败者中查找min。如果n是奇数，最后的关键字
+即可能是胜者也可能是败者。两种情况下，总的比较次数都是$\lceil3n/2\rceil -2$。
+本节中，我们将给出一个对手策略来展示这个解决是最优的。特别的，在剩下的部分中，
+我们证明：
+
+\begin{theorem}
+在n个关键字中通过比较找max和min的任意算法在最坏情况下都必须做至少
+3n/2-2次关键字比较。
+
+证明 为了建立低限，我们假定关键字是不同的。为了知道一个关键字x是max，一个关键字
+y是min，一个算法必须知道其他的所有关键字都直接或间接的败于x，其他关键字都
+直接或间接胜过y。如果我们计胜和败为一个单位的信息，则算法必须知道（至少）
+2n-2个单位的信息来保证给出的是正确回答。我们给出一个对手策略来回答比较结果，
+对手对于每个比较给出的结果都是尽可能的使得到的信息更小。想象对手构造一个特定
+的输入集合来回答算法的比较。
+
+我们对算法进行中任何情况下关键字的状态标记如下：\\
+\begin{tabular}{cc}
+\hline
+关键字状态 &含义\\
+\hline
+W   &至少胜过一次而从未败过\\
+L   &至少败过一次而从未胜过\\
+WL  &至少胜过一次败过一次\\
+N   &还没用比较过\\
+\hline
+\end{tabular}
+
+每一个W或L是一个单元的信息。状态N不携带信息。对手策略在表\ref{Table:AdversaryArgumentsOfminAndmax}
+中描述。主要一点是，除了两个关键字都没有比较过的情况，对手给出的回答至少
+最多提供一个单位的新信息。我们需要验证如果对手符合下面的规则，它的回答
+构成某些输入。之后我们需要展示这种策略迫使算法任意算法都必须做理论宣称
+的比较次数。
+
+观察表\ref{Table:AdversaryArgumentsOfminAndmax}中除了最后一行的情况，对手
+会让还没有败过的关键字继续胜，让没有胜过的关键字继续败。考虑第一种可能性；
+假设算法比较x和y，对手选择x作为胜者，x还没有败过。即使赋给x的值比赋给y的
+值要小，只要不与先前给出的回答矛盾对手就可以改变x的值，使之比y大。其他的
+情况，比如从没有胜过的关键字要继续败，处理方式类似--如果需要就减少关键字
+的值。所以对手可以用表\ref{Table:AdversaryArgumentsOfminAndmax}中的规则构造
+一致的输入来回答算法的比较。这展示在下面的例子中。
+
+为了完成5.1的证明，我们只需要证明对手规则迫使任何算法都要做至少3n/2-2次
+比较才能得到2n-2单位的信息。唯一的一次比较能得到两个单位信息的情况是两个
+比较的元素以前都没有参加过比较。假设n是偶数。算法可以做最多n/2次能得到2个
+单位信息比较，所以算法可以通过这种形式的比较得到n个单位的信息。对于每一个
+其他比较，算法最多得到一个单位的信息。算法还需要n-2单位的信息，所以她必须
+做至少n-2次比较。因此为了得到2n-2的单位的信息，算法必须做至少n/2+n-2=3n/2-2次
+比较。读者可以简单的检查n是奇数的情况，是至少3n/2-3/2次比较。完成了
+定理5.1的证明。
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+\hline
+算法比较的x和y的状态    &对手的回答  &新的状态    &新信息的单位\\
+\hline
+N, N                &x>y     &W, L         &2 \\
+W, N或L, N          &x>y     &W, L或WL, L  &1 \\
+L, N                &x<y     &L, W         &1 \\
+W, W                &x>y     &W, WL        &1 \\
+L, L                &x>y     &WL, L        &1 \\
+W, L或WL, L或W, WL  &x>y     &没有改变     &0 \\
+WL, WL              &与赋值一致  &没有改变    &0\\
+\hline
+\end{tabular}
+\caption{对于min和max问题的对手策略}
+\label{Table:AdversaryArgumentsOfminAndmax} \centering
+\end{table}
+\end{theorem}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+\hline
+
+\hline
+\end{tabular}
+\caption{对手策略找max和min的例子}
+\label{Table:AdversaryArgumentsExampleOfminAndmax} \centering
+\end{table}
+
+
+
 
 \section{查找第二大的关键字}
 我们找到并去除最大的元素，然后在剩下的集合中找到最大的，这样就找到了
@@ -95,9 +186,104 @@ arguments来讨论各种情况的低限，包括median。在大多数算法和arguments
 本小节回答这些问题。
 
 \subsection{概述}
-\subsection{竞标赛方法}
+整个小节中，我们分别用max和secondLargest表示最大和次大的元素。为了简化
+问题和算法，我们假定关键字都是不同的。
+
+次大的元素可以用FindMax（算法\ref{Algo:FindMaxValue}）做2n-3次比较来
+找到，但是这似乎不是最优的。我们必须期望在查找max的过程中发现的一些
+信息用于降低查找secondLargest的比较次数。特别的，任何关键字如果除了
+失败于max之后还失败于别的关键字，则它肯定不是secondLargest。在第二趟
+查找的过程中可以被忽略的关键字在查找max中的过程中都可以被发现。（如何
+保存他们的位置将稍后讨论。）
+
+在一个5个元素的集合上的使用算法\ref{Algo:FindMaxValue}，结果可能如下：
+
+\begin{tabular}{cc}
+\hline
+比较 &胜者\\
+\hline
+x1,x2   &x1\\
+x1,x3   &x1\\
+x1,x4   &x4\\
+x4,x5   &x4\\
+\hline
+\end{tabular}
+
+则max=x4，次大的元素可能是x5或是x1因为x2和x3都失败于x1。因此这个例子
+中还需要做一次比较就可以找到secondLargest。
+
+但是可能在我们第一趟查找max时我们没有得到任何有用的查找secondLargest的信息。
+如果max是x1，则其他每一个元素都只与max比较了一次。这是不是意味着找到
+secondLargest最坏情况下必须做2n-3次吗？不。前面说的都是使用算法\ref{Algo:FindMaxValue}
+的情况。没有算法可以用小于n-1次算法找到max的，但是其他算法可以提供
+更多的信息用来在第二趟中减少比较的次数。下面描述的锦标赛方法提供了更多的信息。
+
+\subsection{锦标赛方法}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=8mm}]
+    \node (x1)  at (0,0) [place] {x1};
+    \node (x2)  at (2,0) [place] {x2};
+    \node (x3)  at (4,0) [place] {x3};
+    \node (x4)  at (6,0) [place] {x4};
+    \node (x5)  at (8,0) [place] {x5};
+    \node (x6)  at (10,0) [place] {x6};
+    \node (x7)  at (12,0) [place] {x7};
+    \node (x8)  at (14,0) [place] {x8};
+    \node (x21)  at (1,1.5) [place] {x2};
+    \node (x22)  at (5,1.5) [place] {x4};
+    \node (x23)  at (9,1.5) [place] {x6};
+    \node (x24)  at (13,1.5) [place] {x7};
+    \node (x31)  at (3,3) [place] {x4};
+    \node (x32)  at (11,3) [place] {x6};
+    \node (x41)  at (7,4.5) [place] {x6};
+    \draw [thick] (x41) -- (x31);
+    \draw [thick] (x41) -- (x32);
+    \draw [thick] (x31) -- (x21);
+    \draw [thick] (x31) -- (x22);
+    \draw [thick] (x32) -- (x23);
+    \draw [thick] (x32) -- (x24);
+    \draw [thick] (x21) -- (x1);
+    \draw [thick] (x21) -- (x2);
+    \draw [thick] (x22) -- (x3);
+    \draw [thick] (x22) -- (x4);
+    \draw [thick] (x23) -- (x5);
+    \draw [thick] (x23) -- (x6);
+    \draw [thick] (x24) -- (x7);
+    \draw [thick] (x24) -- (x8);
+    \end{tikzpicture}
+    \caption{锦标赛的例子；max=x6；次大元素可能是x4,x5,x7}
+    \label{Fig:ChampionshipExample01}
+\end{figure*}
+
+锦标赛方法之所以叫这个名字是因为它以锦标赛的方法执行比较。关键字分对，“分轮”
+比较，胜者进入下一轮。（如果有一轮的关键字数量是奇数，他们中有一个简单的等着
+进入下一轮。）锦标赛可以描述成图\ref{Fig:ChampionshipExample01}中显示的二叉树。
+每一个叶子包含一个关键字，而每一层的父层都是这一层胜出的胜者。根包含最大的
+元素。同算法\ref{Algo:FindMaxValue}一样，需要n-1次比较找到max。
+
+在查找max的过程中，除了max之外的每一个关键字都失败一次。有多少直接失败与max？
+如果n是2的整数次幂，这里有$\lg n$轮；一般情况下是$\lceil \lg n\rceil$。既然
+每一轮中都有max在，则最多有$\lceil \lg n\rceil$个元素仅失败于max。他们是
+secondLargest所有可能的候选。算法\ref{Algo:FindMaxValue}可以用与在$\lceil \lg n\rceil$个
+元素中查找最大的，需要做$\lceil \lg n\rceil-1$次比较。因此最坏情况下锦标赛
+查找max和secondLargest共需要$n+\lceil \lg n\rceil-2$次比较。这比2n-3是一个进步。
+我们可以更好吗？
+
 \subsection{An Adversary Lowe-Bound Argument}
-\subsection{查找max和secondLargest竞标赛方法的实现}
+我们考虑的两个方法都是首先找到最大的元素。这不是浪费。任何查找secondLargest
+的算法必须也找到max，因为为了知道这个关键字是次大的，首先必须知道它不是
+最大的；就是说它必须有一次比较失败。在secondLargest必须失败的那次比较中
+胜出的那个就是max。
+
+\subsection{查找max和secondLargest锦标赛方法的实现}
+为了找到max进行的锦标赛我们需要一种方法保存每一轮的胜者。在通过锦标赛找到max
+之后，只有这些关键字参与查找secondLargest。在我们还不知道那一个是max的时候
+我们如何保存那些只败于max的关键字呢？既然锦标赛的概念就是一棵二叉树，自然
+的想到了4.8.1小节的\emph{堆结构}。对于n个元素的集合，需要一个有2n-1个节点的
+堆结构；就是$E[1], \cdots,E[2*n-1]$。一开始，将元素放在位置$n, \cdots, 2n-1$。
+随着锦标赛的过程，将逐步用胜者填写$1, \cdots,n-1$（反着填）。练习5.4显示了
+额外的细节。这个算法使用线型的额外空间，运行时间也是线型的。
 
 \section{Selection问题}
 假设我们想找到一个数组E中n个元素的中间的元素（我们想元素有rank$\lceil
@@ -114,4 +300,6 @@ median都没有用。如果我们找到一个解决方案可以有效的简单排序整个集合，则需要
 中的关键字都小于$S_2$ 中的关键字。则
 
 \section{查找median的低限}
+我们假设有n个元素的集合E且n是奇数。我们将
 \section{Designing Against an Adversary}
+设计一个对手可能是一种强大的技术

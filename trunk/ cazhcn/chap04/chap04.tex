@@ -1,21 +1,467 @@
 \chapter{排序}\label{Sec:Chapter:Sort}
 
 \section{概述}
-
 在本章中我们将学习几个排序的算法，就是将集合中的元素按顺序排列。将一组
-元素排序的问题是第一个广泛研究的计算机科学问题。已知最好的分而治之的许
-多算法设计范例都是排序算法。在20世纪60年代，当商业数据处理大规模的变的
-自动化的时候，在安装计算机的地方排序程序是运行的最多的程序。
+元素排序的问题是第一个广泛研究的计算机科学问题。已知最好的分而治之的许多
+算法设计范例都是排序算法。在20世纪60年代，当商业数据处理大规模使用自动化
+时，在安装计算机的地方排序程序是运行最多的程序。一个软件公司靠着更好的
+排序程序在行业内能领先好几年。以今天的硬件水品，排序性能的关键有所改变。
+在20世界60年代，低速存储器（磁带或磁盘）和主存之间的传输速度是主要的
+性能瓶颈。主存一般只有100,000字节，而要排序的文件大多比这要大一个数量级上。
+主要的研究都是适合这种类型的排序算法。现在，主存容量增长了1,000倍（也就是
+约100MB），或者高达GB。所以大多数文件都能装入主存了。
+
+有好几个原因要学习排序算法。首先，经常需要排序。以字母顺序排序电话簿或
+字典以使他们更容易使用，在计算机中操作大容量有序的集合比不无序的要容易。
+其次，人们开发了如此多的排序算法（本章将讲解很多种），而且学习很多排序
+算法会给你深刻的影响，即你可以从很多方面来考虑同样的一个问题。如何改进
+一个给出的算法，如何在多个算法之间取舍，本章对算法的讨论一定会让你更清楚
+的理解这两个问题。最后，排序是少数几个我们能简单的推导出最坏情况和平均
+行为的强低限的问题。说底限是强的是指已经有算法近似的达到了最小的工作量。
+因而我们已经根本上最优化了排序算法。
+
+在大多数算法的描述中，我们假定要排序的集合存储在数组中，所以访问任意位置
+元素的时间都是常数；称为\emph{随机访问random access}。但是，有些算法对于
+排序文件和链表也是很有用的。当集合仅以顺序方式访问时，我们使用术语序列sequence，
+来强调集合的结构可能是顺序文件或是链表，也可以是数组。如果数组的索引定义
+为$0,\cdots, n-1$，则数组的\emph{范围range}或\emph{子范围subrange}是指两个
+给定索引之间连续的数组项，一般写做first和last，$0\leq first$，$last\leq n-1$。如果
+$last<first$，称范围是\emph{空}。
+
+我们假设集合中每一个要排序的元素都包含一个标识，叫做\emph{关键字key}，这是一个
+线性集合的元素，两个关键字可以比较以决定他们哪一个大或是两者相等。我们
+总是以非递减顺序排序关键字。集合中的每一个元素都可以包含除key之外的信息。
+当在排序过程中，key重排列之后，相应的信息也会跟着重排列，但是有时我们仅
+关心key，而不显示的给出数组项剩下的信息。
+
+\ref{Sec:InsertSort}小节到\ref{Sec:ShellSort}小节考虑的算法都是只通过比较
+关键字（和复制他们）进行排序的一类算法，这类算法必须不对关键字做其他操作。
+我们称这些是“通过比较关键字排序的算法”，或简称“基于比较的算法”。分析这类
+算法主要的工作是计算比较关键字的次数。在\ref{Sec:LowerBoundsForSortingByComparisonOfKeys}
+小节建立了这类算法需要的比较次数的低限。\ref{Sec:RadixSorting}小节讨论可以
+对关键字使用其他的排序算法，以及不同的度量工作量的方法。
+
+本章的算法叫做\emph{内部排序internal sorts}因为假设数据都在计算机高速随机访问
+的主存中。当集合数据量过大而不能放在主存中时性能问题的焦点就有所不同。对
+存储在外部、低速存储设备中且对数据的访问有约束的数据集合排序算法称为
+\emph{外部排序external sorts}。参看本章后面的Notes和References找到这类算法更多的信息。
+
+当分析排序算法时，我们将考虑他们将使用多少额外空间（超过输入数据的那一部分）。
+如果额外空间的大小相对与输入是一个常数，算法称为\emph{in place}。
+
+为了帮助算法更清楚，我们使用Element和Key作为类型标识符，但是认为Key是一个
+数值类型，我们对Key使用“$=$,$\neq$,$<$”等关系运算符。当书中使用类似
+“E[i].key<x”关键字比较表达式时，如果实际的类型是非数值的（例如\textbf{String}），
+Java程序提供了语法来调用方法，比如“less(E[i].key, x)”。许多语言都是这样。
+
+\emph{Java语言提示：}通过Java中的Comparable接口，可以写一个能比较各种关键字
+类型的过程，类型Key必须体换成关键字Comparable。细节在附录A给出。复习一下
+Java中的数组申明为Element[] arrayName。
 
 \section{插入排序}\label{Sec:InsertSort}
+从插入排序开始是一个很好的选择，因为它的思想是很自然和很一般的，而且计算
+它的最坏时间和平均行为时间也很简单。它也是我们在\ref{Sec:ShellSort}小节
+讨论的更快的算法要用到的部分。
+
 \subsection{策略}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8, place/.style={circle,draw, minimum size=5mm}]
+        \filldraw[fill=black] (0,0) rectangle (0.1,1);
+        \filldraw[fill=black] (1,0) rectangle (1.1,0.3);
+        \filldraw[fill=black] (2,0) rectangle (2.1,2);
+        \filldraw[fill=black] (3,0) rectangle (3.1,1.7);
+        \filldraw[fill=black] (4,0) rectangle (4.1,1.9);
+        \filldraw[fill=black] (5,0) rectangle (5.1,0.8);
+        \filldraw[fill=black] (6,0) rectangle (6.1,0.9);
+        \filldraw[fill=black] (7,0) rectangle (7.1,1.3);
+        \filldraw[fill=black] (8,0) rectangle (8.1,0.6);
+        \filldraw[fill=black] (9,0) rectangle (9.1,1.6);
+        \filldraw[fill=black] (10,0) rectangle (10.1,1.5);
+    \end{tikzpicture}
+    \caption{未排序元素}
+    \label{Fig:UnsortedElements}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8, place/.style={circle,draw, minimum size=5mm}]
+        \filldraw[fill=black] (0,0) rectangle (0.1,0.3);
+        \filldraw[fill=black] (1,0) rectangle (1.1,1);
+        \filldraw[fill=black] (2,0) rectangle (2.1,1.7);
+        \filldraw[fill=black] (3,0) rectangle (3.1,1.9);
+        \filldraw[fill=black] (4,0) rectangle (4.1,2);
+
+       \draw[->] (5, 2.5)node[right]{x}-- (5, 0.9);
+
+        \filldraw[fill=black] (5,0) rectangle (5.1,0.8);
+        \filldraw[fill=black] (6,0) rectangle (6.1,0.9);
+        \filldraw[fill=black] (7,0) rectangle (7.1,1.3);
+        \filldraw[fill=black] (8,0) rectangle (8.1,0.6);
+        \filldraw[fill=black] (9,0) rectangle (9.1,1.6);
+        \filldraw[fill=black] (10,0) rectangle (10.1,1.5);
+        \draw (0, -0.5cm+4pt) -- (0cm,-0.5cm-4pt) node{};
+        \draw (4, -0.5cm+4pt) -- (4cm,-0.5cm-4pt) node{};
+        \draw (6, -0.5cm+4pt) -- (6cm,-0.5cm-4pt) node{};
+        \draw (10, -0.5cm+4pt) -- (10cm,-0.5cm-4pt) node{};
+        \node at(2,-0.5) {-已经排序的-};
+        \node at(8,-0.5) {-还没有检查的-};
+    \end{tikzpicture}
+    \caption{部分排序元素}
+    \label{Fig:PartiallySortedElements}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8, place/.style={circle,draw, minimum size=5mm}]
+        \filldraw[fill=black] (0,0) rectangle (0.1,0.3);
+
+        \filldraw[fill=black] (2,0) rectangle (2.1,1);
+        \filldraw[fill=black] (3,0) rectangle (3.1,1.7);
+        \filldraw[fill=black] (4,0) rectangle (4.1,1.9);
+        \filldraw[fill=black] (5,0) rectangle (5.1,2);
+
+        \filldraw[fill=black] (6,0) rectangle (6.1,0.9);
+        \filldraw[fill=black] (7,0) rectangle (7.1,1.3);
+        \filldraw[fill=black] (8,0) rectangle (8.1,0.6);
+        \filldraw[fill=black] (9,0) rectangle (9.1,1.6);
+        \filldraw[fill=black] (10,0) rectangle (10.1,1.5);
+
+        \draw (4.5, -1.6) node{x=};
+        \filldraw[fill=black] (5,-2) rectangle (5.1,-2+0.8);
+        \node  (x) at (4.8,-1.6) [circle,draw,minimum size=12mm] {};
+        \draw [->] (x.west) .. controls +(left:8mm) and +(down:8mm) .. (1,0);
+    \end{tikzpicture}
+    \caption{将x插入道正确的位置}
+    \label{Fig:InsertionOfXInProperOrder}
+\end{figure*}
+
+我们从有n个元素以任意序列的E开始，如图\ref{Fig:UnsortedElements}。（插入
+排序可以用于关键字是任意线型顺序集合的情况，但是对于小棍的插图，将棍的高
+想象成关键字。）
+
+假设我们已经将序列的一些小段排序了。图\ref{Fig:PartiallySortedElements}显示
+了一个左边的5个已经排完序的快照。下一步就是通过把剩下的元素插入到它正确的
+位置来增加已排序列的长度。
+
+令x是要插入已排序列的下一个元素，就是说，x是未检查段的最左边元素。第一步我
+们把x“搬走”（就是将它拷贝到局部变量），在x的位置留一个空位。然后我们依次
+将x与空位左边的元素比较，只要x比左边的元素大，我们就这个元素搬到空位，留下
+一个新的空位。就是说，空位向左移动了一步。重复这个过程直到，我们没有元素移
+到空位中，或是当前空位左边的元素小于或等于x。将x插入空位，如图
+\ref{Fig:InsertionOfXInProperOrder}。为了让算法开始，我们只需要将第一个元素
+看作是一个有序段就可以了。现在我们将这些步骤规范化成移个过程，我们假定序列
+是一个数组；当然对于list或其他的线性序列结构也是可以的。
+
+\begin{figure*}[!t]
+\colorbox[rgb]{0.9, 0.9, 0.9}{int shiftVac(Element[] E, int vacant, Key x)}
+
+\emph{preconditions：}vacant 是非负的。
+
+\emph{postconditions：}令 xLoc是返回的值。则：
+\begin{enumerate}
+\item E中的索引小于xLoc的元素在它原来的地方，且key都小于或等于x。
+\item E中的元素位置在xLoc+1直到vacant的，大于x的元素都将在shiftVac调用之后把位置移动一格。
+\end{enumerate}
+\caption{shiftVac的规范}
+\label{Fig:SpecificationsForShiftVac}
+\end{figure*}
+
 \subsection{算法和分析}
+现在我们仔细的实现排序过程。让子例程shiftVac(E, vacant, x)做搬运的工作，直
+到把空位移动到按顺序x应该在的地方。过程返回空位的索引，叫做xLoc。Precondition
+和postcondition都在图\ref{Fig:SpecificationsForShiftVac}中。换句话说，
+shiftVac完成图\ref{Fig:PartiallySortedElements}到图\ref{Fig:InsertionOfXInProperOrder}
+的转换。现在insertionSort可以一直调用shiftVac，使得左边的段越来越长，直到
+所有的元素都在有序段中。
+
+shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
+如果没有数据了，fail；否则查找一个元素，如果它是我们要找的元素，成功；否则
+继续没有检查过的元素。因为有两种结束情况，可以用一个\textbf{while}循环来表示，
+再使用\textbf{break}对于一种或多种结束情况。递归形式是直接的。
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    int shiftVacRec(Element[] E, int vacant, Key x)
+    {
+        int xLoc;
+    1:  if(vacant==0)
+    2:      xLoc= vacant;
+        else
+    3:      if(E[vacant-1].key<=x)
+    4:          xLoc=vacant;
+    5:      else
+            {
+    6:          E[vacant]= E[vacant-1];
+    7:          xLoc=shiftVacRec(E, vacant-1,x);
+            }
+    8:  return xLoc;
+    }
+\end{lstlisting}
+\end{figure}
+
+为了验证第七行的递归的正确性，我们注意到递归过程在一个更小的范围内工作，
+而且它的第2个元素是非负的，所以是满足precondition（图\ref{Fig:SpecificationsForShiftVac}
+中的）的。（你可以检查调用链来论证vacant-1为什么是非负的--它为什么不是负的呢？）
+正确性是显然的，如果我们可以假定第七行的递归完成了它的目标的话。
+
+尽管shiftVacRec过程非常简单，如果我们想象一下E的第n个元素插入时候的活动跟踪情况，
+算一下递归的深度或是堆栈的深度可能增长到规模n。这对于很大的n是不可接受的。因此
+这种情况下，当让所有的事情都工作正常之后，递归必须改成迭代。（试图优化不能工作的
+程序是徒劳。）目的与其说是为了节约时间不如说是为了节约空间。实际上如果打开优化，
+许多编译器将自动执行这个转换过程。下面的完整算法把包含了shiftVac的迭代版本。
+
+\begin{algorithm}
+插入排序
+
+Input：数组E，数组的大小。索引从0到n-1。
+
+Output：E，其元素是升序。
+
+Remark：shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    void insertionSort(Element[]E, int n){
+        int xindex;
+        for(xindex=l; xindex<n; xindex++){
+            Element current= E[xindex];
+            Key x=current.key;
+            int xLoc= shiftVac(E, xindex, x);
+            E[xLoc]=current;
+        }
+        return;
+    }
+
+    int shiftVac(Element[]E, int xindex, Key x)
+    {
+        int vacant, xLoc;
+        vacant= xindex;
+        xLoc=0; // `假定失败`
+        while(vacant>0){
+            if(E[vacant-1].key<=x){
+                xLoc=vacant; // `成功`
+                break;
+            }
+            E[vacant]=E[vacant-1];
+            vacant--;
+        }
+        return xLoc;
+    }
+\end{lstlisting}
+\end{figure}
+\end{algorithm}
+
+\subsubsection{最坏情况复杂度}
+为了分析，我们使用i代表xindex。对于每一个i的值，关键字比较的最大次数是i
+（在一次shiftVac的迭代调用中，或是shiftVacRec的顶层递归 中）。则总数是
+\begin{displaymath}
+W(n)\leq \sum_{i=1}^{n-1} i=\frac{n(n-1)}{2}
+\end{displaymath}
+注意，我们已经建立了最坏情况的上界；花点时间来验证对输入确实有n(n-1)/2次
+关键字比较。一种最坏情况是当关键字是颠倒顺序的时候（就是说是递减的时候）。
+所以
+\begin{displaymath}
+W(n)=\frac{n(n+1)}{2}\in \Theta(n^2)
+\end{displaymath}
+
+\subsubsection{平均行为}
+\begin{figure*}[!t]
+    \centering
+    \centering
+    \begin{tikzpicture}[scale=0.8, place/.style={circle,draw, minimum size=5mm}]
+        \draw (-0.5, 3.5)node[right]{i}-- (-0.5, 0.9);
+        \filldraw[fill=black] (0,0)node[anchor=north]{0} rectangle (0.1,0.3);
+        \draw (0.5, 3.5)node[right]{i}-- (0.5, 0.9);
+        \filldraw[fill=black] (1,0)node[anchor=north]{1} rectangle (1.1,0.6);
+        \draw (1.5, 3.5)node[right]{i-1}-- (1.5, 0.9);
+        \filldraw[fill=black] (2,0)node[anchor=north]{2} rectangle (2.1,0.9);
+        \filldraw[fill=black] (3,0)node[anchor=north]{3} rectangle (3.1,1.2);
+
+        \draw (5.5, 3.5)node[right]{3}-- (5.5, 0.9);
+        \filldraw[fill=black] (6,0) rectangle (6.1,2.1);
+        \draw (6.5, 3.5)node[right]{2}-- (6.5, 0.9);
+        \filldraw[fill=black] (7,0)node[anchor=north]{i-1} rectangle (7.1,2.4);
+        \draw (7.5, 3.5)node[right]{1}-- (7.5, 0.9);
+        \draw[thick,dash pattern=on 3pt off 3pt] (4, 0.3) --(5, 0.3);
+        \draw[thick,dash pattern=on 3pt off 3pt] (4, 3.3) --(5, 3.3);
+        \draw (8, 0.5)node{x};
+    \end{tikzpicture}
+    \caption{决定x的位置需要的比较次数}
+    \label{Fig:CompareCountOfDecidedXPostion}
+\end{figure*}
+我们假定输入关键字的所有排列都是等概率的。我们首先将决定将一个新关键字插
+入到原来已经排序好的片段中需要多少次关键字比较，就是以任意i（用于xindex）
+调用一次shiftVac会有多少次比较。为了简化分析，我们假设关键字是不同的。
+（分析过程十分类似与第一章做对序列查找做的分析。）
+
+有i+1个位置可能放置x。图\ref{Fig:CompareCountOfDecidedXPostion}展示了插入
+的位置决定了要做多少次比较。
+
+x属于任一位置的概率是1/(i+1)。（这依赖于一个事实，即算法之前不知道x的
+任何信息。如果算法事先知道关于x的信息，，我们不必假设x对于每一个x的值都
+有相等的概率。）因此在shiftVac中找到第i个元素的平均比较次数是
+\begin{displaymath}
+\frac{1}{i+1}\sum_{j=1}^i+\frac{1}{i+1}i=\frac{i}{2}+\frac{i}{i+1}=\frac{i}{2}+1-\frac{1}{i+1}
+\end{displaymath}
+现在对于所有的n-1次插入，
+\begin{displaymath}
+A(n)=\sum_{i=1}^{n-1}=(\frac{i}{2}+1-\frac{1}{i+1})=\frac{n(n-1)}{4}+n-1-\sum_{j=2}^n\frac{1}{j}
+\end{displaymath}
+这里我们带入j=i+1得到最后的和。我们从等式\ref{Equa:MonotonyFunctionA}可以
+看出 ，我们可以忽略1 preceding the sum to make the lower limit j=1。忽略低阶项，我们有
+\begin{displaymath}
+A(n)\approx \frac{n^2}{4}\in \Theta(n^2)
+\end{displaymath}
+
+\subsubsection{空间}
+显然，插入排序是一个in-place排序方法，当使用迭代版本的shiftVac时。
+当使用递归版本时，frame堆栈可能扩展到$\Theta(n)$。
+
+\subsection{特定排序算法的行为低限}
+考虑一个元素得到关键字是x，当插入排序比较x它左边的关键字时，它恰好占据
+了“vacant”位置。则在每次比较之后，插入排序都不移动元素，或者这是简单
+的交换两个相邻的元素。我们将展示所有的有限制排序算法--即每次比较之后
+“局部”移动元素的那些算法--必须做和插入排序工作量类似的工作。
+
+N的元素的排列可以描述为一个一对一的集合$N={1, 2, \cdots, n}$到自己的
+函数。对于n个元素有$n!$种排列。令在未排序序列E中的元素是$x_1, x_2, \cdots, x_n$。
+为了在这里简化符号，让我们假设排序之后的元素存储在$1, \cdots, n$而不是$0, \cdots, n-1$。
+排列$\pi$，在$1\leq i\leq n$时，$\pi(i)$是$x_i$在排序完成之后的位置。
+不失一般性，我们可以假设关键字是整数$1, 2, \cdots, n$，这样我们就可以认为
+最小关键字是1，第二小的是2，以此类推。则未排序的输入是$\pi(1), \pi(2), \cdots, \pi(n)$。
+例如，考虑输入序列2, 4, 1, 5, 3。$\pi(1)=2$意味着第一个关键字2属于第2个位置。
+$\pi(2)=4$，因为第2个关键字属于第4个位置，如此类推。我们将以排列$\pi$标识序列
+$\pi(1), \pi(2), \cdots, \pi(n)$。
+
+排列$\pi$的一个倒置（inversion）是一个对（$\pi(i), \pi(j)$）有i<j而
+$\pi(i)>\pi(j)$。如果（$\pi(i)$, $\pi(j)$）是一个倒置，序列中的第1个和
+第j个关键字不符合他们的顺序。例如排列2, 4, 1, 5, 3 有4个倒置
+(2, 1),  (4, 1),  (4, 3)和(5, 3)。如果排序算法移除在每次比较之后至少移除
+一个倒置（也就是交换相邻元素），则在输入$\pi(1), π(2), \cdots, \pi(n)$
+上执行的比较次数至少是$\pi$的导致个数。所以我们考虑倒置。
+
+容易得到对于一个排列有n(n-1)/2个倒置。（哪一个？\footnote{译注：逆序时}）
+因此任何每次比较移除至少一个倒置的排序算法最坏行为肯定是$\Omega(n2)$。
+
+为了得到这样的排序算法关键字比较的平均行为的底限，我们计算排列中倒置的
+平均数。每一个排序π有一个转置排列（transpose permutation）
+$\pi(n), \pi(n-1), \cdots, \pi(1)$。例如，2, 4, 1, 5, 3 的转置是3, 5, 1, 4, 2。
+每一个排列有一个唯一的转置而且当n>1时两者是不同的。令i和j是1到n之间的整数，
+假设j<i。则（i, j）是一个排列$\pi$的倒置，但是对于$\pi$的倒置来说就不是。
+有n(n-1)/2对整数。因此每对排列有n(n-1)/2倒置，因此平均是n(n-1)/4。综上所述，
+排列的倒置平均数是n(n-1)/4，我们证明下面的定理。
+
+\begin{theorem}
+任意通过比较关键字排序的算法，如果在每一次比较之后至少减少一个逆序，则
+在最坏情况下至少做n(n-1)/2次比较，平均情况下至少做n(n-1)/4次比较（当有n个元素时）。
+\end{theorem}
+
+既然插入排序在最坏情况下做n(n-1)/2次关键字比较，在平均情况下近似n2/4，它
+已经是做“局部”交换的算法中最好的了。当然肯定有更好的策略，但是如果存在
+更快的算法，他们必须一次移动元素超过一个位置。
 
 \section{分而治之}
-\section{快速排序}
-快速排序是最早发现的分而治之算法；它由1962由C.A.R.Hoare发表。
-直到现在它也是实际使用中最快的算法之一。
+分而治之算法设计范例背后的原理是，通常情况下解决几个小型要比解决一个大型
+问题要容易。\ref{Sec:QuickSort}小节到\ref{Sec:HeapSort}小节的算法都使用了
+分而治之的逼近。他们将一个问题分解成许多同样类型的小问题（本章中是分成
+更小的集合再排序），之后递归的解决这些小问题（以同样的方法），最后合并以得
+到原始输入的解决。为了终止递归我们，直接解决一些小的问题。但是，插入排序仅仅
+分解了一个元素创建了一个子问题。
+
+我们已经看过了分而治之的一个主要的例子--二分查找（\ref{Sec:SearchInOrderArray}节）。
+将主要的问题分解成两个子问题，其中一个甚至不需要去解决。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    solve(I)
+    {
+        n=size(I);
+        if( n <= smallsize)
+            solution=directlySolve(I);
+        else
+        {
+            divide I into I1, ..., Ik.
+            For each i in {1, ..., k}:
+                Si =solve( Ii);
+            solution =combine (S1, ..., Sk);
+        }
+        return solution;
+    }
+    \end{lstlisting}
+    \caption{分而治之骨架}
+    \label{Fig:DivideandConquerSkeleton}
+\end{figure*}
+一般的，我们可以通过图\ref{Fig:DivideandConquerSkeleton}中的框架过程来描述
+分而治之算法。
+
+为了设计一个分而治之算法，我们必须设定子例程directlySolve，divide和combine。
+小的实例的数量分解到k。对于输入规模n，令B(n)是执行directlySolve的步数，令D(n)是
+执行divide的步数，令C(n)是执行combine的步数。则当基本情况T(n)=B(n)描述算法
+工作量的一般形式的递归等式
+\begin{displaymath}
+T(n)=D(n)+\sum_{i=1}^kT(size(I_i))+C(n) \qquad \mbox{n>smallsize}
+\end{displaymath}
+当$n\leq smallsize$时，是基本情况T(n)=B(n)。对于许多分而治之算法而言，分割
+和合并的步骤都很简单，T的递归等式比通用形式要简单。Master定理（定理3.17）
+给出了分而治之递归等式的一般解决方法。
+
+接下来几节介绍的快速排序和归并排序，两者的区别就在他们分割问题和合并解的
+方式不一样，或者说是排序子集的方式不一样。快速排序的特点是“艰难的划分，
+简单的合并”，而归并排序是“简单的划分，艰难的合并”。除了过程调用的簿记
+工作外，我们将看到所有的“实际工作”都在“艰难的”节中。两个排序过程都有
+子例程做他们“hard”部分，这些子例程在他们自己的\textbf{rights}内是非常
+有用的。对于快速排序重点是\textbf{partition}，它是通用framework中
+\textbf{divid}步骤；\textbf{combin}步骤没什么内容。对于归并排序重点是
+\textbf{merge}，它是combin步骤；divide步骤则是简单的计算。两个算法划分问题
+成两个子问题。但是，对于归并排序，两个子问题是等规模的（可能差一个元素），
+而对于快速排序，甚至子划分都是不能保证的。这个不同导致了两者性能上的明显
+不同，在两个算法各自的分析中有详细discovery。
+
+从顶层看，堆排序（\ref{Sec:HeapSort}节）不是一个分而治之算法，但是它使用
+的堆的操作时分而治之策略的。堆排序的加速形式使用了更完善的分而治之算法。
+
+在后面的章节中，分而治之策略将会出现许多次。在第
+\ref{Sec:Chapter:SelectionandAdversaryArguments}章，应用分而治之查找集合
+的中间元素。（通用问题称为selection问题）。在第\ref{Sec:Chapter:DynamicSetAndSearch}章，
+我们使用分而治之生成二叉查找树，以及它的平衡版本红黑树。
+在第9章，我们使用它解决它的路径问题，比如传递闭包。在第12章，
+我们用它解决许多矩阵和矢量问题。在第13章，图的着色问题也用到分而治之。
+第14章中，分而治之在并行计算中以另一种形式出现。
+
+\section{快速排序}\label{Sec:QuickSort}
+快速排序是最早发现的分而治之算法；它由1962由C.A.R.Hoare发表。直到现在它
+也是实际使用中最快的算法之一。
+
 \subsection{快速排序的策略}
+快速排序的策略是将元素重新排列，使得数组中“小”的关键字都在“大”的关键字
+前面（“难度分解”）。之后Quicksort递归的排列“小”关键在和“大”关键字
+子范围，最后整个数组就有序了。对于数组来说，在“合并”（combination）步骤
+没有什么要做的，但是Quicksort也可以用于list（参见练习4.22），在这种情况
+下“合并”步骤连接两个lists。我们为了简单，描述的是数组的实现。
+
+令E是一个数组，令first和last是当前Quicksort要排列子范围的的第一个和最后一个
+元素。最开始的时候first=0，last=n-1，n是数组元素的个数。
+
+Quicksort算法从它要排序的子范围中选择一个元素，叫做pivot元素，它的关键字
+叫做pivot，然后将pivot元素移到一个局部变量中，在数组中留一个空位。暂时，
+我们假设子范围最左边的元素就是pivot元素。
+
+Quicksort将pivot传递给Partition子例程。这个子例程重排列剩下的元素，找
+到splitPoint的索引，splitPoint满足：
+\begin{enumerate}
+\item 对于first≤i<splitPoint，E[i].key<pivot；
+\item 且对于splitPoint<i≤last，E[i].key≥pivot。
+\end{enumerate}
+注意现在有一个空位在splitPoint的位置。
+
+
+
+之后Quicksort将pivot元素放回E[splitPoint]，这就是它正确的位置，pivot元素
+在后面的递归调用中不在参与，就是它正确的位置了（参见图4.7）。这个就完成了
+“分解”的过程，然后Quicksort开始递归调用自己解决由Partition创建的子问题。
+
+
 \subsection{Partition 子例程}
 \subsection{快速排序的分析}
 \subsubsection{最坏情况}
@@ -31,22 +477,162 @@ Partition把每一个关键字与pivot比较，所以如果在它工作的范围有k个位置，它
 时候发生！快速排序是不是有点虚假广告的味道？
 
 \subsubsection{平均行为}
+在4.2.3小节里面我们展示了如果排序算法每次比较至少从排列中移除一个倒置，则
+它在平均情况下至少要做(n2-n)/4次比较（定理4.1）。但是快速排序没有这个限制。
+Partition算法可以移动一个元素穿过整个数组，一次移动消除n-1个倒置。
+快速排序因为它的平均行为得到它的名字。
+
+我们假设关键字是不同的，且所有关键字的排列都是等概率出现。令k是数组要排序范围
+中的元素的个数，令A(k)是这个规模排序要做的平均关键字比较次数。假设下一次
+Partition将pivot移动到了本次子范围的第i个位置（图4.11），从0开始计数。
+Partion做了k-1次关键字比较，下一次要排序的子范围分别有i个元素和k-1-i个元素。
+
+在Partiition完成之后对于我们的分析是很重要的，子范围（$first, \cdots, splitPoint-1$）
+内没有两个关键字相互进行过比较，所以这个子范围内所有的排列依然是等概率的。同理
+（$splitPoint+1, \cdots, last$）也是一样。这一条有下面的递归。
+\begin{displaymath}
+\begin{aligned}
+&A(n)=n-1+\sum_{i=0}^{n-1}\frac{1}{n}(A(i)+A(n-1-i)) \qquad  n\geq 2\\
+&A(1)=A(0)=0
+\end{aligned}
+\end{displaymath}
+检查和中的项以简化递归等式。形如A(n-1-i)的项run from A(n-1) down to A(0)，所以
+他们的和以A(i)的和同样。则我们可以丢弃A(0)项，得到
+\begin{equation}
+A(n)=n-1+\frac{2}{n}\sum_{i=1}^{n-1}A(i)  \qquad  n\geq 1
+\end{equation}
+这是一个比我们前面看到的要复杂的递归等式，因为A(n)的值依赖于早先的值。我们可以
+尝试使用一些技巧来解这个等式，或者我们可以猜一个解然后用归纳法证明这个解正确。
+后一种技术特别适合递归算法。学习两种方法都是有益的，所以两种方法我们都会做。
+
+为了猜A(n)的形式，让我们考虑一种快速排序工作的最好的情况。假设每次Partition执行
+都将原来的范围分成两个等长的子范围。既然我们只是想从侧面猜测快速排序在平均情况
+下有多块，我们将子范围的大小近似为n/2而不管这是不是一个整数。比较的次数描述为：
+\begin{displaymath}
+Q(n)\approx n+2Q(n/2)
+\end{displaymath}
+可以采用Master定理了（定理3.17）：$b=2$，$c=2$，$E=1$，$f(n)=n^1$。因此
+$Q(n)\in \Theta(n\log n)$。所以如果E[first]每次都接近split位置，则快速排序的
+比较次数将在$\Theta(n\log n)$。这比$\Theta(n^2)$有显著的提高。但是如果关键字
+所有的排列都是等概率出现的话，还会得到这么好的结果吗？我们将证明之。
+
+
+
 \subsubsection{更精确的平均行为*}
+尽管我们已经建立了快速排序的平均行为，回到递归等式（等式4.1）依然是有益的，
+尝试直接解这个等式可以得到更多的leading term。这一小节使用一些复杂的数学手段，
+可以跳过本节不会影响学习的连续性。
+
+由等式（4.1）我们有
+
+\begin{equation}\label{}
+A(n)=n-1+\frac{2}{n}\sum_{i-1}^{n-1}A(i)
+\end{equation}
+
+\begin{equation}
+A(n-1)=n-2+\frac{2}{n-1}\sum_{i-1}^{n-2}A(i)
+\end{equation}
+
+如果我们用（4.2）减去（4.3），大多数项都约掉了。既然和需要乘上不同的因子，
+我们需要一个slightly more complicated bit of algebra。非正式的，我们计算
+于是
+\begin{displaymath}
+\begin{aligned}
+nA(n)-(n01)A(n01)&=n(n-1)+2\sum_{i-1}^{n-1}A(i)-(n-1)(n-2)-2\sum_{i-1}^{n-2}A(i)\\
+&=2A(n-1)+2(n-1)
+\end{aligned}
+\end{displaymath}
+
+有
+\begin{displaymath}
+\frac{A(n)}{n+1}=\frac{A(n-1)}{n}+\frac{2(n-1)}{n(n+1)}
+\end{displaymath}
+现在令
+\begin{displaymath}
+B(n)=\frac{A(n)}{n+1}
+\end{displaymath}
+对于B的递归等式是
+\begin{displaymath}
+B(n)=b(n-1)+\frac{2(n-1)}{n(n+1)} \qquad B(1)=0
+\end{displaymath}
+引用等式（1.11），我们过程留给读者验证
+\begin{displaymath}
+\begin{aligned}
+B(n)&=\sum_{i=1}^n\frac{2(i-1)}{i(i+1)}=2\sum_{i=1}^n\frac{1}{i}-4\sum_{i=1}^n\frac{1}{i(i+1)}\\
+&\approx 2(\ln n +0.577)-4n/(n+1)
+\end{aligned}
+\end{displaymath}
+因此
+\begin{displaymath}
+A(n)\approx 1.386n\lg n -2.846n
+\end{displaymath}
+
 \subsubsection{空间使用}
-\subsubsection{}
+第一眼看去似乎快速排序是一种in-place排序。但是不是。当算法在子范围上工作时，所有
+其他范围的起至范围都要存放在frame stack中（译注：递归调用带来的），栈的规模
+依赖于子范围的数量。当然就是依赖于n。在最坏情况下，Partition每次分隔一项；递归
+的深度是n。因此最坏情况下的空间使用数量是$\Theta(n)$。下面描述的一个算法的改进
+能显著的减少栈的尺寸。
 
 \subsection{基本快速排序算法的实现}
 \subsubsection{选择枢轴}
+我们已经看到如果Partition使用的pivot能分成两个基本一样大小的段时，快速排序
+就会很好。（它的位置是Partition返回的splitPoint。）选择E[first]作为pivot时可能
+导致快速排序很糟糕，而本来这时排序会是很简单的，比如当数组已经是有序的情况。有
+许多其他的选择pivot的策略。一种是选一个first和last之间的随机整数q，令pivot=E[q].key。
+另一个是另pivot是E[first], E[(first+last)/2], E[last]的中间一个。（两种情况下，
+在Partition之前E[first]元素都将先和pivot元素交换。）两种策略都需要在选择pivot
+时做一点额外工作，但是他们会减少快速排序程序的平均运行时间。
+
 \subsubsection{可选的Partiton策略}
+文中展示的Partition版本在平均情况下做最少的元素移动，与其他partitioning策略
+比较。这个子例程比较清晰，and coding these in-line would save some overhead；
+但是有些编译器可以自动做这种优化。其他优化考虑在本章后面的Notes和References中
+提及。在练习中有一个可选版本，连续中的版本易于理解和编程，但是稍慢。
+
 \subsubsection{小集合排序}
+实际应用中快速排序对于小的集合效果不佳，因为有太多的过程调用。但是，快速排序
+算法对于大到n的规模也会分解成小的子集合再递归排序他们。因此，当子集合小的
+一定程度时，算法就变的低效率了。这个问题可以通过下面的方法来补偿，选择一个
+小的smallSize，当集合的大小小于或等于smallSize的时候采用简单非递归的排序，在
+改进过的算法中调用了smallSort。（此时插入排序是个不错的选择。）
+
+
 \subsubsection{堆栈空间优化}
+我们观察到Quicksort的递归调用深度可能很深，最坏情况下可能达到n（在Partition每次之分解一个元素的时候）。许多pushing和poping的都是不必要的。Partition之后，程序开始排序子范围E[first]….E[solitPoint-1]；之后它必须排序E[splitPoint+1]…E[last]。
+    第二个递归调用是过程的最后一句话，所以可以用我们前面在插入排序中用于shiftVac的方式将第二个递归转换成迭代。第一个递归依然在那里，所以只是部分的消除了递归。
+    尽管只有过程中只有一个递归调用了，我们仍然要关心递归深度。当每次递归调用只能比前一次稍微小一点时，递归深度就是个问题。所以我们使用的第二个技巧是避免递归在大的子范围做递归。通过保证每次递归调用在接近它的"父"递归调用一半的子范围上，递归深度保证维持在lgn。两个ideal合并在下面的版本中，"TRO"表示"尾递归优化（tail recursion optimization）"。想法是在每次partition之后，下一次递归将在小的那个子范围上，大的子范围将直接用while循环处理。
+
+\subsubsection{结合使用这些改进手段}
+前面我们独立的讨论几种修改方法，但是他们可以协调的组合在一个程序中。
+\subsubsection{Remarks}
+实际中，快速排序程序对大的n平均而言运行的很快，是广泛使用的一种排序方法。但是
+在最坏情况下，快速排序很糟糕。类似插入排序（参看\ref{Sec:InsertSort}小节），
+Maxsort和冒泡排序（练习4.1和4.2），快速排序最坏情况是$\Theta(n^2)$，但是与其他
+不同，快速排序平均行为在$\Theta(n\log n)$。有排序算法最坏情况能在
+$\Theta(n\log n)$吗，或者我们可以建立最坏情况的底限就是$\Theta(n^2)$。让我们
+再次检查通用的技术，看看如何改进最坏情况下的行为。
 
 \section{归并有序序列}
+在这一节中我们回顾一下下面问题的直接解决方案：给定两个升序序列A和B，归并两者得到一个新的序列C。归并有序的子序列是归并排序的关键策略。归并有序子序列同样有许多的方法，在练习中有提及。衡量归并算法的度量是关键字比较的次数。
+    令k和m是分别是A和B元素的数量。令n=k+m是"问题的规模"。假设A和B都不是空的，我们可以立即决定C的第一个元素：就是A和B的第一个元素中小的那个。C剩下的部分呢？假设A的第一个元素是比B的小。则C剩下的部分肯定是A除第一个元素外所有的元素和B所有元素的归并。这只是我们开始那个问题的一个小一点的版本。如果C的第一个元素是来自B的，问题是对称的。两种情况下剩下问题的规模（构造C剩下的部分）都是n-1。Method99（3.2.2小节）。
+\subsection{最坏情况}
+\subsection{归并的优化}
+\subsection{空间使用}
+因为所有的元素都要拷贝到C，从算法4.4看出归并总数是n的条目需要2n个元素的空间。然而有些情况下，需要额外空间的数量可能减少。比如，序列是链表。则在合并完成之后A,B就不需要了，A和B的元素重新组成了C。
+    假定输入的序列存储在数组中，且有k≥m。如果A有足够的空间来放n=k+m个元素，则只需要A中的额外m个元素就可以了。
+
 \section{归并排序}
-\section{基于比较的排序的底限}
-\subsection{排序算法的判定树}
-\subsection{最坏情况的底限}
-\subsection{平均行为的底限}
+\section{基于比较的排序的底限}\label{Sec:LowerBoundsForSortingByComparisonOfKeys}
+插入排序和快速排序做的关键字比较次数在最坏情况下在$\Theta(n^2)$。我们能用
+归并排序加以改进，使得最坏情况在$\Theta(n\log n)$。我们能做的更好吗？
+
+在本节中我们
+
+
+\subsection{排序算法的判定树}\label{Sec:DecisionTreesForSortingAlgorithms}
+\subsection{最坏情况的底限}\label{Sec:LowerBoundOfWorstCase}
+\subsection{平均行为的底限}\label{Sec:LowerBoundOfAverageBehavior}
 \section{堆排序}\label{Sec:HeapSort}
 \subsection{堆}
 \subsection{堆排序的策略}
@@ -59,15 +645,111 @@ Partition把每一个关键字与pivot比较，所以如果在它工作的范围有k个位置，它
 \subsection{加速堆排序}
 \subsubsection{分析}
 本质上，
+
 \section{四种排序算法的比较}
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+    \hline
+    算法   &最坏情况 &平均情况 &空间使用 \\
+    \hline
+    插入排序   &$n^2/2$    &$\Theta(n^2)$     &in place\\
+    快速排序   &$n^2/2$    &$\Theta(n\log n)$ &额外空间和$\log n$成比例\\
+    归并排序   &$n\lg n$   &$\Theta(n\log n)$ &额外空间和$n$成比例\\
+    堆排序     &$2n\lg n$  &$\Theta(n\log n)$ &in place\\
+    加速堆排序 &$n\lg n$   &$\Theta(n\log n)$ &in place\\
+    \hline
+\end{tabular}
+\caption{四种排序算法分析的结果。Entries are number of comparisons and include the leading terms only。}
+\label{Table:CompareOf4Algorithm} \centering
+\end{table}
+表\ref{Table:CompareOf4Algorithm}综合了迄今为止讨论过的四种排序算法分析的结果。
+尽管归并排序在最坏情况下最接近最优，但是有比较次数更少的算法。
+\ref{Sec:LowerBoundsForSortingByComparisonOfKeys}节得到的底限是相当好的。它对于
+有些n的值是很精确的；就是说，排序$\lceil\lg n!\rceil$次比较就足够，对于一些n的值。
+也知道$\lceil\lg n!\rceil$并不是对于所有n的值都足够。例如$\lceil\lg 12!\rceil=29$，
+但是已经证明排序12个元素在最坏情况下至少需要30次比较。参看本章后面的Notes和
+References，哪种排序算法在最坏情况下最接近底限。
+
 \section{Shell排序}\label{Sec:ShellSort}
+Shell排序（以发明者Donald Shell 命名）用的技术是有趣的，而且算法易于编程，
+运行的相当快。只是它的分析是非常困难，而且是不完全的。
 \subsection{算法}
+Shell排序
 \subsection{分析和注意事项}
 
-\section{基数排序}
+\section{基数排序}\label{Sec:RadixSorting}
 对于\ref{Sec:InsertSort}到\ref{Sec:ShellSort}的排序算法，对于关键字的假设
 只有一个：他们是线型的集合。基本的操作是比较两个关键字。如果我们对关键字
 作更多的假设，我们能可以对关键字做其他的操作。本节学习一种新的算法，叫
 “桶排序”，“基数排序”或是“分配排序”
 \subsection{使用关键字的属性}
-假设关键字是打印在卡片上的名字，一个卡片一个名字。为了将他们按字母排序分类
+假设关键字是打印在卡片上的名字，一个卡片一个名字。为了用手将他们按字母
+顺序排序，我们首先根据首字母将他们分成26堆，或者按几个字母一堆分好；用
+其他方法将每一堆卡片按字母顺序排好，比如类似插入排序；最后合并排好序的堆。
+如果关键字是5位十进制树，我们可以根据第一位将他们分成10堆。如果关键字是
+1到m之间的整数，我们可以每间隔k分一堆，[1, m/k]，[m/k+1, 2m/k]等等。上面
+的例子中，都是根据检查关键字的一个单独字母或一位数字，或是与预先定好的
+值比较，来将关键字分发到不同的堆中。然后再将堆单独排序在组合。以这种
+方式排序的算法与前面讨论所的算法都不同，因为要使用这种方法我们必须知道
+关键字的结构或是顺序。
+
+我们将在后面展示\emph{基数排序算法}的细节。为了区分同类新的其他算法，我们使用
+“桶排序”做这类算法的通用名字。
+
+\subsubsection{桶排序有多块}
+一个桶排序算法有3步：
+\begin{enumerate}
+\item 分发关键字
+\item 单独排序桶
+\item 合并桶
+\end{enumerate}
+每一步工作的类型都是不同的，所以我们选一个通用的基本操作来计数的策略
+不好用了。假设有k个桶。
+
+在分发阶段，算法检查每个关键字一次（不管是检查某个特定的位域，或是将关键字
+与常数个特定值比较。）然后算法决定关键字属于那个桶。这一步可能牵涉到拷贝
+关键字或是设置指针引用什么的。第一步的一个合理的实现应该将操作步数控制在$\Theta(n)$。
+
+为了排序桶，假设我们使用一种基于比较关键字的排序算法，即对于m个元素的桶需
+要$S(m)$次比较。令$n_i$是第i个桶中的元素个数。第二步算法要做$\Sigma_{i=1}^kS(n_i)$
+次比较。
+
+第三步，合并桶，最坏情况下需要将所有的元素从桶拷贝到一个list中；操作的数量是$O(n)$。
+
+因此主要的工作是在排序桶时。假设S(m)在Θ(mlogm)。则如果关键字均匀的
+分布在桶中，算法在第二步要做ck(n/k)lg(n/k)=cnlg(n/k)次比较，这里c是一个
+依赖于在桶中使用排序算法的常数。增加桶的数量k将减少比较的数量。如果我们
+选k=n/10，则要做nlg10次比较，桶排序的时间将在n的线性之内，假设关键字是均匀的
+分发且第一步的运行时间不依赖于k的话。（As a caveat, the fewer elements pre bucket,
+the less likely it is that the distribution will be even。）但是在最坏的情况下，
+所有的元素都装进一个桶里面，第二步中要对整个list排序，而第一步和第三步都变成了浪费。
+因此在最坏情况下，桶排序会变的极度低效。如果关键字的分布是可以预先知道的，则可以
+调整每个桶保存关键字的范围，使得所有的桶都接受近似相等数量的元素。
+
+桶排序需要的空间依赖于桶是如何存储的。如果每一个桶都是连续空间的集合（例如数组），
+则每一个桶都必须分配足够的空间以存储一个桶的最多可能的元素数量，也就是所有的元素n。
+因此排序n个元素可能需要$kn$个空间。随着桶数量的增加，算法的速度增加但是使用的空间也
+随之增加。链表可能会好点；仅需要$\Theta(k+n)$的空间（n个元素占用n个空间，k个表头
+占用k个空间）。将关键字分发到桶中可能需要构造list的节点。但是每个桶中的元素如何排序
+呢？快速排序和归并排序，先前讨论的两种最快的排序方法，都可以在链表上简单的实现（参看
+练习4.22和连续4.28）。如果桶的数量很大，桶内的元素的数量很少，可以使用慢一点的算法。
+插入排序也也可以简单的修改之后就用于链表（参看练习4.11）。如果每个桶都是大约n/k个元素，
+归并排序对每个桶平均做大约$(n/k)(\lg(n)-\lg(k))$次比较，总共做$n(\lg(n)-\lg(k))$次比较。
+再次强调，随着k增加，速度也增加，但是空间也增加。
+
+你可能奇怪为什么我们不使用桶排序算法递归的创建更小的桶。这里有几个原因。簿记工作马上
+就会超出控制；指向桶头的指针以及最后合并元素需要信息不得不不断的进栈出栈。由于每一个
+递归调用都要簿记信息，算法不能依赖于最后将问题分解成一个桶装一个元素，所以将用到其他
+的排序算法来排序小的桶。因此如果一开始就使用了合适多的桶，在递归桶排序就会得到的少，
+失去的多。但是尽管递归分发关键字到桶是低效的，但有时利用这种思想还是很有用的。
+
+\subsection{基数排序}
+\subsubsection{分析与注意事项}
+分发一个关键字需要解析出一个域，还有一个连接操作；步数是一个常数。所以对所有的
+关键字，分发是$\Theta(n)$步。类似的，合并也是$\Theta(n)$步。分发和合并的趟数
+是numFields，也是关键字分成多少个域。如果它可以控制在常数之内，基数排序总的
+执行步数在n的线性时间之内。
+
+我们的基数排序的实现使用了$\Theta(n)$的额外空间用于链域，提供的基数是以n相关的。
+其它的不使用链的实现也将使用$\Theta(n)$的额外空间。

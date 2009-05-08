@@ -1,31 +1,9 @@
-\chapter{排序}
+\chapter{串匹配}
 \section{概述}
-\section{插入排序}
-\subsection{策略}
-\subsection{算法和分析}
+在这章里面我们学习检查一个特定子串（称为pattern）是否出现在另一个
+字符串（称为text）的问题。这个问题经常出现在
 
-\section{分而治之}
-\section{快速排序}
-\subsection{快速排序的策略}
-\subsection{Partition 子例程}
-\subsection{快速排序的分析}
-\subsubsection{最坏情况}
-Partition把每一个关键字与pivot比较，所以如果在它工作的范围有k个位置，它
-将做k-1次比较（第一个位置是空位）。如果E[first]是要分割范围最小的元素，
-则splitPoint=first，这将导致分割成一个空的子范围（没有元素比pivot小）和
-一个k-1个元素的子范围。因此所以，每次Partition调用时如果pivot是最小的元素，
-则总的比较次数是
-\begin{displaymath}
-    \sum_{k=2}^n=\frac{n(n-1)}{2}
-\end{displaymath}
-
-\subsection{基本快速排序算法的实现}
-
-\section{归并有序序列}
-\section{归并排序}
-\section{基于比较的排序的低限}
-\subsection{排序算法的判定树}
-\section{堆排序}
-\section{四种排序算法的比较}
-\section{Shell排序}
-\section{基数排序}
+\section{直接的解决方案}
+\section{Knuth-Morris-Pratt算法}
+\section{Boyer-Moore算法}
+\section{近似串匹配}

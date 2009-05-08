@@ -1,5 +1,5 @@
 
-\chapter{分析算法和问题：原理与例子}
+\chapter{分析算法和问题：原理与例子}\label{Sec:Chapter:FirstChap}
 
 \section{概述}
 说一个问题是算法\emph{可解的}（非正式的），意味着可以编写一个计算机程序，如果我们允
@@ -117,60 +117,60 @@ Java只有很少的\emph{原生类型}，其他所有类型都叫classes。原生类型是逻辑（\textbf{
 
 
 \begin{example}\label{Example:CreateAndAccessAClass}
-    创建和存取一个Java 对象
+创建和存取一个Java 对象
 
-    在这个例子，让我们假设数据信息遵循下面的嵌套逻辑结构：
+在这个例子，让我们假设数据信息遵循下面的嵌套逻辑结构：
+\begin{itemize}
+    \item year
     \begin{itemize}
-        \item year
-            \begin{itemize}
-                \item number
-                \item isLeap
-            \end{itemize}
-        \item month
-        \item day
+        \item number
+        \item isLeap
     \end{itemize}
+    \item month
+    \item day
+\end{itemize}
 
-        这里使用非正式的术语，year 是由布尔属性isLeap 和整数属性number
-    构成的组合属性，而month 和day 只是简单的整数属性。为了反映这个嵌
-    套结构，我们必须在Java 中定义两个类，一个表示整个数据，另一个表
-    示year 域。假设我们为这两个类分别取名Date 和Year。接下来我们要申
-    明number 和isLeap 作为Year 类的实例域，申明year、month、day 为Date
-    类的实例域。除此之外，我们最好将Year 定义为Date 的内部类。语法如
-    图\ref{Fig:DataClasswithYear}。
+这里使用非正式的术语，year 是由布尔属性isLeap 和整数属性number
+构成的组合属性，而month 和day 只是简单的整数属性。为了反映这个嵌
+套结构，我们必须在Java 中定义两个类，一个表示整个数据，另一个表
+示year 域。假设我们为这两个类分别取名Date 和Year。接下来我们要申
+明number 和isLeap 作为Year 类的实例域，申明year、month、day 为Date
+类的实例域。除此之外，我们最好将Year 定义为Date 的内部类。语法如
+图\ref{Fig:DataClasswithYear}。
 
-    \begin{figure}
-        \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
-            class Date {
-                public Year year;
-                public int month;
-                public int day;
+\begin{figure}
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    class Date {
+        public Year year;
+        public int month;
+        public int day;
 
-                public static class Year {
-                    public int number;
-                    public boolean isLeap;
-                }
-            }
-        \end{lstlisting}
-        \caption{带一个内部类Year的类Date的Java语法}\label{Fig:DataClasswithYear}
-    \end{figure}
+        public static class Year {
+            public int number;
+            public boolean isLeap;
+        }
+    }
+\end{lstlisting}
+\caption{带一个内部类Year的类Date的Java语法}\label{Fig:DataClasswithYear}
+\end{figure}
 
-    不带public 关键字，实例域就不能在Date和Year外面访问；为了简单，我们在这里使用public。
-    申明内部类，Year带static修饰符的原因是，因为我们可以单独创建Year的实例
-    而不与任何特定Date对象相关联。本书中所有的内部类都将是static。
+不带public 关键字，实例域就不能在Date和Year外面访问；为了简单，我们在这里使用public。
+申明内部类，Year带static修饰符的原因是，因为我们可以单独创建Year的实例
+而不与任何特定Date对象相关联。本书中所有的内部类都将是static。
 
-    假定我们创建了一个由dueDate变量引用的Date对象。为了存取对象中的year实例域，
-    使用.运算符，如“dueDate.year”。如果一个实例域在类中（与之对应的是在原始类型中），
-    要再接一个.来存取他的实例域，如“dueDate.year.isLeap” 。
+假定我们创建了一个由dueDate变量引用的Date对象。为了存取对象中的year实例域，
+使用.运算符，如“dueDate.year”。如果一个实例域在类中（与之对应的是在原始类型中），
+要再接一个.来存取他的实例域，如“dueDate.year.isLeap” 。
 
-    赋值语句仅仅拷贝类对象的引用或地址；不拷贝实例域。例如，“noticDate =
-    dueDate”导致变量noticDate指向了变量dueDate指向的同一对象。因此下面的
-    代码很可能是逻辑错误：
-    \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
-        noticDate = dueDate;
+赋值语句仅仅拷贝类对象的引用或地址；不拷贝实例域。例如，“noticDate =
+dueDate”导致变量noticDate指向了变量dueDate指向的同一对象。因此下面的
+代码很可能是逻辑错误：
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    noticDate = dueDate;
         noticDate.day = dueData .day -7 ;
-    \end{lstlisting}
-    \noindent
-    参见\ref{Fig:DataClasswithYear}节，对这个问题有另外的讨论。
+\end{lstlisting}
+\noindent
+参见\ref{Fig:DataClasswithYear}节，对这个问题有另外的讨论。
 \end{example}
 
 Java中的控制语句\textbf{if} , \textbf{else} , \textbf{while} ,
@@ -181,7 +181,8 @@ while和for的语法是
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     while("continuation condition")
         body;
-    for("initializer"; "continuation condition"; "incrementer")
+    for("initializer"; "continuation condition";
+        "incrementer")
         body;
 \end{lstlisting}
 \end{figure}
@@ -401,7 +402,7 @@ Date的组织者类中定义，我们可以使用语句
 本书中我们使用各种数学概念、工具和技术。大多数你应该熟悉了，可能会有少部分是
 新的。本节一一列举他们，为你提供一个参考，也是一个回顾。设计较深的证明在第三章。
 
-\subsection{集合、元组和关系}
+\subsection{集合、元组和关系}\label{Sec:SetTupleRelation}
 本节提供一些非正式的定义和集合、关系概念的基础特性。集合是“一堆”不同元素，我
 们相将他们作为一个对象处理。通常，元素有同样的类型，有利于我们将他们看作一个对象
 的公有的特性。符号$e\in
@@ -1030,11 +1031,11 @@ L_{f,u,v}(x)$ 。非正式的，如果函数f(x)从不向下弯，则它是凸的。
         \frac{1}{k+1}n^{k+1}\ln(n)-\frac{1}{(k+1)^2}n^{k+1}
     \end{aligned}
 \end{equation}
-如果f(x)是单调递增，则
+如果$f(x)$是单调递增，则
 \begin{equation}\label{Equa:MonotonyFunctionA}
     \int_{a-1}^b f(x)dx \leq \sum_{i=a}^b f(i) \leq \int_a^{b+1} f(x)dx
 \end{equation}
-同样的，如果f(x)是单调递减，则
+同样的，如果$f(x)$是单调递减，则
 \begin{equation}\label{Equa:MonotonyFunction}
     \int_a^{b+1} f(x)dx \leq \sum_{i=a}^b f(i) \leq \int_{a-1}^b f(x)dx
 \end{equation}

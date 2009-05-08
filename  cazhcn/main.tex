@@ -7,11 +7,8 @@
 \usepackage{amsmath} %对公式的扩展支持
 \usepackage{listings} %源代码支持
 \usepackage{xcolor} %使用颜色宏包
-
-%\usepackage[dvips]{graphicx}
-%\graphicspath{{./eps/}}
-%\DeclareGraphicsExtensions{.eps}
-
+\usepackage{pgf,tikz} %画图支持
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning}
 \usepackage{threeparttable}%表格内脚注支持
 
 %------ 书签代码-----------
@@ -28,8 +25,6 @@
 \AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
 %--------分割线----------
 
-\usepackage{pgf,tikz} %画图支持
-\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning}
 
 \newtheorem{example}{例}[chapter]
 \newtheorem{definition}{定义}[chapter]

@@ -16,7 +16,7 @@
 动态等价关系在许多应用中存在，它们的操作与Union-Find
 ADT紧密相关。使用In-Tree ADT，在一些情况下是非常高效的实现。
 
-优先级队列是许多算法的工具，尤其是贪婪算法。对优先级队列ADT两种
+优先级队列是许多算法的工具，尤其是\emph{贪婪}算法。对优先级队列ADT两种
 高效的实现是二叉堆（也用于堆排序）和pairing
 forests，也称为lazy pairing heaps。
 
@@ -24,56 +24,117 @@ forests，也称为lazy pairing heaps。
 Note和References。
 
 
-\section{数组翻倍}
-引起动态集合并的典型情况是我们在计算开始时并不知道序列的大小。尽管
-分配一个“尽可能大”的序列是常用的方法但并不总是令人满意的。简单的
-说，采用灵活的方法初始化一个较小的序列当空间明显不足时就加倍。对这项
-工作我们必须明确当前序列有多满和当前已分配了多少条目。Java通过length域
-自动明确了后一个信息，对前一个参数是程序员的责任，它依赖于对使用序列
-的应用。
+\section{数组翻倍}\label{Sec:ArrayDoubleSize}
+引起动态集合并的典型情况是我们在计算开始时并不知道需要多大的数组。分配
+一个“满足需要的最大的”的数组通常是非常令人不满意，但是这是最普通的
+解决方法。一个简单的更有灵活性的方案是，开始的时候只分配一个小的数组，
+当空间不组时就加倍数组。为了完成这项工作我们必须记录当前数组用了多少，
+以及当前分配了多少。Java通过length域自动记录了当前分配了多少，但是对
+前一个参数是程序员的责任，它依赖于具体的应用。
 
-假设我们组织了一个类setArray，有两个域setSize和elements，然后把它作为
-一个序列元素的类型，我们简单称之为对象。初始化，我们如下在这个类中构造
-一个对象：
+假设我们组织了一个类\textbf{setArray}，有两个域\textbf{setSize}和
+\textbf{elements}，后一个是element类型的数组，这里我们假设类型是
+Object。最开始我们如下够这个类的对象：
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     setArray mySet= new setArray();
     mySet.setSize=0;
     mySet.elements=new Object[100];
 \end{lstlisting}
-在每次向mySet中添加元素的时候，setSize都将增加。但是在插入新元素之前，
-都要确保有空间,若不存在空间，则要把序列长度加倍。这是通过分配一个大小
-是当前序列大小2倍的新序列，然后把所有元素转到新序列，这个应用的代码如下：
+在每次向mySet中添加元素的时候，但是在插入新元素之前，都要确保还有空位，
+若没有了，把数组的大小翻倍。这个过程是分配一块两倍原来大小的新数组，
+然后把所有元素移动到新数组中。代码如下：
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     if(mySet.setSize==mySet.element.length)
         arrayDouble(mySet);
     Continue with insertion of new element;
 \end{lstlisting}
-在arrayDouble子过程如下：
+在arrayDouble子例程如下:
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     arrayDouble(set)
-    newLength=2*set.elements.length;
-    newElements=new Object[newLength];
-    Transfer all elements from the
-        set.elements array to the newElements array;
-    Set.elements=newElements;
+    {
+        newLength=2*set.elements.length;
+        newElements=new Object[newLength];
+        `将set.elements数组的元素移动到newElements数组中`;
+        set.elements=newElements;
+    }
 \end{lstlisting}
 
-花费大的部分是转移元素。然而，我们在头部插入n个元素入集合，用这种方式存储$O(n)$。
-假设插入第(n+1)个元素将触发数组增倍操作，设t为从旧数组转移到新数组的花费
-（我们设t是常数）。在数组增倍操作要进行n次转移，在前一次操作中是n/2次操作，
-再前一次n/4，等等。所有的转移花费不会超过2tn。
+耗时的大部分是移动元素。但是，我们现在将展示以这种存储方式插入n个元素的
+总系统开销是$\Theta(n)$。
 
-这是可以分期清偿的简单例子，操作的代价偶尔会很昂贵，所以平均每次操作都会被一个
-常数所限制。Amortized时间分析将在下面解释。
+假设插入第(n+1)个元素将触发数组翻倍操作，令t是将数据从旧数组转移到新数组
+的花费（假设t是常数）。在这次数组翻倍操作中要进行n个元素的转移。但是在
+前一次操作中是n/2个元素转移，再之前是n/4，等等。从集合创建以来所有元素
+转移不会超过2tn。
+
+这是可以\emph{平摊}或者铺开偶尔出现昂贵操作的简单例子，所以每一步的平均开销是
+一个常数时间低限。平摊时间分析在下一节解释。.
 
 \section{Amortized 时间分析}
+
+
 \section{红黑树}
+红黑树是满足特定结构要求的二叉树。这些结构要求暗示有n个节点的红黑树的高不
+超过$2\lg(n+1)$。就是说，它的高比有n个节点的最平衡的二叉树多一个2倍常数因子。
+红黑树最流行的用处是做二叉查找树，但是这不是它唯一的应用。本节展示如何用
+红黑树来高效的保持平衡二叉查找树（平衡度刚被提及）。其他保持平衡二叉查找树
+的方案在本章后面的Note和References中提到。我们选择红黑树是因为其删除过程在
+所有选择方案中是最简单的。
+
+在介绍了一些符号之后我们将复习二叉查找树。之后我们介绍红黑树要求的结构特性，
+并介绍如何在插入和删除的时候有效的维护之。
+
+红黑树是一个RBtree类的对象，它的实现可能与\ref{Sec:BinaryTreeADT}小节的
+BinTree ADT非常的类似；但是规范和接口非常不同。这是因为红黑树比以BinTree ADT
+实现的一般二叉树有更多的目的，并且有改变它结构的操作，而BinTree ADT没有
+定义这样的操作。同BinTree ADT一样，以null表示一颗空树。红黑树的操作有
+rbtInsert、rbtDelete和rbtSearch。他们分别在树中插入，删除或查找给定的
+关键字。与BinTree ADT不同，红黑树没有提供直接访问子树的操作。但是在理解
+其子树是二叉查找树但是不一定是红黑树之后，就可以添加相应的操作。
+
+RBtree类非常适合实现字典ADT，或其他需要平衡二叉树的ADT。注意，红黑树是
+
 \subsubsection{Properly Drawn树}
+Properly Drawn树的思想可以帮助我们理解二叉查找树和红黑树的许多概念。本书
+用properly drawn树画所有的插图。
+
+\begin{definition}\vspace{1ex}
+一棵树在二维平面内是\emph{properly drawn}的，如果：
+\begin{enumerate}
+\item 每一个节点是一个点，每一条边是一条线段或是一段连接父母到孩子的弧线。
+     （在画图中一个节点是一个圈或是类似的插图，他们的“点”可以认为是中心，
+      边认为从点出发。）
+\item 一个节点左孩子和右孩子分别画在节点的左边和右边，水平位置。
+\item 对于任意边uv，u开始于父节点，没有
+\end{enumerate}
+\end{definition}
+
 \subsubsection{空树作为external节点}
+对于二叉查找树，特别是对红黑树来说，将空树当作一种特殊类型的节点是方便的，空树
+的节点称为\emph{external node}。
+\begin{definition}
+节点群和他们的主要子树
+
+一个节点群是
+\end{definition}
+
 \subsection{二叉查找树}
+在二叉查找树中，节点的关键字满足下面的约束。
+\begin{definition}
+二叉查找树property
+
+二叉树
+\end{definition}
 
 \subsection{二叉树的旋转}
 \subsection{红黑树的定义}
+红黑树是RBtree类的对象。
+\begin{definition}
+红黑树
+
+令T是二叉树
+\end{definition}
+
 \subsection{红黑树的大小和深度}
 \begin{lemma}
 令T是一个$RB_k$树。就是说，令$T$是一个有black height h的红黑树。则：
@@ -91,10 +152,86 @@ Note和References。
 \end{enumerate}
 
 \end{lemma}
+
 \subsection{红黑树中插入}
+红黑树定义了基于颜色和black height的约束。理想的插入是在红黑树中插入一个
+红节点，这样就保证了black height的约束仍然是满足的。但是新的红节点可能会
+造成红节点成了红节点的孩子。我们可以通过合并颜色和结构来修复这个犯规且
+保持black-height的约束。
+
+插入关键字K的第一步是在BST中查找K应该在的位置，当然因为K不在BST中所以会
+找到一个external节点（空树，参见算法6.1）。下一步是将空树替换成仅包含一个
+节点K的树。最后一步，递归调用的出口，是修复颜色的犯规。任何时候都不会违反
+black-height的规范。
+
+\begin{example}
+红黑树插入的第一步
+    
+在写出完整的算法之前，让我们考虑看看在图6.5的红黑树中插入关键字70会产生
+什么情况。在整个树中，70与根比较，大，所以下降到右子树。然后70与60比较，
+接着下降到右子树，这里70与80比较。现在转到了左子树，且遇到了external节点。
+\end{example}
 
 \section{哈希}
-\section{动态等价关系和联合查找程序}
+哈希是一种常用来实现字典ADT的技术，尽管字典也可以用其他技术实现。想象一下
+在一个应用中，我们能给每一个可能关键字都赋予一个唯一的数组索引。这样，定位、
+插入、删除元素都是非常简单和快速的。
+
+当然一般情况下，关键字空间（所有可能关键字的集合）都过于庞大。一个典型的
+例子字符串的关键字空间，比如人名。假设名字最多有20个字母或空格。关键字空间
+超过2100个元素。就是说如果我们使用数组，将需要2100个单元来为每一个字符串
+赋予一个索引，这完全是不可实现的。即使关键字空间是巨大的，在一个特定的
+应用程序中仅会碰到一小部分。实际元素的集合可能在几百之内，或者小于百万。
+一个有4百万个元素的足够给每一个元素一个不同的索引，这样规模的数组大小是
+可行的。
+
+哈希的目的就是为了将巨大的关键字空间映射到一个合理的小的整数范围内。关键字
+转换之后的值称之为关键字的哈希码，计算转换过程的称为哈希函数。我们可以根据
+元素的哈希码用数组存储每一个元素。
+
+“哈希”这个名字原来是根据早期的处理关键字的做法来的，即“chopping up”
+关键字，选取关键字的特定几位来做哈希码。
+
+哈希函数的工作是以某种方式将关键字赋予一个整数，这种方式可能会失败的将一个
+“典型”的n个元素的集合中两个元素映射到同一个整数。当这种情况发生时，这个
+事件称为一个碰撞。为了减少碰撞出现的机会，如果我们有n个元素，典型的情况我们
+使用2n作为哈希码的范围。
+
+最普通的，但是不是唯一的方式，使用哈希来维护一张哈希表。哈希表是一个索引
+$0, \cdots, h-1$的数组H；就是说表有h个条目。H的条目称为哈希单元。哈希函数
+将每一个关键字映射到$0,\cdots,h-1$之间的整数。
+
+\begin{example}
+哈希
+
+对于一个简单的例子，假设关键字空间是4位整数，现在需要把他们转换到$0, \cdots, 7$
+之间的整数。我们选择哈希函数：
+\begin{displaymath}
+hashCode(x)=(5x mod 8)
+\end{displaymath}
+假设我们实际的集合由6个重要的历史日期组成：1055、1492、1776、1812、1918和1945。
+他们映射到$0,\cdots,7$如下：
+
+\begin{tabular}{ccccccccc}
+\hline
+hashcode  &0      &1  &2  &3     &4                     &5     &6     &7\\
+key       &1775   &   &   &1055  &$\frac{1492}{1812}$   &1945  &1918  & \\
+\hline
+\end{tabular}
+
+
+如果我们有一个由8个条目组成的哈希表，元素可以根据他们的哈希码存储，他们将
+分散在整个表中。但是，有些元素有同样的哈希码，所以必须为这种事件做预防措施。
+在这个例子中，关键字1492和1812\emph{碰撞}了。意味着他们映射得到了同样的哈希码。
+\end{example}
+
+两个议题为哈希表设计地址：哈希函数怎么设计，碰撞如何处理？两个议题相当的独立。
+找一个合适的哈希函数依赖于具体的应用。我们将讨论碰撞问题。
+\subsection{封闭地址哈希}
+\subsection{开放地址哈希}
+\subsection{哈希函数}
+
+\section{动态等价关系和联合查找程序}\label{Sec:DynamicEquivalenceRelationAndUnionSearch}
 \subsection{动态等价关系}
 \subsection{一些浅显的实现}
 \subsection{联合－查找程序}
@@ -105,4 +242,8 @@ Note和References。
 \subsection{应用}
 
 \section{优先级队列with a Decrease Key Operation}
-\subsection{The Decrease Key Operation}
+回顾优先权队列ADT（2.5.1小节）的主要access函数是getBest，
+这里best可能是最大或者最小。一个完整的最小化优先权队列ADT的操作有：
+
+
+\subsection{The Decrease Key Operation}\label{Sec:TheDecreaseKeyOperation}

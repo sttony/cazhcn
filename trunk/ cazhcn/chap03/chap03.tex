@@ -12,7 +12,7 @@
 很简单的。（和前一章一样，在本章中，我们使用“函数”更一般的名字“过程”，Java
 的 术语是“方法”。）
 
-递归树在\ref{Sec:RecursionTree}节引入，提供了一个通用的分析递归过程的时间消耗
+递归树在\ref{Sec:RecursionTrees}节引入，提供了一个通用的分析递归过程的时间消耗
 的framework。我们将解决许多通用的递归模式，结论以定理的形式总结。
 
 \section{递归过程}
@@ -45,61 +45,88 @@
     \begin{tikzpicture}[scale=0.83, place/.style={rectangle,draw, minimum size=8mm,text width=8mm,text centered, below}]
         \node   at ( 0, 0) [place] {main\\ \vspace{-1ex}X:};
         \node   at ( 0,-1.5) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 1.5,-1.5) [place] {fib\\ \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
+        \node   at ( 1.5,-1.5) [place]
+            {fib\\ \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
 
         \node   at ( 0,-1.5- 3.0*1) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 1.5,-1.5- 3.0*1) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 1.5,-1.5- 3.0*1) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
 
         \node   at ( 0,-1.5- 3.0*2) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 1.5,-1.5- 3.0*2) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 3,-1.5- 3.0*2) [place] {fib\\ \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
+        \node   at ( 1.5,-1.5- 3.0*2) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 3,-1.5- 3.0*2) [place]
+            {fib\\ \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
 
         \node   at ( 0,-1.5- 3.0*3) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 1.5,-1.5- 3.0*3) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\ \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 3,-1.5- 3.0*3) [place] {fib\\ \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 4.5,-1.5- 3.0*3) [place] {fib\\ \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
+        \node   at ( 1.5,-1.5- 3.0*3) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\ \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 3,-1.5- 3.0*3) [place]
+            {fib\\ \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 4.5,-1.5- 3.0*3) [place]
+            {fib\\ \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:1};
 
         \node   at ( 0,-13.5) [place] {main\\ \vspace{-1ex}X:};
-        \node   at ( 1.5,-13.5) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 3,-13.5) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 4.5,-13.5) [place] {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:2};
+        \node   at ( 1.5,-13.5) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 3,-13.5) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 4.5,-13.5) [place]
+            {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:2};
 
         \node   at ( 0,-16.5) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 1.5,-16.5) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 3,-16.5) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 4.5,-16.5) [place] {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:1\\  \vspace{-1ex}\textbf{line}:7};
+        \node   at ( 1.5,-16.5) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 3,-16.5) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 4.5,-16.5) [place]
+            {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:1\\  \vspace{-1ex}\textbf{line}:7};
 
         \node   at ( 0,-19.5) [place] {main\\ \vspace{-1ex}X:};
-        \node   at ( 1.5,-19.5) [place] {fib\\ \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 3,-19.5) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
+        \node   at ( 1.5,-19.5) [place]
+            {fib\\ \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 3,-19.5) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
 
         \draw (5.6, 0)--(5.6, -22);
 
         \node   at ( 6.5,0) [place] {main\\ \vspace{-1ex}X:};
-        \node   at ( 8,0) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 9.5,0) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
-        \node   at ( 11,0) [place] {fib\\  \vspace{-1ex}n:0\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:7};
+        \node   at ( 8,0) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 9.5,0) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
+        \node   at ( 11,0) [place]
+            {fib\\  \vspace{-1ex}n:0\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:7};
 
         \node   at ( 6.5, -3) [place] {main\\ \vspace{-1ex}X:};
-        \node   at ( 8, -3) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 9.5,-3) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:0\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:6};
+        \node   at ( 8, -3) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 9.5,-3) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:0\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:6};
 
         \node   at ( 6.5,-6) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 8,-6) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
-        \node   at ( 9.5,-6) [place] {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:0\\ \vspace{-1ex}f:1\\  \vspace{-1ex}\textbf{line}:7};
+        \node   at ( 8,-6) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:4};
+        \node   at ( 9.5,-6) [place]
+            {fib\\  \vspace{-1ex}n:2\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:0\\ \vspace{-1ex}f:1\\  \vspace{-1ex}\textbf{line}:7};
 
         \node   at ( 6.5,-9) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 8,-9) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
+        \node   at ( 8,-9) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
 
         \node   at ( 6.5,-12) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 8,-12) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
-        \node   at ( 9.5,-12) [place] {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:7};
+        \node   at ( 8,-12) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:5};
+        \node   at ( 9.5,-12) [place]
+            {fib\\  \vspace{-1ex}n:1\\ \vspace{-1ex}f1:\\ \vspace{-1ex}f2:\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:7};
 
         \node   at ( 6.5,-15) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 8,-15) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:1\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:6};
+        \node   at ( 8,-15) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:1\\ \vspace{-1ex}f:\\  \vspace{-1ex}\textbf{line}:6};
 
         \node   at ( 6.5,-18) [place] {main\\  \vspace{-1ex}X:};
-        \node   at ( 8,-18) [place] {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:1\\ \vspace{-1ex}f:2\\  \vspace{-1ex}\textbf{line}:7};
+        \node   at ( 8,-18) [place]
+            {fib\\  \vspace{-1ex}n:3\\ \vspace{-1ex}f1:1\\ \vspace{-1ex}f2:1\\ \vspace{-1ex}f:2\\  \vspace{-1ex}\textbf{line}:7};
 
         \node   at ( 6.5,-21) [place] {main\\  \vspace{-1ex}X:};
     \end{tikzpicture}
@@ -131,8 +158,11 @@ Fibonacci数列的活动帧
 
 这段代码申明了一些局部变量，编译器通常为局部变量产生临时的空间，于是我们就
 可以更细致的研究活动帧。事实上如同许多递归定义的函数一样，fib函数可以写成
-一条“怪物”语句：return n<2?n:fib(n-1)+fib(n-2); 。 但是这种形式让我们追踪
-活动记录不是很方便。
+一条“怪物”语句：
+\begin{displaymath}
+\mbox{\textbf{return}}\qquad n<2?n:fib(n-1)+fib(n-2);
+\end{displaymath}
+但是这种形式让我们追踪活动记录不是很方便。
 
 图\ref{Fig:ActivationTraceOfFib}中左列顶行是在fib(3)调用之前帧堆栈，下一行
 是fib进入之后帧堆栈。帧下面显示的行号是将要被执行的，如果帧不是帧堆栈顶部
@@ -158,20 +188,22 @@ Fibonacci数列的活动帧
 简单语句运行常数时间，而且薄记一个函数调用的环境（设置下一个活动帧等）也是
 常数时间。因此有：
 
-\begin{lemma}
-在不带while或for循环，但是可能有递归过程调用的计算过程中，总的计算时间是
-$\Theta(C)$)，这里C是在计算中过程调用的总数（包括作为过程调用的函数）。
+\begin{lemma}\label{Lemma:3_1}
+在不带\textbf{while}或\textbf{for}循环，但是可能有递归过程调用的计算过程中，
+总的计算时间是$\Theta(C)$)，这里C是在计算中过程调用的总数（包括作为
+过程调用的函数）。
 \end{lemma}
 
-但是任意过程的规模L必须是自不变的；就是说不会因输入的不同而不同。在任意
-固定算法中，对于算法中所有的过程都有一个最大的L。每一次运行算法的总时间，
+但是任意过程的规模$L$必须是自不变的；就是说不会因输入的不同而不同。在任意
+固定算法中，对于算法中所有的过程都有一个最大的$L$。每一次运行算法的总时间，
 确定是栈顶不同时间活动帧代表的过程调用的时间的总和。还可以合理的假定，由于
 薄记工作的存在，每一个活动帧都会消耗时间，即使它是立即“返回”的。这些给
 我们分析递归计算的运行时间的强有力工具。
 
 \begin{theorem}
-在不带while或for循环但是可能包含递归调用的计算中，总的计算时间是$\Theta(C)$，
-这里C是在计算过程中调用的总数（包括作为过程调用的函数）。
+在不带\textbf{while}或\textbf{for}循环但是可能包含递归调用的计算中，
+总的计算时间是$\Theta(C)$，这里C是在计算过程中调用的总数（包括作为
+过程调用的函数）。
 \end{theorem}
 
 \begin{figure*}[!t]
@@ -199,11 +231,12 @@ $\Theta(C)$)，这里C是在计算中过程调用的总数（包括作为过程调用的函数）。
 创建的顺序。图\ref{Fig:ActivationTreeOfFib}是个例子。
 
 先序遍历活动树将是活动帧创建的顺序，树中节点的数量与执行时间是成比例的。
-执行期间任何帧堆栈的快照都是对应树中的某条从根开始的线路。（在\ref{Sec:Depth-firstSearchandRecursive}节
-的深度优先查找时我们回到这种对应性）在\ref{Sec:WhyCanRecursiveTreeWork}小节中
-我们会检查活动树和递归等式之间的关系。这对分析递归算法是很有帮助的。
+执行期间任何帧堆栈的快照都是对应树中的某条从根开始的线路。（在
+\ref{Sec:Depth-firstSearchandRecursive}节的深度优先查找时我们回到这种
+对应性）在\ref{Sec:WhyCanRecursiveTreeWork}小节中我们会检查活动树和
+递归等式之间的关系。这对分析递归算法是很有帮助的。
 
-\subsection{递归的提示－Method 99}
+\subsection{递归的提示－Method 99}\label{Sec:HintsForRecursionMethod99}
 对于高级的算法开发，递归是一种必不可少的设计技术。对于递归的深层次的
 讨论超出了本书的范围，但是这里有个小提示。可以参考本章后面的Notes和References
 作进一步阅读。
@@ -223,8 +256,8 @@ $\Theta(C)$)，这里C是在计算中过程调用的总数（包括作为过程调用的函数）。
 假想规模是1,000,000,000，但是method 999,999,999太长了。）但是将它的规模决定
 成0或是更小的常量是完全可行的。
 
-现在Method 99指出了通过调用p99来写p的一种方法。（你不需要写p99，所以不要
-想他。）当然，如果p是一个很简单的情况，则不需要调用p99。关键的一点是，
+现在\emph{Method 99}指出了通过调用p99来写p的一种方法。（你不需要写p99，
+所以不要想它。）当然，如果p是一个很简单的情况，则不需要调用p99。关键的一点是，
 当p检测到问题不能立即解决的时候，它就需要创建一个子问题p99以解决之，
 这满足下列3种情况：
 \begin{enumerate}
@@ -282,15 +315,12 @@ delete的过程也适合\emph{普通搜索例程}（参见定义\ref{Def:GeneralSearch}）：
 过程独立出来，再调用递归过程。我们称这个非递归过程是递归过程的包装器。有时候
 包装器只是简单的初始化递归过程的参数。例如二分查找（算法\ref{Algo:BinrarySearch}）
 需要一个包装器使第一次递归有范围。包装器可能简单如下：
-\begin{figure}
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     int orderSearch(int[] E, int n, int k)
     {
         return binarySearch(E, 0, n-1, K);
     }
 \end{lstlisting}
-\end{figure}
-
 
 
 \section{什么是证明}\label{Sec:WhatIsTheProof}
@@ -318,7 +348,7 @@ delete的过程也适合\emph{普通搜索例程}（参见定义\ref{Def:GeneralSearch}）：
 \item 众所周知的，且不是你将要证明的（例如，数学恒等式），或
 \item 你要证明的定理的假定（前提），或
 \item 在前面的证明中已经建立的语句（中间结论），或是
-]item inductive hypothesis的实例，在\ref{Sec:PatternOfInductionProof}小节讨论
+        item inductive hypothesis的实例，在\ref{Sec:PatternOfInductionProof}小节讨论
 \end{itemize}
 \noindent 证明的最后一个语句必须是要证明命题的结论。当一个证明分好几种情况时，
 每一种情况度必须遵循上面的。
@@ -373,9 +403,9 @@ justifications更清晰；右列包含所有的justifications。每一个证明语句占用代行号的一
 
 \begin{theorem}
 对于所有$\alpha\in R$，对于所有$\beta\in R$，如果$\alpha$和$\beta$是常数
-且$\alpha<\beta$，则$2^{\alpha n} \in o(2^{\beta n}$
+且$\alpha<\beta$，则$2^{\alpha n} \in o(2^{\beta n})$
 
-证明：
+\noindent 证明：
 
 \begin{tabular}{ll}
 \hline
@@ -386,7 +416,7 @@ justifications更清晰；右列包含所有的justifications。每一个证明语句占用代行号的一
 3.$\beta > \alpha$且都是常数  &定理的前提＋数学恒等式\\
 4.$\lim_{n\rightarrow \infty}2^{(\beta-\alpha)n} = \infty$ &（3）＋已知的数学定理\\
 5.$\lim_{n\rightarrow \infty}\frac{2^{\beta n}}{2^{\alpha n}} = \infty$ &（2）＋（4）和带入\\
-6.$2^{\alpha n} \in o(2^{\beta n}$  &（5）＋ 集合的定义（定义\ref{Def:LittleoAndomega}）\\
+6.$2^{\alpha n} \in o(2^{\beta n}$  &（5）+$o$ 集合的定义（定义\ref{Def:LittleoAndomega}）\\
 \hline
 \end{tabular}
 
@@ -502,7 +532,7 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 \subsection{归纳证明的模式}\label{Sec:PatternOfInductionProof}
 归纳证明的第一件事就是：\\
 \indent\emph{There is no such thing as "n+1" in an induction proof.}\\
-不幸的是，很多读者学到了另外一面。为什么我们把这个教条放在这里呢？
+不幸的是，很多读者学到了其他的。为什么我们把这个教条放在这里呢？
 
 答案在我们早先给出的动机中--为了将递归和归纳联系起来。我们知道一个递归过程
 是\emph{创建和解决小的子问题}，再合并子问题来解决主要问题。我们希望我们的
@@ -521,9 +551,10 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 \end{example}
 
 \begin{proposition}
-命题3.6  对于所有$n \geq 0$，$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2}{6}$ 。
+对于所有
+$n \geq 0$，$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ 。
 
-证明:
+\noindent 证明:
 
 \begin{tabular}{ll}
 \hline
@@ -545,10 +576,13 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 \vspace{2ex}
 一行一行的解释:
 \begin{enumerate}
-\item n是主要的归纳变量。注意命题的形式是$\forall n \in N[A(n)\Rightarrow C(n)]$。这里$A(n)$是简单true，而$C(n)$是等式。
-\item 一个归纳证明始终有两种主要情况，称为\emph{基本情况}和\emph{归纳情况}。有时是基本情况s（复数）。
+\item n是主要的归纳变量。注意命题的形式是$\forall n \in N[A(n)\Rightarrow C(n)]$。
+        这里$A(n)$是简单true，而$C(n)$是等式。
+\item 一个归纳证明始终有两种主要情况，称为\emph{基本情况}和\emph{归纳情况}。
+        有时是基本情况s（复数）。
 \item \emph{证明}基本情况s
-\item 引入辅助变量$k$，进行递归假设。注意递归假设是$A(n)\Rightarrow C(n)$ 的形式，回到这个命题，$A(n)$仅仅是true；
+\item 引入辅助变量$k$，进行递归假设。注意递归假设是$A(n)\Rightarrow C(n)$
+        的形式，回到这个命题，$A(n)$仅仅是true；
 
         注意k的范围包括基本情况。
 
@@ -575,10 +609,10 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 
 \end{proposition}
 
-前面的证明遵循了一种模式，这种模式可以泛化成下面的schema。注意一般的术语，命题
-可以是定理、引理、推论或是其他term，都不会改变证明过程。
+前面的证明遵循了一种模式，这种模式可以泛化成下面的schema。注意一般的术语，\emph{命题}
+可以是\emph{定理}、\emph{引理}、\emph{推论}或是其他term，都不会改变证明过程。
 
-\begin{definition}
+\begin{definition}\label{Def:InductionProofSchema}
 归纳证明模式
 
 首先我们解释下面模式用到的符号。\emph{宋体}的内容重要表示重要的内容。在角括号
@@ -587,7 +621,11 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 叫做\emph{命题假设}（或是假设s，如果它是一个合取式）。变量x叫做主要
 归纳变量（或简称归纳变量）。变量y叫做辅助变量。
 
-一个形如$\forall x \in W[A(x) \Rightarrow C(x)]$ 的命题的归纳证明由下面的几部分组成。
+一个形如
+\begin{displaymath}
+\forall x \in W[A(x) \Rightarrow C(x)]
+\end{displaymath}
+的命题的归纳证明由下面的几部分组成。
 \begin{enumerate}
 \item \emph{证明是归纳x}，<描述x>。
 \item \emph{基本情况是（情况s是）}<基本情况>。
@@ -597,7 +635,7 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 \end{enumerate}
 \end{definition}
 
-一个归纳证明有两个主要情况：基本情况合和递归情况。模式的第2步定义了基本情况；
+一个归纳证明有两个主要情况：基本情况和递归情况。模式的第2步定义了基本情况；
 第3步证明基本情况下定理成立。第4步定义了递归情况，而且使用了递归假设。
 第5步证明递归情况下定理成立，这通常是证明的主要部分。$C(x)$的证明可以由下面部分支持：
 \begin{enumerate}
@@ -619,8 +657,10 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 
 \subsubsection{归纳模式的变体}
 \begin{enumerate}
-\item  如果假设$A(x)$并不实际依赖于x，则递归假设可以简化成：假设$C(x)$对于所有$y\in W$
-        且y小于x都成立。你必须能解释why simplification is justified y referring back to the justifications for proof statements.
+\item  如果假设$A(x)$并不实际依赖于x，则递归假设可以简化成：
+        假设$C(x)$对于所有$y\in W$且y小于x都成立。你必须能解释
+        why simplification is justified referring back to the
+        justifications for proof statements.
 \item 如果归纳需要多于一个的有次级情况，比如Fibonacci数列等式\ref{Equa:FibonacciSeries}，
         可以有两个或多个基本情况。但是，最好仅引入归纳情况必须要的元素，因为每一个基本情况
         都需要它自己的证明。
@@ -630,16 +670,18 @@ justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 
 \subsection{归纳证明一个递归过程}
 下一个例子展示了归纳和递归是怎样一起工作的。我们将要证明的引理是关于一个
-计算2-tree的external路径长度的过程的，这在底限分析中很有用（参见\ref{BoundOfAverageBehavior}小节）。
+计算2-tree的external路径长度的过程的，这在底限分析中很有用
+（参见\ref{Sec:LowerBoundOfAverageBehavior}小节）。
 External路径长度在一些其他的问题中自然的被提出。首先我们需要一些定义。
 
 \begin{definition}
 External节点和2-tree
 
 二叉树基本类型中除了空树外的基本情况，是只有一个节点的树， 这个节点的类型
-与树剩下节点的类型不同。这种节点叫external 节点。一个由external节点组成的
-树叫叶子，它没有任何子树了。其他节点的类型是internal节点，它必须有两个孩子。
-这样的二叉树叫2-tress，因为每个节点要么有两个孩子，要么没有。
+与树剩下节点的类型不同。这种节点叫external 节点。一个由\emph{external节点}
+组成的树叫\emph{叶子}，它没有任何子树了。其他节点的类型是\emph{internal节点}，
+它必须有两个孩子。这样的二叉树叫\emph{2-trees}，因为每个节点要么有两个孩子，
+要么没有。
 \end{definition}
 
 注意，如果我们将2-tree中所有的external节点替换成空树，则会剩下一个正常的，
@@ -655,7 +697,7 @@ External路径长度
 \begin{enumerate}
 \item 叶子的external路径长度是0。
 \item 令t是一个非叶子节点，它有左子树L和右子树R（两者都可能是叶子）。
-        t的external路径长度等于L的external路径长度＋L的external节点数＋R的
+        t的 external 路径长度等于L的external路径长度＋L的external节点数＋R的
         external路径长度＋R的external节点数。（t的external节点的数量是L和R
         的external节点数量的和。）
 \end{enumerate}
@@ -703,7 +745,7 @@ External路径长度
 \item $epl \geq m\lg(m)$
 \end{enumerate}
 
-证明： 在证明引理之前，让我们先把引理的语句和我们前面的证明模式关联起来，
+\emph{证明：} 在证明引理之前，让我们先把引理的语句和我们前面的证明模式关联起来，
 等式\ref{Equ:3_1}。注意为了阅读把引理分成了几个句子。因此t是主要的递归变量
 而W是所有2-tree的集合。第二个句子代表假设，所以表示$A(t)$。最后的三个结论组成$C(t)$。
 和前面的例子一样，粗体表示了在任何递归证明中的关键部分。
@@ -718,7 +760,7 @@ s的外部路径的长度，$epl_s\geq m_s\lg(m_s)$ 。令L和R分别表示t的左右子树。这里必须
 下面的等式
 \begin{displaymath}
 \begin{aligned}
-    &epl= epl_L +epl_R + m_L +m_R
+    &epl= epl_L +epl_R + m_L +m_R\\
     &m=m_L+m_R
 \end{aligned}
 \end{displaymath}
@@ -730,10 +772,13 @@ s的外部路径的长度，$epl_s\geq m_s\lg(m_s)$ 。令L和R分别表示t的左右子树。这里必须
 可以使用引理\ref{Lemma:ConvexLemma1}。通过归纳假设我们有
 \begin{displaymath}
 \begin{aligned}
-&epl \geq m_L\lg(m_L) +m_R\lg(m_R) +m\\
-&m_L\lg(m_L) + m_R\lg(m_R) \geq 2(\frac{m_L+m_R}{2})\lg(\frac{m_L+m_R}{2}) \mbox{$\geq$的传递性}\\
-&epl \geq  m(\lg(m) -1) +m =m\lg(m)
+epl &\geq m_L\lg(m_L) +m_R\lg(m_R) +m\\
+m_L\lg(m_L) + m_R\lg(m_R) &\geq 2(\frac{m_L+m_R}{2})\lg(\frac{m_L+m_R}{2})
 \end{aligned}
+\end{displaymath}
+由于“$\geq$”的传递性，
+\begin{displaymath}
+epl \geq  m(\lg(m) -1) +m =m\lg(m)
 \end{displaymath}
 \end{lemma}
 
@@ -790,19 +835,47 @@ s的外部路径的长度，$epl_s\geq m_s\lg(m_s)$ 。令L和R分别表示t的左右子树。这里必须
 是局部的，但是对象的\emph{实例域}是非局部的。更新非局部数据对于某些算法的效率非常重
 要，但是为证明正确性带来了很大的麻烦。
 
-\subsection{基本控制结构}
+\subsection{基本控制结构}\label{Sec:ElementaryControlStructures}
 \begin{figure*}[!t]
     \centering
-    XXXXXXXXXXXXXXXX
+    \begin{tikzpicture}[scale=0.8]
+        \draw (0,0) rectangle (1.5,3);
+        \node (P6)  at (0.75,1.5)  {block};
+        \draw (2,0) rectangle (3.5,1.5);
+        \node (P5)  at (2.75,0.75)  {block1};
+        \draw (2,1.5) rectangle (3.5,3);
+        \node (P4)  at (2.75,1.5+0.75)  {block2};
+
+        \draw (5,0) rectangle (9,3);
+        \node (P3)  at (7,2.7)  {if (conditions)};
+        \draw (6,0) rectangle (7.5, 2.3);
+        \node (P2)  at (6.75,2)  {THEN};
+        \node (P2)  at (6.75,1.15)[text width=10mm]  {true-block};
+        \draw (7.5,0) rectangle (9,2.3);
+        \node (P1)  at (8.25,2)  {ELSE};
+        \node (P2)  at (8.25,1.15)[text width=10mm]  {false-block};
+
+        \draw (10,0) rectangle (13,3);
+        \node (x43)  at (11.5,1.5)  {z=f(x,y)};
+        \node (x3)  at (15,2.3)  {f(x,y)};
+        \draw (14,0) rectangle (16,2);
+        \draw [->, thick] (13, 1.5) -- (14, 1.5);
+        \draw [->, thick] (14, 0) -- (13, 1.3);
+        \node (P0)  at (2.75,-0.5)  {\emph{sequence}};
+        \node (P0)  at (7,-0.5) {\emph{alternation}};
+        \node (P0)  at (13,-0.5) {\emph{procedure call}};
+    \end{tikzpicture}
     \caption{基本控制结构}
-    \label{Fig:BasicControlStructure}
+    \label{Fig:ElementaryProceduralControlStructures}
 \end{figure*}
 
+
 控制结构是导致不同的block被执行的机制。一开始我们仅考虑3种控制结构（参见
-图\ref{Fig:BasicControlStructure}）：\emph{顺序}（block1，之后block2），\emph{选择}
-（if\emph{条件} then block1，else block2），和\emph{过程调用}。在我们的基本证明
-方法学中省略for和while循环是特意的。在发展出基本方法学之后，我们讨论3种构造的
-适应性（在3.5.4小节）。
+图\ref{Fig:ElementaryProceduralControlStructures}）：\emph{顺序}（block1，
+之后block2），\emph{选择}（if\emph{条件} then block1，else block2），和
+\emph{过程调用}。在我们的基本证明方法学中省略\textbf{for}和\textbf{while}
+循环是特意的。在发展出基本方法学之后，我们讨论3种构造的适应性
+（在\ref{Sec:ProceduresWithLoop}小节）。
 
 我们能不用循环写出任意可用的程序吗？吃惊的答案是"yes"。可以使用递归，，而且
 用递归一般比用循环更简单。
@@ -824,7 +897,7 @@ postcondition应该是真。Block的规范是preconditions和postconditions，
 每一个block（包括过程和函数）必须有规范，如果我们想证明它的正确性的话。
 为了证明正确的行为，证明下面形式的引理就足够了。
 
-\begin{proposition}
+\begin{proposition}\label{Proposition:GeneralCorrectnessLemmaForm}
 （通用正确性引理形式）如果当block进入的时候所有的\emph{preconditions}都满足，
 则block退出的时候所有的\emph{postconditions}都应该是真。
 \end{proposition}
@@ -832,7 +905,7 @@ postcondition应该是真。Block的规范是preconditions和postconditions，
 假设一个block可以分为\emph{顺序结构}：block1 then block2。为了证明block的
 正确性，证明如下形式的引理就足够了：
 
-\begin{proposition}
+\begin{proposition}\label{Proposition:SequenceCorrectnessLemmaForm}
 （顺序结构正确性引理形式）
 \begin{enumerate}
 \item Block的preconditions包含了block1的preconditions。
@@ -844,7 +917,7 @@ postcondition应该是真。Block的规范是preconditions和postconditions，
 假设一个block可以分为\emph{选择结构}：if（\emph{condition}）then true-block，
 else false-block。为了证明block的正确性，证明如下形式的引理就足够了：
 
-\begin{proposition}
+\begin{proposition}\label{Proposition:AlternationCorrectnessLemmaForm}
 （选择结构正确性形式）
 \begin{enumerate}
 \item Block的preconditions逻辑与condtion为真包含了true-block的preconditions。
@@ -856,15 +929,70 @@ else false-block。为了证明block的正确性，证明如下形式的引理就足够了：
 
 \begin{figure*}[!t]
     \centering
-    XXXXXXXXXXXXXXXX
-    \caption{用来证明\emph{顺序}和\emph{选择}结构block的preconditions能推倒出postconditions的推导链}
-    \label{Fig:BasicControlStructure}
+    \subfloat{
+    \begin{tikzpicture}[scale=1]
+        \node  at (-1,6)[text centered, text width=32mm]
+            {block precondition\\ \vspace{-1ex}\emph{implies}\\ \vspace{-1ex}block1 precondition};
+        \node  at (-1,4.5)[text width=10mm]  {\emph{implies}};
+        \node  at (-1,3)[text centered, text width=32mm]
+            {block1 postcondition\\ \vspace{-1ex}\emph{implies}\\ \vspace{-1ex}block2 precondition};
+        \node  at (-1,1.5)[text width=10mm]  {\emph{implies}};
+        \node  at (-1,0)[text centered, text width=32mm]
+            {block2 precondition\\ \vspace{-1ex}\emph{implies}\\ \vspace{-1ex}block1 postcondition};
+        \draw (2,0) rectangle (4,3);
+        \draw (2,3) rectangle (4,6);
+        \draw [->] (1, 6.3) -- (3, 6.3);
+        \draw [->] (1, 5.7) -- (3, 5.7);
+        \draw [->] (1, 3.3) -- (3, 3.3);
+        \draw [->] (1, 2.7) -- (3, 2.7);
+        \draw [->] (1, 0.3) -- (3, 0.3);
+        \draw [->] (1, -0.3) -- (3, -0.3);
+    \end{tikzpicture}
+    }
+    \hfil
+    \subfloat{
+    \begin{tikzpicture}[scale=1]
+        \node  at (3,6)[text centered, text width=32mm]  {block\\ \vspace{-1ex}precondition\\ \vspace{-1ex}and\\ \vspace{-1ex}(condition)};
+        \node  at (3,4.5)[text width=10mm]  {\emph{implies}};
+        \node  at (3,3)[text centered, text width=32mm]  {true-block precondition};
+        \node  at (3,1.5)[text width=10mm]  {\emph{implies}};
+        \node  at (3,0)[text centered, text width=32mm]  {true-block postcondition\\ \vspace{-1ex}\emph{implies}\\ \vspace{-1ex}block postcondition};
+
+        \draw (5,0) rectangle (9,6);
+        \node at (7,5.7)  {if (conditions)};
+        \draw (6,0) rectangle (7.5, 5.3);
+        \node at (6.75, 5)  {THEN};
+        \draw (7.5,0) rectangle (9,5.3);
+        \node at (8.25,5)  {ELSE};
+
+        \node  at (11,6)[text centered, text width=32mm]
+            {block\\ \vspace{-1ex}precondition\\ \vspace{-1ex}and\\ \vspace{-1ex}not(condition)};
+        \node  at (11,4.5)[text width=10mm]  {\emph{implies}};
+        \node  at (11,3)[text centered, text width=32mm]  {false-block precondition};
+        \node  at (11,1.5)[text width=10mm]  {\emph{implies}};
+        \node  at (11,0)[text centered, text width=32mm]
+          {false-block postcondition\\ \vspace{-1ex}\emph{implies}\\ \vspace{-1ex}block postcondition};
+
+        \draw [->] (4, 6.3) -- (6.5, 6.3);
+        \draw [->] (4, 4) -- (6.5, 4);
+        \draw [->] (4, 0.3) -- (6.5, 0.3);
+        \draw [->] (4, -0.3) -- (6.5, -0.3);
+        \draw [->] (10, 6.3) -- (7.5, 6.3);
+        \draw [->] (10, 4) -- (8.5, 4);
+        \draw [->] (10, 0.3) -- (8.5, 0.3);
+        \draw [->] (10, -0.3) -- (7.5, -0.3);
+    \end{tikzpicture}
+    }
+    \caption{用来证明\emph{顺序}和\emph{选择}结构block的preconditions能推导出postconditions的推导链}
+    \label{Fig:TheChainsOfInferences}
 \end{figure*}
 
-图\ref{Fig:BasicControlStructure}展示了命题3.10和3.11 是如何进行组合以获得类似命题3.9的证明形式的。
+图\ref{Fig:TheChainsOfInferences}展示了命题\ref{Proposition:SequenceCorrectnessLemmaForm}
+和\ref{Proposition:AlternationCorrectnessLemmaForm}是如何进行组合以获得类似
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}的证明形式的。
 
 假设一个block由一个过程调用组成。为了证明block的正确性，证明如下形式的引理就足够了：
-\begin{proposition}
+\begin{proposition}\label{Proposition:ProcedureCallCorrectnessLemmaForm}
 （过程调用正确性引理形式）
 \begin{enumerate}
 \item Block的preconditions包含了以实际参数调用过程的preconditions。
@@ -880,60 +1008,66 @@ else false-block。为了证明block的正确性，证明如下形式的引理就足够了：
 
 例如，假设我们看到java语句，“x=y+1”。在语句之后我们可以知道什么逻辑语句
 （也就是什么是语句的postcondition）？似乎postcondtion是等式x=y+1。但是
-假设语句是"y=y+1"？或是假设我们有一个语句序列"x=y+1, y=z"？
+假设语句是“y=y+1”？或是假设我们有一个语句序列“x=y+1, y=z”？
 
-实践中，人们依赖"common sense"arguments，而不是正式的证明方法。不是试图
+实践中，人们依赖“common sense” arguments，而不是正式的证明方法。不是试图
 指出过程代码隐含什么逻辑语句，我们关注描述的postcondition是否能到达，而且
-试图对于结论得出ad hoc arguments。下一个主题讨论更好的方式。
+试图对于结论得出\emph{ad hoc arguments}。下一个主题讨论更好的方式。
 
 
 \subsection{单赋值范例}\label{Sec:ParadigmOfSingleAssignment}
 在早期对证明友好的编程风格的研究中，研究者发现引起证明困难的是主要是两种构造：
-goto语句和赋值语句。消除赋值语句是不切实际的，所以早期的研究者开始消除goto语句，
-结果导致了结构化编程的兴起。不幸的是，即使没有goto语句，证明通常还是困难的。
-    最近，消除赋值语句的问题被重新提出，出的方法是消除重新赋值（overwriting）
+\emph{goto}语句和\emph{赋值}语句。消除赋值语句是不切实际的，所以早期的研究者
+开始消除goto语句，结果导致了结构化编程的兴起。不幸的是，即使没有goto语句，
+证明通常还是困难的。
+
+最近，消除赋值语句的问题被重新提出，出的方法是消除重新赋值（overwriting）
 赋值语句。就是说，在变量创建之后，变量只有一个值；一旦赋值之后就不能被覆盖。
 既然，变量的值在变量的生存期之内不能改变，那么关于变量论证就简单了。
-这就是单赋值范例。
+这就是\emph{单赋值范例}。
 
-很多程序设计语言有一体化的单赋值范例约束，比如Prolog、ML、Haskell、Sisal（
-for Streams and iteration in a single assignment language）和SAC（单赋值C）。
+很多程序设计语言有一体化的单赋值范例约束，比如Prolog、ML、Haskell、Sisal
+\footnote{for Streams and iteration in a single assignment language}
+和SAC（单赋值C）。
 
 在其他程序设计语言中，包括C、Fortran和Java，也可以在不改变程序的行为的情况
 下转换成单赋值。这种转换用于编译优化和并行代码检测。研究发现采用单赋值形式
 之后，程序分析可以达到很深的程度（参见本章后面的 Notes和References）我们能
 在日常的编程利用单赋值范例的优点吗？
 
-单赋值范例不能通用，但是可以非常简单的用于非循环的局部变量。非循环代码包含
-递归过程调用的代码，所以这个限制还不至于严重单赋值范例无用的地步。，事实上，
-Sisal的编译器讲for和while循环转换成递归过程调用，所以它能在转换后的程序中
-采用单赋值范例。由于强制使用了单赋值范例，Sisal编译器能自动分析哪一段代码
-可以并行执行。但是，单赋值范例的限制形式也可以和while和for循环一起使用。
+\emph{单赋值范例}不能通用，但是可以非常简单的用于非循环的局部变量。非循环代码包含
+递归过程调用的代码，所以这个限制还不至于严重单赋值范例无用的地步。事实上，
+Sisal的编译器将\textbf{for}和\textbf{while}循环转换成递归过程调用，所以它
+能在转换后的程序中采用单赋值范例。由于强制使用了单赋值范例，Sisal编译器能
+自动分析哪一段代码可以并行执行。但是，单赋值范例的限制形式也可以和
+\textbf{while}和\textbf{for}循环一起使用。
 
-复习一下本小节前面提到的使得证明变困难的赋值语句。在单赋值范例中"x=y+1;"
-隐含等式x=y+1在整个程序中x有一个值。麻烦的语句是"y=y+1;"和"x=y+1; y=z"，
+复习一下本小节前面提到的使得证明变困难的赋值语句。在单赋值范例中“x=y+1;”
+隐含等式x=y+1在整个程序中x有一个值。麻烦的语句是“y=y+1;”和“x=y+1; y=z”，
 这两个违反单赋值范例的语句，将y第二次赋值了。
 
 在没有循环的过程中，x和y可以是局部变量，我们总是可以通过定义额外的局部变量
 做我们想做的计算。
 
-\begin{example}\vspace{1ex}
-为了修正语句"y=y+1;"我们写"y1=y+1;"来代替，我们得到了有效的等式y1=y+1。
-为了修正"x=y+1;y=z"我们必须有两个有效等式，x=y+1和y1=z。在两种情况中，过程
+\begin{example}\mbox{}\par
+为了修正语句“y=y+1;”我们写“y1=y+1;”来代替，我们得到了有效的等式y1=y+1。
+为了修正“x=y+1;y=z”我们必须有两个有效等式，x=y+1和y1=z。在两种情况中，过程
 这个分支后面所有对y的引用都可以改成y1，因为y1是修改后的值。
 \end{example}
 
 让我们看一个更普通的困难：一个变量仅在选择结构一个的分支里面才更新，但是在
 分支后面使用时混合了分支的两种情况。
 
-\begin{example}
+\begin{example}\mbox{}\par
 考虑下面的代码片段
+
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     1.if(y<0)
-        2.  y=0;
+    2.  y=0;
     3.x=2*y;
 \end{lstlisting}
-根据我们前面说的，我们必须定义一个局部变量y1，然后将第二行替换成"y1=0"。但是
+
+根据我们前面说的，我们必须定义一个局部变量y1，然后将第二行替换成“y1=0”。但是
 第3行呢？显然我们不知道该使用y还是y1。解决方案是：如果局部变量在选择结构的
 一个分支里面赋值，则在所有的分支中赋以正确的值。在这种情况下，使用多条赋值语句
 但是仅有一条赋值语句将会执行。修订后的符合单赋值范例的代码是
@@ -944,7 +1078,7 @@ Sisal的编译器讲for和while循环转换成递归过程调用，所以它能在转换后的程序中
     4.  y1=y;
     5.x=2*y1;
 \end{lstlisting}
-现在我们对于变量有了一个清晰的逻辑关系（ 表示推导出，$\wedge$表示合取）：
+现在我们对于变量有了一个清晰的逻辑关系（$\Rightarrow$表示推导出，$\wedge$表示合取）：
 \begin{displaymath}
 (y<0 \Rightarrow y1=0) \wedge (y\geq 0 \Rightarrow y1 =y )\wedge (x =2y1)
 \end{displaymath}
@@ -961,23 +1095,24 @@ Sisal的编译器讲for和while循环转换成递归过程调用，所以它能在转换后的程序中
 如果我们相对while或for循环采用本节讨论的证明工具，and the procedure is reasonably
 compact，最简单的方法可能就是将循环转换成一个递归过程。
 
-\begin{example}\vspace{1ex}
-算法1.1给出了一个顺序查找的迭代过程。下面的代码给出递归版本，并且使用单赋值
-范例。命题3.9到3.12用于证明其正确性。（我们不证明算法1.1的正确性，它将一个
-变量赋予多个值导致了它的复杂。）
+\begin{example}\mbox{}\par
+算法\ref{Algo:SequentialSearch}给出了一个顺序查找的迭代过程。下面的代码给出
+递归版本，并且使用单赋值范例。命题\ref{Proposition:GeneralCorrectnessLemmaForm}
+到\ref{Proposition:AlternationCorrectnessLemmaForm}用于证明其正确性。（我们不
+证明算法\ref{Algo:SequentialSearch}的正确性，它将一个变量赋予多个值导致了它的复杂。）
 \end{example}
 
 \begin{algorithm}\label{Algo:seqSearchRec}
 顺序查找，递归
 
-输入： E, m, num, K, 这里E是一个有num个元素的数组（索引从0, …, num-1），K是
-要查找的元素，m≥0是要查找的数组段的启示索引。为了简化，我们假定K和E的元素都
+输入： E, m, num, K, 这里E是一个有num个元素的数组（索引从$0, \cdots, num-1$），K是
+要查找的元素，$m \geq 0$是要查找的数组段的启示索引。为了简化，我们假定K和E的元素都
 是整数，就和num一样。
 
-输出：ans，一个在E中K的位置，范围是m≤ans<num，或是-1，如果K在范围内没有找到的话。
+输出：ans，一个在E中K的位置，范围是$m \leq ans <num$，或是-1，如果K在范围内没有找到的话。
 
 注意：顶层调用必须是ans=seqSearchRec(E, 0, num, K)。
-\begin{figure}
+
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     int seqSearchRec(int[] E, int m, int num, int K)
     {
@@ -994,7 +1129,7 @@ compact，最简单的方法可能就是将循环转换成一个递归过程。
     7.  return ans;
     }
 \end{lstlisting}
-\end{figure}
+
 注意ans出现在三个赋值语句中，但是他们在不同的分支里面，所以这是符合单赋值范例的。
 让我们来看看如何采用已知的命题来验证过程的正确性。
 
@@ -1005,105 +1140,253 @@ compact，最简单的方法可能就是将循环转换成一个递归过程。
 \end{enumerate}
 现在我们给出目标或是postcondition，即在第7行必须是true的。
 \begin{enumerate}
-\item 如果ans=-1，则对于m≤ j < num， E[i]≠K。
-\item 如果ans≠-1，则m≤ ans< num，且E[ans]=K。
+\item 如果$ans=-1$，则对于$m \leq j < num$， $E[i]\neq K$。
+\item 如果$ans \neq -1$，则$m \leq  ans< num$，且$E[ans]=K$。
 \end{enumerate}
-现在，使用命题3.9，我们展示了如果当进入seqSearchRec的时候precondition是满足的，
-则过程调用结束的时候postcondition就是满足的。我们发现过程分离到三种选择情况中，，
-第2,4,6行，最后汇聚到第7行的return语句。命题3.11用于每种情况。对于每一个选择，
-导致选择的条件是可以用于证明每一个分支都导致postcondition的额外的信息。
+现在，使用命题\ref{Proposition:GeneralCorrectnessLemmaForm}，我们展示了如果当进入
+seqSearchRec的时候precondition是满足的，则过程调用结束的时候postcondition就是
+满足的。我们发现过程分离到三种选择情况中，第2,4,6行，最后汇聚到第7行的
+return语句。命题\ref{Proposition:AlternationCorrectnessLemmaForm}用于每种情况。
+对于每一个选择，导致选择的条件是可以用于证明每一个分支都导致postcondition的额外的信息。
 
-如果到达第2行，则第1行的条件是true（m≥num）。第2行之后，ans= -1，之后就到了第7行。
-此时，第1行条件为true包含了没有索引在范围≤ i < num内，所以条件1满足。条件2也
-是true，因为它的前提是false（复习1.3.3小节）。
+如果到达第2行，则第1行的条件是true（$m \geq num$）。第2行之后，ans= -1，之后就
+到了第7行。此时，第1行条件为true包含了没有索引在范围$m \leq i < num$内，所以
+条件1满足。条件2也是true，因为它的前提是false（复习\ref{Sec:LogicElement}小节）。
 
 类似的，如果达到第4行，第1行的条件是false（所以m<num），且第3行的条件是true（E[m]=K）。
-第4行自己建立了等式（ans=m）。合并这些域，条件2是正确的。等式（ans =m）和precondition 1
+第4行自己建立了等式（ans=m）。合并这些域，条件2是正确的。等式（$ans=m$）和precondition 1
 可以得出postcondition 1的前提是false；因此postcondition 1是true。
 
-最后，如果到达第6行，第1行和第3行的条件都是false（所以m<num且E[m]≠K）。首先，我们
-需要展示我们在第6行以实参"正确的调用"了seqSearchRec。就是说，当我们初始化这些实际
+最后，如果到达第6行，第1行和第3行的条件都是false（所以m<num$且E[m]\neq K$）。首先，我们
+需要展示我们在第6行以实参“正确的调用”了seqSearchRec。就是说，当我们初始化这些实际
 参数的时候，我们需要验证seqSearchRec的preconditions：
 \begin{enumerate}
-\item 1.  如果m≥0，则m+1≥0。
-\item 2.  范围m+1, …, num+1包含在m, …, num-1，所以E[i]是初始化的。
+\item 如果$m \leq 0$，则$m+1 \leq 0$。
+\item 范围$m+1, \cdots, num+1$包含在$m, \cdots, num-1$，所以E[i]是初始化的。
 \end{enumerate}
-现在，根据命题3.12，我们可以得出结论第6行的过程调用符合他的postconditions。既然
-第6行赋予ans的值就是调用返回的值，它满足调用的postcondition（以实参m+1）。这些
-postconditions和参数E[i]≠K隐含了当前调用的postconditions（实参是m）。例如如果
-返回-1，隐含了E[m+1],…, E[num-1]都不包含K，所以E[m],…, E[num-1]也不包含K。
-另外ans≥m+1，也有ans≥m。
+现在，根据命题\ref{Proposition:ProcedureCallCorrectnessLemmaForm}，我们可以得出结论
+第6行的过程调用符合它的postconditions。既然第6行赋予ans的值就是调用返回的值，它
+满足调用的postcondition（以实参m+1）。这些postconditions和参数$E[i]\neq K$隐含了
+当前调用的postconditions（实参是m）。例如如果返回-1，隐含了$E[m+1], \cdots, E[num-1]$
+都不包含K，所以$E[m], \cdots, E[num-1]$也不包含K。另外$ans \geq m+1$，也有$ans \geq m$。
 
 因此我们展示了无论第7行如何到达，需要的postconditions都能达到。剩下的唯一问题是
-是否存在可能性第7行永远无法到达，即进入了无限递归中。3.5.6小节讨论这个问题。
+是否存在可能性第7行永远无法到达，即进入了无限递归中。
+\ref{Sec:TerminationOfRecursiveProcedures}小节讨论这个问题。
 \end{algorithm}
+
 练习3.6要求读者使用本小节的技术证明找两个整数最大公约数的欧几里得算法的正确性。
 
-\subsection{带循环过程}
-命题3.9 到3.12给我们了一个在没有for和while循环的情况下证明正确性的框架。只要
-有循环，单赋值范例通常就是不可能的了，因为必须定义一个循环变量，indexed both
-by 过程中的行号和by number og passes through the loop to keep track of all
-the values taken on by the same 程序变量。Then 必须小心的trace每一个变化中的
-历史值。我们相信相对于规格化过程本身来说，将循环转换成递归过程在实践上更简单。
+\subsection{带循环过程}\label{Sec:ProceduresWithLoop}
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}到
+\ref{Proposition:ProcedureCallCorrectnessLemmaForm}给我们了一个在没有\textbf{for}
+和\textbf{while}循环的情况下证明正确性的框架。只要有循环，单赋值范例通常就是不可能
+的了，因为必须定义一个循环变量，indexed both by 过程中的行号和by number of passes
+ through the loop to keep track of all the values taken on by the same 程序变量。
+Then 必须小心的trace每一个变化中的历史值。我们相信相对于规格化过程本身来说，将
+循环转换成递归过程在实践上更简单。
 
 事实上，一旦我们理解了循环和递归版本之间的关系，通常没有必要实际的完成转换。
 作为一个预处理步骤，我们必须下列：
 \begin{enumerate}
-\item 1.  在循环体内部最宽范围内申明一个局部变量，遵循单赋值范例。就是说，在一轮仅给变量一个值。
+\item 在循环体内部最宽范围内申明一个局部变量，遵循单赋值范例。就是说，在一轮仅给变量一个值。
 \item 因为变量必须更新（而且必须声明在循环外面），在循环体的终结处做所有的更新。
 \end{enumerate}
 这些规则最小化了必须考虑到的不同情况的数量。
 
 将一个\textbf{while}循环重新表示成递归的一般规则是：
 \begin{enumerate}
-\item 在循环内更新的变量变成一个过程的输入参数。他们在循环入口的初始值对应顶层递归调用的实际参数值。我们称这些为活动参数（active parameters）.
+\item 在循环内更新的变量变成一个过程的输入参数。他们在循环入口的初始值对应顶层
+    递归调用的实际参数值。我们称这些为\emph{活动参数（active parameters）}.
 \item 循环中引用的但是早先的定义的，
 \end{enumerate}
-For循环的规则类似。
+for循环的规则类似。
 
-在3.7图中展示了一个斐波那契函数的转换。注意n是一个传递的参数。
+\begin{figure*}[!t]
+    \centering
+    \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    int factLoop(int n)
+    {
+        int k, f;
+    1.  k=1;
+    2.  f=1;
+    3.  while(k<=n)
+    4.  {
+    5.     int fnew = f*k;
+    6.     int knew= k+1;
+    7.     k= knew; f=fnew;
+    8.  }
+    9.  return f;
+    }
+
+    int fact(int n)
+    {
+    9.   return factRec(n,1,1);
+    }
+
+    int factRec(int n, int k, int f)
+    {
+        int ans;
+    3a. if(k>n)
+    3b.    ans =f;
+    4.  else
+        {
+    5.     int fnew = f*k;
+    6.     int knew =k +l;
+    7.     ans =factRec(n, knew, fnew);
+        }
+        return ans;
+    }
+    \end{lstlisting}
+    \caption{while循环转换成递归函数。与转换不相关的花括号省略了。}
+    \label{Fig:TransformationOfFactorialFunction}
+\end{figure*}
+
+在图\ref{Fig:TransformationOfFactorialFunction}中展示了一个结成函数的转换。
+注意n是一个传递的参数。
+
+除了第7行，factLoop的循环体是可以使用单赋值范例的。因此我们可以使用命题
+\ref{Proposition:GeneralCorrectnessLemmaForm}到
+\ref{Proposition:ProcedureCallCorrectnessLemmaForm}和变量之间的等式关系来思考
+循环体，不牵涉到复杂的索引，也不需要处理通常碰到的一个变量在过程执行中有
+不同的赋值。至少一直到第7行我们都可以使用单赋值范例的处理方法，此时变量的值
+为下一轮“roll over”了。进一步的，如果我们能visualize这个“rolling over”作为
+带新的实参的过程，并且这个过程有的\emph{比原来小的问题规模}，我们就可以尝试
+证明使用递归的算法形式。在这个有限的场景里面，单赋值范例可以用于带循环的过程。
 
 \subsection{正确性证明作为调试工具}
-证明正确性最大的实际价值一--即使是非常不正式"心算"证明--在于证明能在编码和测试没有开始之前就常常精确指出了bug所在。有时证明仅是完整的理顺一下过程的preconditions和postconditions，并把他们作为注释写在代码中。（即使你的证明将是一个"心算"，你也不应该逃避这步写文档的工作。）
-    许多程序bugs是过程的preconditions和调用过程时的实际条件不匹配，而且这种不匹配是简单和显而易见的。另外大部分是因为postconditions不匹配。这种错误通常在考虑命题3.12之后就会显而易见。
-    当问题比较微妙，一切看上"看上去都对"，你必须试图使用命题来为一个一个合适大小的block来构在证明。这个过程就是问每一个block，"假设这个block完成了会怎样？"，再问"它完成需要那些条件？"现在其一个block是否正确的达到这些要求？
-    如果代码中有一个bug，而且你推理的很小心，证明中断的点告诉你bug的所在。就是，bug就在两个block中穿过边界附近，在你发现postconditions和preconditions不匹配的地方。
-    例如，在递归顺序搜索（算法3.1）中，如果第1行的条件错写成了（m≥num-1），则postcondition 1在第2行之后将不能得到，bug就定位了。
-    另一个例子，假设算法3.1中1-2行和3-4行交换一下位置，就是说，第1行变成"if(E[m]==k)"。我们给出的证明中所有提到的语句都重复行号上的变化，但是过程有一个bug。为了在检查期间找出bug，我们必须注意到所有计算一个表达式的语句的precondition是表达式中的所有数据元素都已经给出值，也就是我们不能access未初始化的变量和实例域。如果m可能是大于num-1的数，我们不能保证这一点。再一次的，证明试图暴露bug，但是仅在我们检查的很仔细的时候才行。在我们复查代码的时候问一下"数据元素初始化了吗？"是一个很好的习惯。
+证明正确性最大的实际价值——即使是非常不正式“心算”证明——在于证明能在编码和
+测试没有开始之前就常常精确指出了bug所在。有时证明仅是完整的理顺一下过程的
+preconditions和postconditions，并把他们作为注释写在代码中。（即使你的证明将是
+一个“心算”，你也不应该逃避这步写文档的工作。）
+
+许多程序bugs是过程的preconditions和调用过程时的实际条件不匹配，而且这种不匹配
+是简单和显而易见的。另外大部分是因为postconditions不匹配。这种错误通常在考虑
+命题\ref{Proposition:ProcedureCallCorrectnessLemmaForm}之后就会显而易见。
+
+当问题比较微妙，一切看上“看上去都对”，你必须试图使用命题来为一个一个合适
+大小的block来构在证明。这个过程就是问每一个block，“假设这个block完成了会怎样？”，
+再问“它完成需要那些条件？”现在其一个block是否正确的达到这些要求？
+
+如果代码中有一个bug，而且你推理的很小心，\emph{证明出错的地方就是bug的所在}。就是说，
+bug就在两个block中穿过边界附近，在你发现postconditions和preconditions不匹配的地方。
+
+例如，在递归顺序搜索（算法\ref{Algo:seqSearchRec}）中，如果第1行的条件错写成了
+（$m \geq num-1$），则postcondition 1在第2行之后将不能得到，bug就定位了。
+
+另一个例子，假设算法\ref{Algo:seqSearchRec}中1-2行和3-4行交换一下位置，就是说，
+第1行变成“if(E[m]==k)”。我们给出的证明中所有提到的语句都重复行号上的变化，
+但是过程有一个bug。为了在检查期间找出bug，我们必须注意到所有计算一个表达式的
+语句的precondition是表达式中的所有数据元素都已经给出值，也就是我们不能access未
+初始化的变量和实例域。如果m可能是大于num-1的数，我们不能保证这一点。再一次的，
+证明试图暴露bug，但是仅在我们检查的很仔细的时候才行。在我们复查代码的时候问
+一下“数据元素初始化了吗？”是一个很好的习惯。
 
 
-\subsection{递归过程的终止}
-命题3.9到3.12，3.5.2描述的引理等有递归过程的场合，展示什么叫部分正确，因为他们没有给出过程是否该终止。为了完成完全正确的证明，必须展示每一次递归调用都得到比原来要小的问题。
-这时首先需要证明递归调用的precondition是满足的，其次是讨论传递给递归调用的结构或是"问题规模"比调用者的要小。作为另一个正确性问题，实践中人们使用合理的一般的讨论，而不用带公理和推论的正式的证明。
-在许多情况下，问题的规模是一个非负整数，比如子范围的元素数量，链表中元素的数量，诸如此类。例如在算法3.1中，在3.5.2小节"问题规模"方便的定义为n=(num-m)，未检查元素的数量。每次递归调用为导致减少1，最终会减少到0。
-在有些情况下，one can use directly a partial order defined on the structure being passed as an imput parameter, such as the subtree partial order(see 图3.3)。例如，在一个二叉树遍历过程中，如图3.4，如果过程的输入参数是树T，而T不是基本情况，则T的子树比T"要小"in partial order。因此在形式正确的二叉树结构上的递归过程会结束。
-为了技术上的正确，在二叉树上做递归的过程必须有一个precondition，即输入参数T是正确的二叉树--没有环。规范BinaryTree抽象数据结构类型一个动机（如同我们在2.3.3小节做的）是使得这个条件自动满足。
+\subsection{递归过程的终止}\label{Sec:TerminationOfRecursiveProcedures}
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}到\ref{Proposition:ProcedureCallCorrectnessLemmaForm}，
+\ref{Sec:ElementaryControlStructures}小节描述的引理等有递归过程的场合，展示
+什么叫部分正确，因为他们没有给出过程是否该终止。为了完成完全正确的证明，
+必须展示每一次递归调用都得到比原来要小的问题。
 
-\subsection{二分查找的正确性}
-我们现在证明递归过程binarySearch的正确性（二分查找的细节参看算法1.4）。这作为一个
-用归纳法证明递归过程的示范。一个归纳证明建立在全部的不带循环递归过程正确性的基础
-之上；就是说，it establishes that the procedure terminates, as well as
-establishing that its preconditions imply its postconditions.（如果递归过程调用
+这时首先需要证明递归调用的precondition是满足的，其次是讨论传递给递归调用的
+结构或是"问题规模"比调用者的要小。作为另一个正确性问题，实践中人们使用合理
+的一般的讨论，而不用带公理和推论的正式的证明。
+
+在许多情况下，问题的规模是一个非负整数，比如子范围的元素数量，链表中元素的数量，
+诸如此类。例如在算法\ref{Algo:seqSearchRec}中，在
+\ref{Sec:ElementaryControlStructures}小节“问题规模”方便的定义为n=(num-m)，
+未检查元素的数量。每次递归调用为导致减少1，最终会减少到0。
+
+在有些情况下，问题的规模可以直接使用定义在结构上的partial order，通过一个输入
+参数传递，比如\emph{subtree} partial order(参看图\ref{Fig:ExampleOfSubtreePartialOrder})。
+例如，在一个二叉树遍历过程中，如图\ref{Fig:LegthOf2-tree external}，如果
+过程的输入参数是树T，而T不是基本情况，则T的子树比T“要小”in partial order。
+因此在形式正确的二叉树结构上的递归过程会结束。
+
+为了技术上的正确，在二叉树上做递归的过程必须有一个precondition，即输入参数T是
+正确的二叉树--没有环。规范BinaryTree抽象数据结构类型一个动机（如同我们在
+\ref{Sec:BinaryTreeADT}小节做的）是使得这个条件自动满足。
+
+\subsection{二分查找的正确性}\label{Sec:CorrectnessofBinarySearch}
+我们现在证明递归过程binarySearch的正确性（二分查找的细节参看
+算法\ref{Algo:BinrarySearch}）。这作为一个用归纳法证明递归过程的示范。一个
+归纳证明建立在全部的不带循环递归过程正确性的基础之上；就是说，它建立在过程结束，
+以及各它的preconditions蕴涵了postconditions的基础上。（如果递归过程调用
 子例程，则子例程的正确性要在递归过程被证明之前作为一个假设添加。）
 
-我们定义binarySearch的问题规模n= last -first+1，E在查找范围中的条目的数量。图3.8只是为了方便做的一个重复。
+我们定义binarySearch的问题规模n= last -first+1，E在查找范围中的条目的数量。图
+\ref{Fig:ProcedureforBinarySearch}只是为了方便做的一个重复。
+
 \begin{lemma}
 对于$n\geq 0$，如果\textbf{binarySearch(E, first, last, K)}被调用，问题的规模是
 (last- first +1)=n，E[first], …, E[last]在非递减阶，则如果K不在E中first, …, last
 的范围中返回-1，否则如果K=E[index]返回index。
 
 证明  证明归纳n，问题的规模。基本情况是n=0。这时第1行是true，到达第2行，返回-1。
+
+对于n>0，假设binarySearch(E, f, l,K)在$0\leq k <n$的问题规模k上满足引理，f和l是
+任意索引满足$k=l-f+1$。因为$n>0$，第1行是false，$first \leq last$，流程到第4行，
+然后是第5行。根据前面提到的不等式和等式$mid=\lfloor (first+last)/2\rfloor$，
+得$first\leq mid \leq last$。因此mid在搜索范围内。如果第5行是true，过程在第6行
+得到了结果。
+
+现在假定第5行是false。从前面的两个不等式和n的定义，我们有（根据$\leq$的传递性）
+\begin{displaymath}
+\begin{aligned}
+&(mid-1)-first+1 \leq (n-1)\\
+&last-(mid-1)+1 \leq (n-1)
+\end{aligned}
+\end{displaymath}
+所以对于第8行和第10行的两个递归调用递归假设都是适用的。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    int binarySearcha(int[] E, int first, int last, int K)
+{
+1   if( last< first)
+2       index =-1;
+3   else
+    {
+4       int mid = (first +last)/2;
+5       if(K== E[mid])
+6           index=mid;
+7       else
+        {
+7           if(K<E[mid])
+8               index= binarySearch(E, first, mid-1, K);
+9           else
+10              index= binarySearch(E, mid+1, last, K) ;
+        }
+11  return index;
+}
+    \end{lstlisting}
+    \caption{binarySearch过程，算法\ref{Algo:BinrarySearch}的重复}
+    \label{Fig:ProcedureforBinarySearch}
+\end{figure*}
+
+现在，如果第7行是true，则执行第8行。直接就可以发现binarySearch的precondition是满足
+的，因为第8行的实际参数只有第3个参数改变了，而且是变小了。因此我们假定调用了完成
+了binarySearch的目标。如果第8行的调用返回一个正的索引，这解决了当前了的问题。如果
+第8行的调用返回-1，这意味着K不再E的范围$first, \cdots, mid-1$内。但是第7行隐含了K不在
+范围$mid, \cdots, last$内，所以从当前的过程返回-1是正确的。如果第7行是false，则执行
+第10行，是类似的。
 \end{lemma}
+
+关于证明需要强调的一点是，在我们（能）假定地8行和第10行的调用完成了他们的目标之前，
+我们需要验证调用的preconditions。既然许多逻辑错误是由调用过程而没有满足过程
+的precondition引起的，这种检查能揭示很多bugs。
 
 \section{递归等式}\label{Sec:RecursiveEquation}
 递归等式是定义在自然数上的函数，$T(n)$，它的值表达式中有一项或多项是小于n的整数的T。
-换句话说，T(n)是归纳定义的。如所有的归纳一样，基本情况是单独定义，递归等式仅处理
+换句话说，$T(n)$是归纳定义的。如所有的归纳一样，基本情况是单独定义，递归等式仅处理
 比基本情况大的n。尽管我们的主要兴趣在用递归等式作为一种描述算法（运行时间，关键字
 的比较次数，或者其他的重要工具）的函数式工具，但这不是递归等式唯一的用途。许多有趣
 的数学函数可以用递归等式定义，比如Fibonacci数列，等式\ref{Equa:FibonacciSeries}。
 
 用递归等式来描述递归过程是很自然的事情。本节的目的是展示如何从递归等式的代码中衍生
-出递归等式，并描述算法中一些经常出现的patterns。\ref{Sec:RecursionTree}节探索了如
+出递归等式，并描述算法中一些经常出现的patterns。\ref{Sec:RecursionTrees}节探索了如
 何解一些常见的递归等式。因为不同资源的数量可能需要度量（时间，空间，关键字比较次数
 等），我们将使用通用的术语\emph{cost}来给出递归等式的界限。
 
@@ -1135,7 +1418,7 @@ if we are satisfied with an answer that is within a constant factor.
 different inputs，子例程的cost和递归调用的cost需要平均。由于这个原因，平均行为
 分析通常认为比最坏情况分析要难。
 
-\begin{example}\vspace{1ex}
+\begin{example}\mbox{}\par
 对于简单应用的规则，考虑算法\ref{Algo:seqSearchRec}的递归函数
 seqSearchRec(E, m, num, K)
 
@@ -1155,26 +1438,111 @@ seqSearchRec(E, m, num, K)
 行号的范围来描述。整个过程是1-7。可以参照下面的diagram，"OR"表示\emph{可选项}，
 "；"表示\emph{序列}。
 
+\begin{center}
+    \begin{tikzpicture}[scale=1]
+        \draw (-0.4,0) rectangle (7.4,2);
+        \draw (-0.2,0.2) rectangle (6.2, 1.8);
+        \node  at (0.4,2.2)[text width=1mm]  {1};
+        \draw (0,0.6) rectangle (0.8, 1.4);
+        \node  at (1.4,2.2)[text width=1mm]  {2};
+        \draw (1,0.6) rectangle (1.8, 1.4);
+        \node (P2)  at (1.9,1)[text width=1mm]  {OR};
+        \draw (2.5,0.4) rectangle (6.1, 1.6);
+        \node  at (3,2.2)[text width=1mm]  {3};
+        \draw (2.6,0.6) rectangle (3.4, 1.4);
+        \node  at (4,2.2)[text width=1mm]  {4};
+        \draw (3.6,0.6) rectangle (4.4, 1.4);
+        \node  at (4.6,2.2)[text width=1mm]  {5};
+        \node (P1)  at (4.6,1)[text width=1mm]  {OR};
+        \node  at (5.6,2.2)[text width=1mm]  {6};
+        \draw (5.2,0.6) rectangle (6.0, 1.4);
+        \node (P0)  at (6.3,1)[text width=1mm]  {;};
+        \node  at (6.8 ,2.2)[text width=1mm]  {7};
+        \draw (6.4,0.6) rectangle (7.2, 1.4);
+    \end{tikzpicture}
+\end{center}
 
 
+基本情况是块2-2，基本情况需要排除在递归等式之外，递归等式只考虑非基本情况。
+所有最里面的块s都是简单语句，除了6-6。当cost是运行时间时，我们假设简单语句
+需要常量的运行时间，并用1代表任意常量时间（于是1+1=1）。当cost是某些特定操作
+的数量时，则操作需要计数。For definiteness，我们将假设cost是数组元素比较的
+次数。因此第3行cost是1，而在这个cost模型下其他简单语句没有cost。
+
+注意算法\ref{Algo:seqSearchRec}中的第6行的调用，我们看到实际参数的第2个和
+第3个是m+1和num，所以它的问题规模是num-(m+1)=m-1。所以，6-6的cost是T(n-1)。
+整个块的cost由两部分构成，合并可选语句的最大项，合并序列块。块2-2作为一个
+可选项被排除。注意1-7是1-6和7-7的和，给出seqSearchRec递归等式的右边
 \end{example}
 
-\begin{theorem}
-xxxxxx
-\end{theorem}
+\begin{example}
+对于其他例子，考虑二叉查找，算法\ref{Algo:BinrarySearch}，在
+\ref{Sec:CorrectnessofBinarySearch}小节有重复。问题规模是n=last-first+1。
+消耗的度量是关键字比较，所以第5行消耗是1。第8行和第10行的递归调用的问题规模
+是n/2和(n-1)/2，但是这是可选的，所以其合并的消耗取最大值，而不是两者的和。
+剩下的语句中没有关键字比较，所以递归等式是
+\begin{displaymath}
+T(n)=T(m/2)+1
+\end{displaymath}
+在这个过程中，出现了两次递归调用实际上只有一次。在第4章我们将遇到排序过程，
+有些排序中有两次递归调用，他们的递归等式的右边会有每一次递归调用代表的项。
+\end{example}
+
+如果规模$n_r(n)$或$n_s(n)$不是很清楚就有了新的问题。例如，在n个节点的二叉树
+遍历中（\ref{Sec:BinaryTreeADT}小节），我们知道左子树和右子树总共有n-1个节点，
+但是我们不知道两边各是多少。假设我们引入额外变量r表示右子树的规模。则我们
+得到递归等式
+\begin{displaymath}
+T(n)=T(n-1-r)+T(r)+1, T(0)=1
+\end{displaymath}
+巧合的是，我们通过代入法能知道这个等式为$T(n)=2n+1$，即使我们不知道r。一般
+我们没有这么幸运，而且对于不同的r可能结果不一样。这个问题在快速排序中就
+出现了（\ref{Sec:AnalysisofQuickSort}小节）。
+
 
 \subsubsection{普通递归等式}
 我们能描述许多类递归等式，他们经常遇到且能通过标准方法解决（某种程度上）。
-在所有情况下"子问题"指主要问题比较小的实例，需要递归解决的。符号b和c是常量。
+在所有情况下“子问题”指主要问题比较小的实例，需要递归解决的。符号b和c是常量。
 
 \noindent
-分而治之： 在分而治之范例的许多情况中，子问题的大小是n/2或n乘以某个固定的比例。
-例如我们已经看过的二分查找（1.6节），我们在第四章要学习的：归并（4.6节）和
-堆操作（4.8.3小节）。使用4.6节的归并作为例子，归并排序做的比较数目是：
+{\textbf{分而治之：}}在分而治之范例的许多情况中，子问题的大小是n/2或n乘以某个固定的比例。
+例如我们已经看过的二分查找（\ref{Sec:SearchInOrderArray}节），我们在第
+\ref{Sec:Chapter:Sort}章要学习的：归并（\ref{Sec:Mergesort}节）和
+堆操作（{Sec:FixHeap}小节）。使用\ref{Sec:Mergesort}节的归并作为例子，归并
+排序做的比较数目是：
+\begin{equation}\label{Equ:3_2}
+T_{MS}(n)=T_{MS}(n/2)+T_{MS}(n/2)+M(n), T_{MS}(1)=0
+\end{equation}
+M(n)的消耗是归并子例程产生的。在我们能解决TMS(n)之前，我们需要知道M(n)是什么。
 
+一般对于分而治之类型问题，规模n的主问题可以分解为b个（$b \geq 1$）规模是n/c（$c>1$）
+的子问题。还有一部分非递归消耗$f(n)$（为了分解问题，且/或合并子问题的解到主问题）。
 
+\begin{equation}\label{Equ:3_3}
+T(n)=bT(\frac{n}{c})+f(n)
+\end{equation}
+我们称b是\emph{分支因子}。
 
-\section{递归树}\label{Sec:RecursionTree}
+{\textbf{Chip and Conquer：}}规模n的主问题可以“切掉一部分”成一个规模是n-c
+的子问题（$c>0$），再带一个$f(n)$的非递归消耗（为了分解问题，且/或合并子问题
+的解到主问题）。
+\begin{equation}\label{Equ:3_4}
+T(n)=T(n-c)+f(n)
+\end{equation}
+
+{\textbf{Chip and Be Conquered：}}规模n的主问题可以“切掉一部分”成b个（b>1）
+规模是n-c的子问题（c>0），再带一个f(n)的非递归消耗（为了分解问题，且/或合并子问题的解
+到主问题）。我们称b是\emph{分支因子}。
+\begin{equation}\label{Equ:3_5}
+T(n)=bT(n-c)+f(n)
+\end{equation}
+
+如果子问题有不同的规模，但是所有的子问题规模都在n-cmax到n-cmin之间，责低限
+可以分别使用$c_{max}$，$c_{min}$代替c来求。这种情况在练习3.11中考虑。
+
+下一节我们探讨用数学方法分析这些典型的递归等式。
+
+\section{递归树}\label{Sec:RecursionTrees}
 递归树提供了一种分析我们已知递归等式的递归过程的消耗的工具（运行时间，关键字
 比较次数或是其他测量方式）。首先我们将以一个例子展示如何从递归等式生成一个
 递归树，然后我们将描述一般的过程。从一般过程中，我们将能派生出几种一般的
@@ -1184,19 +1552,29 @@ xxxxxx
 technical details in this section to be able to apply the general solutions
 mentioned.
 
-每一个递归树的节点有两个域，size和非递归cost域。一个节点表示如下：
+每一个递归树的节点有两个域，\emph{size}和\emph{非递归cost域}。一个节点表示如下：
 
-\begin{example}
+\begin{center}
+\begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=15mm}]
+    \node (P6)  at (0,0) [place] {T(size)};
+    \node (P5)  at (1.5,0) [place] {非递归cost};
+\end{tikzpicture}
+\end{center}
+
+规模域代表这个节点处T的实际参数。我们加上递归名字T来提醒我们规模域不是cost。
+
+
+\begin{example}\label{Example:3_10}
 简单的分而治之的递归树
 
 考虑递归等式：
 \begin{displaymath}
 T(n)=T(\frac{n}{2})+T(\frac{n}{2})+n
 \end{displaymath}
-这是等式（3.3）的特殊情况，b=2和c=2。这是归并排序的一个稍微简单的形式，它
+这是等式\ref{Equ:3_3}的特殊情况，b=2和c=2。这是归并排序的一个稍微简单的形式，它
 会在很多地方出现。我们将一步一步的构造出相应的递归树。第一步，是以辅助变量重
 写等式（在递归假设中有一个类似的辅助变量），这有助于避免替换错误。我们称这个
-递归等式为我们的工作拷贝。
+递归等式为我们的\emph{工作拷贝}。
 
 \begin{equation}
 T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
@@ -1204,44 +1582,411 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 只要节点的size域知道了一个节点就可以创建了；之后我们就可以用size域计算非
 递归消耗的值。我们准备创建T(n)递归树的root节点；这里size=n。
 
+\begin{center}
+\begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm}]
+    \node (P6)  at (0,0) [place] {T(size)};
+    \node (P5)  at (1.2,0) [place] {};
+\end{tikzpicture}
+\end{center}
 \end{example}
 
 决定非递归cost域和没有完成孩子节点的过程叫扩展节点。我们将节点的规模域添上
 准备扩展，这里是n，替换掉我们工作拷贝k，等式（3.6）。右边成为T(n/2)+T(n/2)+n。
 所有带T的部分变成孩子节点，剩下的部分变成节点的非递归cost，如下
+\begin{center}
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm}]
+    \node (P6)  at (0,0) [place] {T(n)};
+    \node (P5)  at (1.2,0) [place] {n};
+    \node (P4)  at (-2.4,-2) [place] {T(n/2)};
+    \node (P3)  at (-1.2,-2) [place] {};
+    \node (P2)  at (2.4,-2) [place] {T(n/2)};
+    \node (P1)  at (3.6,-2) [place] {};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \end{tikzpicture}
+\end{center}
 
 既然同样深度的所有节点看上去一样，我们可以在分支中产生他们。一般情况下，每一个
 不完全节点必须根据自己的规模域产生。这里所有规模域都是n/2，所以我们用n/2代入
 等式（3.6）中的k，而且我们看到右边应该是T(n/4)+T(n/4)+n/2。所以现在我们有
+
+\begin{center}
+
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm}]
+    \node (P6)  at (0,0) [place] {T(n)};
+    \node (P5)  at (1.2,0) [place] {n};
+    \node (P4)  at (-2.4,-2) [place] {T(n/2)};
+    \node (P3)  at (-1.2,-2) [place] {n/2};
+    \node (P2)  at (2.4,-2) [place] {T(n/2)};
+    \node (P1)  at (3.6,-2) [place] {n/2};
+
+    \node (P41)  at (-4.6,-4) [place] {T(n/4)};
+    \node (P31)  at (-3.4,-4) [place] {};
+    \node (P21)  at (-1.6,-4) [place] {T(n/4)};
+    \node (P11)  at (-0.4,-4) [place] {};
+    \node (P42)  at (1.6,-4) [place] {T(n/4)};
+    \node (P32)  at (2.8,-4) [place] {};
+    \node (P22)  at (4.6,-4) [place] {T(n/4)};
+    \node (P12)  at (5.8,-4) [place] {};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \draw (P4.south)--(P41.north);
+    \draw (P3.south)--(P21.north);
+    \draw (P2.south)--(P42.north);
+    \draw (P1.south)--(P22.north);
+    \end{tikzpicture}
+
+\end{center}
 
 我们可以继续下一层，直到我们看出数的模式。图3.9展示了数扩展到另外一层；有8个
 未完成孩子，其细节没有显示出来。这里我们可以看到以深度为函数的规模参数, n/2d，
 非递归cost恰好也是n/2d。（复习下，为了方便，我们将根的深度定义为0）。在这个简单
 的例子中，有同样数深度所有节点都是一致的，但是这不总是成立的。
 
-我们在下一页总结生成一颗递归树的规则s。
+我们在下一页总结生成一颗递归树的规则(s)。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm},
+                            do/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+    \node (P6)  at (0,0) [place] {T(n)};
+    \node (P5)  at (1.2,0) [place] {n};
+    \node (P4)  at (-2.4,-2) [place] {T(n/2)};
+    \node (P3)  at (-1.2,-2) [place] {n/2};
+    \node (P2)  at (2.4,-2) [place] {T(n/2)};
+    \node (P1)  at (3.6,-2) [place] {n/2};
+
+    \node (P41)  at (-4.6,-4) [place] {T(n/4)};
+    \node (P31)  at (-3.4,-4) [place] {};
+    \node (P21)  at (-1.6,-4) [place] {T(n/4)};
+    \node (P11)  at (-0.4,-4) [place] {};
+    \node (P42)  at (1.6,-4) [place] {T(n/4)};
+    \node (P32)  at (2.8,-4) [place] {};
+    \node (P22)  at (4.6,-4) [place] {T(n/4)};
+    \node (P12)  at (5.8,-4) [place] {};
+
+    \node (P83)  at (-4.6,-5) [do] {};
+    \node (P73)  at (-3.4,-5) [do] {};
+    \node (P63)  at (-1.6,-5) [do] {};
+    \node (P53)  at (-0.4,-5) [do] {};
+    \node (P43)  at (1.6,-5) [do] {};
+    \node (P33)  at (2.8,-5) [do] {};
+    \node (P23)  at (4.6,-5) [do] {};
+    \node (P13)  at (5.8,-5) [do] {};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \draw (P4.south)--(P41.north);
+    \draw (P3.south)--(P21.north);
+    \draw (P2.south)--(P42.north);
+    \draw (P1.south)--(P22.north);
+
+    \draw (P41.south)--(P83.north);
+    \draw (P31.south)--(P73.north);
+    \draw (P21.south)--(P63.north);
+    \draw (P11.south)--(P53.north);
+    \draw (P42.south)--(P43.north);
+    \draw (P32.south)--(P33.north);
+    \draw (P22.south)--(P23.north);
+    \draw (P12.south)--(P13.north);
+    \end{tikzpicture}
+    \caption{三层递归树。8个未完成孩子的规模域没有显示。}
+    \label{Fig:BasicControlStructure}
+\end{figure*}
 
 \begin{definition}
 递归树规则
 
 \begin{enumerate}
-\item 递归等式的工作拷贝使用和原来不同的变量；称为辅助变量。这里令k是辅助变量。原来递归等式的左边（假设是T(n)）变成递归树根节点的规模域。
+\item 递归等式的\emph{工作拷贝}使用和原来不同的变量；称为辅助变量。这里令k是
+    \emph{辅助变量}。原来递归等式的左边（假设是T(n)）变成递归树根节点的规模域。
 \item 一个未完成节点有一个规模域，但是没有非递归cost。
-\item 决定给递归cost和未完成节点孩子的过程称为扩展节点。我们取出待扩展节点的规模，代入递归等式的辅助变量k中。在右边包含T的部分变成节点的孩子；所有剩下的部分称为节点的非递归调用。
+\item 决定给递归cost和未完成节点孩子的过程称为\emph{扩展}节点。我们取出待扩展节点
+    的规模，代入递归等式的辅助变量k中。在右边包含T的部分变成节点的孩子；所有
+    剩下的部分称为节点的非递归调用。
 \item 扩展基本情况给出非递归调用，对于基本情况没有孩子。
 \end{enumerate}
-为了简化表示形式，我们假定递归等式的基本情况的cost不为0。如果等式的基本情况的cost是0，我们可以只计算最小的不为0情况，将它作为基本情况。
+为了简化表示形式，我们假定递归等式的基本情况的cost不为0。如果等式的基本情况
+的cost是0，我们可以只计算最小的不为0情况，将它作为基本情况。
 
 事实上，我们经常假定基本情况cost是1，for definiteness。如果必要可以做变动。
-
 \end{definition}
+
+在任意递归树的子树里面，下面的等式成立：
+\begin{equation}\label{Equ:3_7}
+\mbox{根的规模}=\sum\mbox{扩展节点的非递归cost} + \sum\mbox{未完成节点的规模}
+\end{equation}
+这很容易由归纳法证明。在基本情况下，T(n)=T(n)。一次扩展后，根节点被扩展，
+而孩子是未完成的，所以式\ref{Equ:3_7}给出的是原始的递归等式，以此类推。
+
+\begin{example}
+递归树
+
+在例子\ref{Example:3_10}的7个节点递归树中（带4个未完成节点），式\ref{Equ:3_7}
+表示为$T(n)=n+2(n/2)+4T(n/4)=2n+4T(n/4)$。
+\end{example}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm},
+                            do/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+    \node (P6)  at (0,0) [place] {T(n)};
+    \node (P5)  at (1.2,0) [place] {n};
+    \node (P4)  at (-2.4,-2) [place] {T(n/2)};
+    \node (P3)  at (-1.2,-2) [place] {n/2};
+    \node (P2)  at (2.4,-2) [place] {T(n/2)};
+    \node (P1)  at (3.6,-2) [place] {n/2};
+
+    \node (P41)  at (-4.6,-4) [place] {T(n/4)};
+    \node (P31)  at (-3.4,-4) [place] {};
+    \node (P21)  at (-1.6,-4) [place] {T(n/4)};
+    \node (P11)  at (-0.4,-4) [place] {};
+    \node (P42)  at (1.6,-4) [place] {T(n/4)};
+    \node (P32)  at (2.8,-4) [place] {};
+    \node (P22)  at (4.6,-4) [place] {T(n/4)};
+    \node (P12)  at (5.8,-4) [place] {};
+
+    \node (P83)  at (-4.6,-5) [do] {};
+    \node (P73)  at (-3.4,-5) [do] {};
+    \node (P63)  at (-1.6,-5) [do] {};
+    \node (P53)  at (-0.4,-5) [do] {};
+    \node (P43)  at (1.6,-5) [do] {};
+    \node (P33)  at (2.8,-5) [do] {};
+    \node (P23)  at (4.6,-5) [do] {};
+    \node (P13)  at (5.8,-5) [do] {};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \draw (P4.south)--(P41.north);
+    \draw (P3.south)--(P21.north);
+    \draw (P2.south)--(P42.north);
+    \draw (P1.south)--(P22.north);
+
+    \draw (P41.south)--(P83.north);
+    \draw (P31.south)--(P73.north);
+    \draw (P21.south)--(P63.north);
+    \draw (P11.south)--(P53.north);
+    \draw (P42.south)--(P43.north);
+    \draw (P32.south)--(P33.north);
+    \draw (P22.south)--(P23.north);
+    \draw (P12.south)--(P13.north);
+
+    \node (Px1)  at (7.5,0)  {n};
+    \node (Px2)  at (7.5,-2)  {n};
+    \node (Px3)  at (7.5,-3.5)  {n};
+    \node (Px4)  at (7.5,-4) {$\cdots$};
+    \draw (7.2,-4.5)--(7.8, -4.5);
+    \node (Px6)  at (7.5,-4.8)  {n};
+    \end{tikzpicture}
+    \caption{递归树中非递归cost的和。头3行的行和列在右边}
+    \label{Fig:RowSumExample}
+\end{figure*}
+
+计算递归树的技术是：首先计算每一深度所有节点非递归cost的和；称为树这一层
+的\emph{行和（row-sum）}。然后计算所有行和的和。继续图3.9的例子，有些行和已经
+展示在图\ref{Fig:RowSumExample}中了。
+
+为了计算行和的总和，（通常）需要知道递归树的最大深度。也就是规模约简
+到基本情况的层数。
+
+\begin{example}\label{Example:3_12}
+递归树计算
+
+对于例子\ref{Example:3_10}（参看图\ref{Fig:RowSumExample}）我们观察规模与节点深度的
+函数是$n/2^d$，所以基本情况发生在$d=\lg(n)$。既然每一行的和是n，树的
+总和是$T(n)=n\log(n)$。
+\end{example}
 
 \subsection{分而治之， 一般情况}
-\begin{definition}
+使用例子\ref{Example:3_10}到例子\ref{Example:3_12}同样的步骤，我们能估计
+一般分而治之递归等式（等式\ref{Equ:3_3}，为了方便这里重复一下），以得到T(n)的渐进阶。
+\begin{equation}\label{Equ:3_8}
+T(n)=bT(\frac{n}{c})+f(n)
+\end{equation}
+这小节得到这种技术，但是引理和定理可以被理解，而且可以被单独使用。
+
+首先，我们可以看到规模参数以因数c每次递减（我们令c=2为例）。因此基本情况
+发生在$(n/c^D)=1$时，这里D是基本情况节点的深度。解方程得
+$D=\lg(n)/\lg(c)\in \Theta(\log(n))$。然而，我们必须跳出所有深度
+行和都一样的情况。
+
+知道树\emph{有多少}叶子是很有用的。分支因数是b，所以深度D的节点数
+是$L=b^D$。为了方便：$\lg(L)=D\lg(b)=(\lg(b)/\lg(c))\lg(n)$。系数
+$lg(n)$经常出现，我们给它一个名字。
+
+\begin{definition}\label{Def:CriticalExponent}
 临界指数
 
-
+对于等式\ref{Equ:3_3}中的b和c，我们定义临界指数为
+\begin{displaymath}
+E=\frac{\lg(b)}{\lg(c)}
+\end{displaymath}
 \end{definition}
 
+通过引理\ref{Lemma:3_1}，第8部分，对于E这样形式的对数可以使用任意方便的底，只要
+分子分母同时还就行。以这个符号，有如下引理：
+
+\begin{lemma}
+等式\ref{Equ:3_8}递归树的叶子数量近似是$L=n^E$，这里E是定义
+\ref{Def:CriticalExponent}中定义的临界指数。
+\end{lemma}
+
+假设叶子中的非递归cost是1，这告诉我们树的cost至少是nE。即使叶子的
+非递归cost是0，在叶子的上层也肯定会有非0的cost的节点（或者极端情况下
+叶子之上有常数层非0）。但是这层中仍然是$\Theta(n^E)$节点，所以保持的
+$\Omega(n^E)$底限。
+
+让我们总结下目前得到的结论。
+\begin{lemma}\label{Lemma:3_15}
+用前面使用的符号，我们近似有：
+
+\begin{enumerate}
+\item 递归树有深度$D=\lg(n)/\lg(c)$，所以有许多行和。
+\item 第0层的行和是$f(n)$，即根的非递归cost。
+\item 第D层行和是$n^E$，假设基本情况是1，或者$\Theta(n^E)$，in any event。
+\item T(n)的值，也就是等式\ref{Equ:3_8}的解，是树中所有非递归cost的和，也就是所有行和的和。
+\end{enumerate}
+\end{lemma}
+
+在许多实际情况中，行和形式是一个几何多项式（或者近似的上下界都是多项式）。
+几何多项式的形式 （\ref{Sec:Calculous}小节）。常量r称为比率。Quit a few simplification occur
+in practice that are based on the principle of 定理\ref{Theorem:1_13}的第2部分，which stated
+that, for a 几何多项式 whose 比率不是1，the sum is in $\Theta$ of its largest term。
+由这个定理和引理\ref{Lemma:3_15}，我们可以得出结论：
+
+\begin{theorem}\label{Theorem:LittleMasterTheorem}
+（Little Master Theorem）以前面讨论的符号，和等式\ref{Equ:3_8}定义的T(n)：
+
+\begin{enumerate}
+\item 如果行和组成了一个几何多项式（从第0行数的顶层开始），这里E是定义\ref{Def:InductionProofSchema}定义的
+    临界指数。就是说，cost与递归树的叶子数量成比例。
+\item 如果行和保持常量，$T(n)\in \Theta(f(n)\log(n))$。
+\item 如果行和组成一个递减几何多项式，则$T(n)\in \Theta(f(n))$，这和根的cost成比例。
+\end{enumerate}
+
+\noindent{\emph{\textbf{证明}}} 在情况1中和由最后一项支配。在情况2中
+有相当于$\Theta(\log(n))$的项。在情况3中和由最后一项支配。
+\end{theorem}
+
+为了更抽象适用范围更广，将这个定理泛化。泛化是很有用的，当等式\ref{Equ:3_8}中的函数
+牵涉到对数时，因为之后行和可能不是很整洁。（对于更一般的版本，参见练习3.9。）
+
+\begin{theorem}\label{Theorem:MasterTheorem}
+（Master Theorem）以前面讨论的术语，递归等式的解
+
+\begin{equation}
+T(n)=bT(\frac{n}{c})+f(n)
+\end{equation}
+（重复等式\ref{Equ:3_3}和\ref{Equ:3_8}）有如下解的形式，这里$E=\lg(b)/\lg(c)$是
+定义\ref{Def:CriticalExponent}定义的临界指数。
+
+\begin{enumerate}
+\item 对于任意正数$\varepsilon$如果$f(n) \in Ο(n^{E-\varepsilon})$，则
+    $T(n)\in\Theta(n^E)$，与递归树的叶子数量成比例。
+\item 如果$f(n)\inΟ(n^E)$，则$T(n)\in\Theta(f(n)\log(n))$，as all node
+    depths contribute about equally。
+\item 对于任意正数$\varepsilon$如果$f(n)\in\Omega(n^{E-\varepsilon})$，并且
+    对于$\sigma\geq\varepsilon$有$f(n)\inΟ(n^{E+\varepsilon})$，则$T(n)\in\Theta(f(n))$，
+    与递归树根的的非递归cost成比例。
+\end{enumerate}
+（可能没有一种情况是适用的。）
+
+\noindent{\emph{\textbf{证明}}} 深度d的节点有$b^d$个节点，每一个都有
+非递归cost $f(n/c^d)$。因此我们对于等式\ref{Equ:3_8}的解有下面的通用表达式：
+\begin{equation}
+T(n)=\sum_{d=0}^{\lg(n)/lg(c)}b^df(\frac{n}{c^d})
+\end{equation}
+我们将只给出一个框架证明，它遵循定理\ref{Theorem:LittleMasterTheorem}给的理由。
+（参看Notes和References有完全的证明）考虑情况3。忽略系数，对于某些正数$\varepsilon$，
+f(n)关于$nE+\varepsilon$。所以
+\begin{displaymath}
+f(\frac{n}{c^d})\approx\frac{n^{E+\varepsilon}}{(c^d)^{E+\varepsilon}\approx\frac{f(n)}{c^{Ed+\varepsilon d}}}
+\end{displaymath}
+则$b^df(n/c^d)$是$f(n)b^d/(c^{Ed}c^{\varepsilon d})$。但是$c^E=b$，由于标准的标识符，
+所以分母是$c^{Ed}$和分子$b^d$。我们最后有$f(n)/c^\varepsilon d$，给d一个递减
+的几何多项式。其他情况的分析类似。
+\end{theorem}
+
 \subsection{Chip and Conquer，或者Be Conquered}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm},
+                            do/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+    \node (P6)  at (0,0) [place] {T(n)};
+    \node (P5)  at (1.2,0) [place] {n};
+    \node (P4)  at (-2.4,-2) [place] {T(n/2)};
+    \node (P3)  at (-1.2,-2) [place] {n/2};
+    \node (P2)  at (2.4,-2) [place] {T(n/2)};
+    \node (P1)  at (3.6,-2) [place] {n/2};
+
+    \node (P41)  at (-4.6,-4) [place] {T(n/4)};
+    \node (P31)  at (-3.4,-4) [place] {};
+    \node (P21)  at (-1.6,-4) [place] {T(n/4)};
+    \node (P11)  at (-0.4,-4) [place] {};
+    \node (P42)  at (1.6,-4) [place] {T(n/4)};
+    \node (P32)  at (2.8,-4) [place] {};
+    \node (P22)  at (4.6,-4) [place] {T(n/4)};
+    \node (P12)  at (5.8,-4) [place] {};
+
+    \node (P83)  at (-4.6,-5) [do] {};
+    \node (P73)  at (-3.4,-5) [do] {};
+    \node (P63)  at (-1.6,-5) [do] {};
+    \node (P53)  at (-0.4,-5) [do] {};
+    \node (P43)  at (1.6,-5) [do] {};
+    \node (P33)  at (2.8,-5) [do] {};
+    \node (P23)  at (4.6,-5) [do] {};
+    \node (P13)  at (5.8,-5) [do] {};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \draw (P4.south)--(P41.north);
+    \draw (P3.south)--(P21.north);
+    \draw (P2.south)--(P42.north);
+    \draw (P1.south)--(P22.north);
+
+    \draw (P41.south)--(P83.north);
+    \draw (P31.south)--(P73.north);
+    \draw (P21.south)--(P63.north);
+    \draw (P11.south)--(P53.north);
+    \draw (P42.south)--(P43.north);
+    \draw (P32.south)--(P33.north);
+    \draw (P22.south)--(P23.north);
+    \draw (P12.south)--(P13.north);
+
+    \node (Px1)  at (7.5,0)  {1};
+    \node (Px2)  at (7.5,-2)  {2};
+    \node (Px3)  at (7.5,-3.5)  {4};
+    \node (Px5)  at (7.5,-4)  {8};
+    \node (Px4)  at (7.5,-4.5) {\underline{$\cdots$}};
+
+    \node (Px6)  at (7.5,-4.8)  {$\Theta(2^n/c)$};
+    \end{tikzpicture}
+    \caption{在一个chip-and-be-conquered 递归树的非递归cost的和。}
+    \label{Fig:SummingNonrecursiveCosts}
+\end{figure*}
+
+一个不同的图片融合了等式\ref{Equ:3_4}和\ref{Equ:3_5}。如果分支因子大于1，我们
+有等式\ref{Equ:3_5}，这里为了方便重复一下：
+
 \subsection{*为什么递归树能工作}\label{Sec:WhyCanRecursiveTreeWork}
+这小结给出了一个给定递归等式和它的递归树的联系，以及编写好的用来计算
+递归解的函数。读者可以略过本节，而不会丢失任何连续性。
+
+一种可视化递归树的方式是想象我们实际上编写了一个简单的递归函数（称
+为evalT(k)）来计算递归等式的值，比如等式\ref{Equ:3_2}到等式\ref{Equ:3_5}。
+这个函数的activation树非常精确的对应了递归树。递归等式看上去如
+$T(k)=f(k)+\cdots $（带T的项）。我们假设我们的递归函数evalT有一个参数
+k（代表问题规模），而一个局部变量nonrecCost来存储非递归cost的值
+（也就是f(k)）。忽略基本情况，假设evalT的
+代码如下：
+\indent   nonrecCost=f(k)；
+\indent   return nonrecCost+ … （带evalT的项）
+这里带evalT的项只是模仿了递归等式右边带T的项。
+
+递归等式的递归树，以T(n)为根，将是evalT(n)的activation树。（这假设
+非递归cost函数f(k)可以用简单语句计算。\footnote{译注：即没有函数调用。}）
+
+可以看出，整个树的nonrecCost值得和就是顶层调用返回的值。我们假定顶层
+调用时evalT(n)，就是为了计算递归等式T(n)的值。

@@ -1,15 +1,16 @@
 \chapter{排序}\label{Sec:Chapter:Sort}
 
 \section{概述}
-在本章中我们将学习几个排序的算法，就是将集合中的元素按顺序排列。将一组
-元素排序的问题是第一个广泛研究的计算机科学问题。已知最好的分而治之的许多
-算法设计范例都是排序算法。在20世纪60年代，当商业数据处理大规模使用自动化
-时，在安装计算机的地方排序程序是运行最多的程序。一个软件公司靠着更好的
-排序程序在行业内能领先好几年。以今天的硬件水品，排序性能的关键有所改变。
-在20世界60年代，低速存储器（磁带或磁盘）和主存之间的传输速度是主要的
-性能瓶颈。主存一般只有100,000字节，而要排序的文件大多比这要大一个数量级上。
-主要的研究都是适合这种类型的排序算法。现在，主存容量增长了1,000倍（也就是
-约100MB），或者高达GB。所以大多数文件都能装入主存了。
+在本章中我们将学习几个排序的算法，所谓排序算法就是将集合中的元素按顺序排列。
+将一组元素排序的问题是第一个广泛研究的计算机科学问题。已知最好的
+\emph{分而治之}的许多算法设计范例都是排序算法。在20世纪60年代，当商业
+数据处理大规模使用自动化时，在安装计算机的地方排序程序是运行最多的程序。
+一个软件公司靠着更好的排序程序在行业内能领先好几年。以今天的硬件水品，
+排序性能的关键有所改变。在20世界60年代，低速存储器（磁带或磁盘）和
+主存之间的传输速度是主要的性能瓶颈。主存一般只有100,000字节，而要排序
+的文件大多比这要大一个数量级以上。主要的研究都是适合这种类型的排序算法。
+现在，主存容量增长了1,000倍（也就是约100MB），或者高达GB
+\footnote{译注：今天GB已经是标准配置了}。所以大多数文件都能装入主存了。
 
 有好几个原因要学习排序算法。首先，经常需要排序。以字母顺序排序电话簿或
 字典以使他们更容易使用，在计算机中操作大容量有序的集合比不无序的要容易。
@@ -179,7 +180,7 @@ shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
 如果没有数据了，fail；否则查找一个元素，如果它是我们要找的元素，成功；否则
 继续没有检查过的元素。因为有两种结束情况，可以用一个\textbf{while}循环来表示，
 再使用\textbf{break}对于一种或多种结束情况。递归形式是直接的。
-\begin{figure}
+
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     int shiftVacRec(Element[] E, int vacant, Key x)
     {
@@ -197,14 +198,14 @@ shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
     8:  return xLoc;
     }
 \end{lstlisting}
-\end{figure}
 
-为了验证第七行的递归的正确性，我们注意到递归过程在一个更小的范围内工作，
+
+为了验证第7行的递归的正确性，我们注意到递归过程在一个更小的范围内工作，
 而且它的第2个元素是非负的，所以是满足precondition（图\ref{Fig:SpecificationsForShiftVac}
 中的）的。（你可以检查调用链来论证vacant-1为什么是非负的--它为什么不是负的呢？）
-正确性是显然的，如果我们可以假定第七行的递归完成了它的目标的话。
+正确性是显然的，如果我们可以假定第7行的递归完成了它的目标的话。
 
-尽管shiftVacRec过程非常简单，如果我们想象一下E的第n个元素插入时候的活动跟踪情况，
+尽管shiftVacRec过程非常简单，如果我们想象一下$E$的第n个元素插入时候的活动跟踪情况，
 算一下递归的深度或是堆栈的深度可能增长到规模n。这对于很大的n是不可接受的。因此
 这种情况下，当让所有的事情都工作正常之后，递归必须改成迭代。（试图优化不能工作的
 程序是徒劳。）目的与其说是为了节约时间不如说是为了节约空间。实际上如果打开优化，
@@ -213,13 +214,13 @@ shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
 \begin{algorithm}
 插入排序
 
-Input：数组E，数组的大小。索引从0到n-1。
+{\textbf{\emph{Input：}}}数组E，数组的大小。索引从0到n-1。
 
-Output：E，其元素是升序。
+{\textbf{\emph{Output：}}}E，其元素是升序。
 
-Remark：shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
+{\textbf{\emph{Remark：}}}shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
 
-\begin{figure}
+
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     void insertionSort(Element[]E, int n){
         int xindex;
@@ -231,9 +232,7 @@ Remark：shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
         }
         return;
     }
-
-    int shiftVac(Element[]E, int xindex, Key x)
-    {
+    int shiftVac(Element[]E, int xindex, Key x){
         int vacant, xLoc;
         vacant= xindex;
         xLoc=0; // `假定失败`
@@ -248,7 +247,7 @@ Remark：shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
         return xLoc;
     }
 \end{lstlisting}
-\end{figure}
+
 \end{algorithm}
 
 \subsubsection{最坏情况复杂度}
@@ -351,7 +350,7 @@ $\pi(n), \pi(n-1), \cdots, \pi(1)$。例如，2, 4, 1, 5, 3 的转置是3, 5, 1, 4, 2。
 有n(n-1)/2对整数。因此每对排列有n(n-1)/2倒置，因此平均是n(n-1)/4。综上所述，
 排列的倒置平均数是n(n-1)/4，我们证明下面的定理。
 
-\begin{theorem}
+\begin{theorem}\label{Theorem:4_1}
 任意通过比较关键字排序的算法，如果在每一次比较之后至少减少一个逆序，则
 在最坏情况下至少做n(n-1)/2次比较，平均情况下至少做n(n-1)/4次比较（当有n个元素时）。
 \end{theorem}
@@ -360,7 +359,7 @@ $\pi(n), \pi(n-1), \cdots, \pi(1)$。例如，2, 4, 1, 5, 3 的转置是3, 5, 1, 4, 2。
 已经是做“局部”交换的算法中最好的了。当然肯定有更好的策略，但是如果存在
 更快的算法，他们必须一次移动元素超过一个位置。
 
-\section{分而治之}
+\section{分而治之}\label{Sec:DividAndConquer}
 分而治之算法设计范例背后的原理是，通常情况下解决几个小型要比解决一个大型
 问题要容易。\ref{Sec:QuickSort}小节到\ref{Sec:HeapSort}小节的算法都使用了
 分而治之的逼近。他们将一个问题分解成许多同样类型的小问题（本章中是分成
@@ -403,8 +402,8 @@ $\pi(n), \pi(n-1), \cdots, \pi(1)$。例如，2, 4, 1, 5, 3 的转置是3, 5, 1, 4, 2。
 T(n)=D(n)+\sum_{i=1}^kT(size(I_i))+C(n) \qquad \mbox{n>smallsize}
 \end{displaymath}
 当$n\leq smallsize$时，是基本情况T(n)=B(n)。对于许多分而治之算法而言，分割
-和合并的步骤都很简单，T的递归等式比通用形式要简单。Master定理（定理3.17）
-给出了分而治之递归等式的一般解决方法。
+和合并的步骤都很简单，T的递归等式比通用形式要简单。Master定理
+（定理\ref{Theorem:LittleMasterTheorem}）给出了分而治之递归等式的一般解决方法。
 
 接下来几节介绍的快速排序和归并排序，两者的区别就在他们分割问题和合并解的
 方式不一样，或者说是排序子集的方式不一样。快速排序的特点是“艰难的划分，
@@ -455,14 +454,388 @@ Quicksort将pivot传递给Partition子例程。这个子例程重排列剩下的元素，找
 \end{enumerate}
 注意现在有一个空位在splitPoint的位置。
 
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw (0,0) rectangle (6,0.8);
+        \draw (6,0) rectangle (8, 0.8);
+        \draw (8,0) rectangle (12, 0.8);
+        \node  at (3,0.4)[]  {$<$ pivot};
+        \node  at (7,0.4)[]  {pivot};
+        \node  at (10,0.4)[]  {$\geq$ pivot};
+        \node  at (0,1.2)[]  {\textit{first}};
+        \node  at (12,1.2)[]  {\textit{last}};
+        \node  at (7,1.2)[]  {\textit{splitPoint}};
+        \node  at (3,-0.6)[]  {递归使用Quicksort};
+        \node  at (10,-0.6)[]  {递归使用Quicksort};
 
+        \draw (0,3) rectangle (2,3.8);
+        \draw (2,3) rectangle (12, 3.8);
+        \node  at (1,3.4)[]  {pivot};
+        \node  at (0,4.2)[]  {\textit{first}};
+        \node  at (12,4.2)[]  {\textit{last}};
+        \node  at (7,2)[]  {partition};
+        \draw [->](6,2.8) -- (6, 1.4);
+
+    \end{tikzpicture}
+    \caption{Quicksort}
+    \label{Fig:ExampleofQuicksort}
+\end{figure*}
 
 之后Quicksort将pivot元素放回E[splitPoint]，这就是它正确的位置，pivot元素
-在后面的递归调用中不在参与，就是它正确的位置了（参见图4.7）。这个就完成了
-“分解”的过程，然后Quicksort开始递归调用自己解决由Partition创建的子问题。
+在后面的递归调用中不在参与，就是它正确的位置了
+（参见图\ref{Fig:ExampleofQuicksort}）。这个就完成了“分解”的过程，然后
+Quicksort开始递归调用自己解决由Partition创建的子问题。
 
+Quicksort过程可能选择E[first]和E[last]中的任意一个元素来做partition，这
+作为一个预处理步骤。无论那个元素被选择，先移动到局部变量pivot中，如果它
+不是E[first]，则E[first]移动到它的位置，保证E[first]在Partition调用时是
+一个空位。其他的选择pivot的策略在\ref{Sec:ImprovementsOntheBasicQuicksortAlgorithm}
+小节中有叙述。
+
+\begin{algorithm}\label{Algo:Quicksort}
+快速排序
+
+{\textbf{\emph{Input:}}} 数组E和索引first，last，其中元素E[i]定义为$first≤i≤last$。
+
+{\textbf{\emph{Output:}}} $E[first],\cdots,E[last]$是一个排序好的数组，
+和原来的数组元素相同。
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    void quickSort( Element[] E, int first, int last)
+    {
+        if( first<last)
+        {
+            Element pivotElement =E[first];
+            Key pivot = pivotElement.Key;
+            int splitPoint = partition( E, pivot, first, last);
+            E[splitPoint]= pivotElement;
+            quickSort(E, first, splitPoint -1);
+            quickSort(E, splitPoint+1, last);
+        }
+        return;
+    }
+\end{lstlisting}
+\end{figure}
+
+\end{algorithm}
 
 \subsection{Partition 子例程}
+所有比较和移动元素的工作都在Partition子例程中。Partition有许多不同的
+策略可以使用；不同的策略带来不同的优点和缺点。我们在这里展示一个，在
+练习中留下另一个。策略的关键在于如何完成元素的重排列。一个非常简单的
+解决方案是降元素移动到一个临时数组中，但是这样做的问题是如何将他们
+重新到正确的位置。
+
+我们这里描述的partition方法本质上来说是Hoare描述的方法。As motivation,
+remember that the lower bound argument in Section 4.2.3 showed that,
+to improve on Insertion Sort, it is necessary to be able to move an
+element many positions after one compare. 这里空位初始时在E[first]。
+这里我们想要小的元素都在左边的范围里面，而且我们想要元素移动的距离都
+尽可能的长，所以很自然的我们从E[last]开始查找小元素（小于pivot的元素）。
+找到一个的时候，我们将这个元素移动到空位（现在是first）。这时将在小的
+那个元素的位置留下一个空位；我们称它为highVac。这种情况展示在图4.8的
+头两个数组图中。
+
+我们知道所有索引大于highVac（直到last）的元素都是大于或等于pivot的。
+可能的话，某个其他的大于pivot的元素应该移动到highVac。同样的，我们希望
+元素移动的距离尽可能的长，于是很自然的从first+1查找大的元素。当我们找到
+的时候，我们移动这个元素到空位（现在是highVac），之后会留下一个新空位，
+我们称它是（lowVac）。我们知道所有索引小于lowVac（从first开始）的元素
+小于pivot的。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw (0,5) rectangle (1,5.8);
+        \node at (0.5,5.4)[] {pivot};
+
+        \draw (0,3) rectangle (1,3.8);
+        \draw (1,3) rectangle (12, 3.8);
+        \node  at (0.5,3.4)[]  {vacant};
+        \node  at (6.5,3.4)[]  {\textit{unexamined}};
+        \node  at (0,4.0)[]  {\textit{first}};
+        \node  at (12,4.0)[]  {\textit{last}};
+
+        \draw (0,1) rectangle (1,1.8);
+        \draw (1,1) rectangle (12, 1.8);
+        \draw (9,1) rectangle (10,1.8);
+        \draw (10,1) rectangle (12, 1.8);
+        \node  at (9.5,1.4)[]  {vacant};
+        \node  at (6.5,1.4)[]  {\textit{unexamined}};
+        \node  at (11,1.4)[]  {$\geq pivot$};
+        \node  at (0,2.0)[]  {\textit{low}};
+        \node  at (12,2.0)[]  {\textit{high}};
+        \node  at (9.5,0.3)[]  {highVac};
+        \draw [->](9.5,0.5) -- (9.5, 1);
+        \draw [->] (9,1) to [out=-160,in=-20]   (1, 1);
+        \node  at (5,0.5)[]  {小的元素};
+
+        \draw (0,-1.2) rectangle (3,-0.4);
+        \draw (3,-1.2) rectangle (12,-0.4);
+        \draw (3,-1.2) rectangle (4,-0.4);
+        \draw (9,-1.2) rectangle (10,-0.4);
+        \draw (10,-1.2) rectangle (12,-0.4);
+        \node  at (3.5,-0.8)[]  {vacant};
+        \node  at (6.5,-0.8)[]  {\textit{unexamined}};
+        \node  at (11,-0.8)[]  {$\geq pivot$};
+        \node  at (0,-0.2)[]  {\textit{low}};
+        \node  at (12,-0.2)[]  {\textit{high}};
+        \node  at (3.5,-2.0)[]  {highVac};
+        \draw [->](3.5,-1.9) -- (3.5, -1.2);
+        \draw [<-] (9,-1.2) to [out=-160,in=-20]   (4, -1.2);
+        \node  at (6.5,-2.0)[]  {大的元素};
+        \node  at (1.5,-0.8)[]  {$< pivot$};
+
+        \draw (0,-3.4) rectangle (3,-2.6);
+        \draw (3,-3.4) rectangle (12,-2.6);
+        \draw (3,-3.4) rectangle (4,-2.6);
+        \draw (9,-3.4) rectangle (12,-2.6);
+        \node  at (3.5,-2.9)[]  {vacant};
+        \node  at (6.5,-2.9)[]  {\textit{unexamined}};
+        \node  at (11,-2.9)[]  {$\geq pivot$};
+        \node  at (0,-2.4)[]  {\textit{first}};
+        \node  at (12,-2.4)[]  {\textit{last}};
+        \node  at (3.5,-2.4)[]  {\textit{low}};
+        \node  at (9,-2.4)[]  {\textit{high}};
+        \node  at (1.5,-2.4)[]  {$< pivot$};
+    \end{tikzpicture}
+    \caption{Partition第一个周期的过程}
+    \label{Fig:TheFirstCycle_Partition}
+\end{figure*}
+
+最后我们更新low和high变量准备下一次循环，如图\ref{Fig:TheFirstCycle_Partition}
+最后一行显示的。在第一个循环开始的时候，从low+1到high之间的元素
+还没有被检查，E[low]是空位。我们可以按刚才描述的方式重新开始，
+在high之后查找小的元素，将它移动到low vacancy，之后从low+1开始
+往前找一个大的元素，将它移动到highVac，在lowVac的位置创建一个
+新的空位。最后lowVac和highVac碰到一起了，意味着所有的元素都和
+pivot比较过了。
+
+Partition过程以刚才描述的循环实现，使用子例程以方便组织代码。
+子例程extendLargRegion扫描右边，越过大的元素直到遇到一个小的元素，
+遇到之后将小的元素移动到空位返回，或者直到空位而没有一个小的元素。
+在后一种情况下，partition就完成了。在前一种情况下，返回新的空位的位置，
+调用第二个子例程。子例程extendSmallRegion类似，除了是向左搜索，以及
+越过小的元素找到大的元素。
+
+一开始，small-key范围（low的左边）和large-key范围（high的右边）都是
+空的，空位是middle-region的最左边（在此刻，它是整个数组）。每一次调用
+子例程extendlargRegion或是extendSmallRegion，都会将middle-region至少
+缩减1个，然后将空位留在middle-region的最后。两个子例程还保证每次只有
+一个小的元素进入small-region，一个大的元素进入large-region。这可以
+参考他们的postcondition。当middle-region缩减到只有一个位置时，这个位置
+就是空位，作为splitPoint返回。下面的问题作为一个联系：在partition的while
+循环中，middle region的两个边界是什么，最终空位在什么地方？尽管Partition
+过程可以"make do"只用更少的变量，但是我们定义的每一个变量都有它自己的含义，
+在练习中有简化的版本。
+
+为了避免在partition的while循环中额外的比较，在第5行没有测试highVac=lowVac，
+这将预示所有的元素都将被partitioned。因此，当循环结束的时候high可能只比low小1，
+而从逻辑上来说应该相等。然而，high在循环结束后不你呢个accessed，所以
+这个差异是无害的。
+
+图\ref{Fig:ExampleOfQuicksort}展示了一个小的例子。Partition的细节操作只在
+它第一次调用时展示。注意小的元素积累到low的左边，而大的元素积累到high的右边。
+
+\begin{algorithm}\label{Algo:Partition}
+Partition
+
+\noindent{\textbf{\emph{输入：}}}数组E，partition的轴pivot，索引first和last，
+元素E[i]定义为first+1≤i≤last，且E[first]是空位。假设first<last。
+
+\noindent{\textbf{\emph{输出：}}}令splitPoint是返回值。原来在$first+1, \cdots, last$
+之间的元素被重新排列成两个子范围：
+\begin{enumerate}
+\item $E[first], \cdots, E[splitPoint-1]$之间元素的关键字都小于pivot，而
+\item $E[splitPoint+1], \cdots, E[last]$之间元素的关键字都大于等于pivot。
+\end{enumerate}
+还有，$first\leq splitPoint \leq last$，E[splitPoint]是空位。
+
+\noindent{\textbf{\emph{过程：}}}参看图\ref{Fig:ProcedureOfPartition}。
+
+\end{algorithm}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+int partition(Element[] E, Key pivot, int first, int last)
+{
+    int low, high;
+1.  low=first, high=last;
+2.  while(low<high)
+    {
+3.      int highVac= extentLargeRegion(E,pivot, low, high);
+4.      int lowVac=extendSmallRegion(E, pivot, low+1, highVac);
+5.      low= lowVac; high=highVac-1;
+    }
+6.  return low; // `这是splitPoint;`
+}
+
+/** Postcondition for extendLargeRegion:
+*`E[lowVac+1], …, E[high]最右边的关键字<pivot被移动到E[lowVac]`
+*`被移动元素的索引作为返回值。如果不存在这样的元素，lowVac被返回。`
+*/
+int extendLargeRegion(Element[] E, Key pivot, int lowVac, int high)
+{
+    int highVac, curr;
+    highVac=lowVac; // `考虑没有key<pivot的情况`
+    curr=high;
+    while(curr>lowVac)
+    {
+        if(E[curr].key<pivot)
+        {
+            E[lowVac]=E[curr];
+            highVac=curr;
+            break;
+        }
+        curr--; // `簿记`
+    }
+    return hgihVac;
+}
+    \end{lstlisting}
+    \caption{算法\ref{Algo:Partition}的过程}
+    \label{Fig:ProcedureOfPartition}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+/** `Postcondition：（练习）`*/
+int extendSmallRegion(Element[] E, Key pivot, int low, int highVac)
+{
+    int lowVac, curr;
+    lowVac= highVac;
+    curr=low; //`考虑没有key>=pivot的情况`
+    while(curr< highVac)
+    {
+        if(E[curr].key>= pivot)
+        {
+            E[hgihVac]=E[curr];
+            lowVac=curr;
+            break;
+        }
+        curr++;  // `簿记`
+    }
+    return lowVac;
+}
+    \end{lstlisting}
+    \addtocounter{figure}{-1}
+    \caption{算法\ref{Algo:Partition}的过程(续)}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.5]
+        \node  at (0,-1.5)[]  {关键字};
+        \foreach \y  in{-2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (2,\y)  node[right]{14} ;
+        \foreach \y  in{-2, -4, -6, -8}
+            \draw (4,\y)  node[right]{62} ;
+        \foreach \y  in{-2, -4, -6, -8, -10, -12, -14}
+            \draw (6,\y) node[right]{51} ;
+        \foreach \y  in{-2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (8,\y) node[right]{75} ;
+        \foreach \y  in{-2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (10,\y) node[right]{96} ;
+        \foreach \y  in{-2, -4, -6, -8, -10, -12}
+            \draw (12,\y) node[right]{33} ;
+        \foreach \y  in{-16, -18, -20, -22, -24, -26}
+            \draw (12,\y) node[right]{51} ;
+        \foreach \y  in{-2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (14,\y) node[right]{84} ;
+        \foreach \y  in{-2, -4, -6}
+            \draw (16,\y) node[right]{20} ;
+        \foreach \y  in{-10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (16,\y) node[right]{62} ;
+        \foreach \y  in{-8, -10, -12, -14, -16, -18, -20, -22, -24, -26}
+            \draw (0,\y) node[right]{20} ;
+        \foreach \y  in{-2}
+            \draw (0, \y) node[right]{45};
+        \foreach \y  in{-7, -13, -19}
+            \draw (20, \y) node[right]{{\textbf{while}}循环开始};
+        \foreach \y  in{-9, -15, -21}
+            \draw (20, \y) node[right]{extendLargeRegion之后};
+        \foreach \y  in{-11, -17, -23}
+            \draw (20, \y) node[right] {extendSmallRegion之后};
+        \foreach \y  in{-6+0.4, -12+0.4, -18+0.4, -24+0.4}
+            \draw (0, \y) -- (18, \y);
+        \draw (0, -2.8) node[right] {选出pivot};
+        \draw (0, -3.5) node[right] {$45 \leftarrow$ pivot};
+        \draw (0, -4) node[right] {\_\_};
+        \draw (0, -5) node[right] {第一次执行Partition};
+        \draw (0, -6) node[right] {\_\_};
+        \draw (0, -7) node[right] {$\updownarrow$low};
+        \draw (18, -7) node[left] {high$\updownarrow$};
+        \draw (16, -8) node[right] {\_\_};
+        \draw (18, -9) node[left] {hVac$\updownarrow$};
+        \draw (4, -10) node[right] {\_\_};
+        \draw (4, -11) node[right] {$\uparrow$lVac};
+        \draw (18, -11) node[left] {hVac$\uparrow$};
+        \draw (4, -12) node[right] {\_\_};
+        \draw (6, -13) node[right] {$\updownarrow$low};
+        \draw (14, -13) node[right] {$\updownarrow$high};
+        \foreach \y  in{-14, -16, -18, -20, -22, -24, -26}
+            \draw (4,\y) node[right]{33} ;
+        \draw (12, -14) node[right] {\_\_};
+        \draw (12, -15) node[right] {$\updownarrow$hVac};
+        \draw (6, -16) node[right] {\_\_};
+        \draw (6, -17) node[right] {$\uparrow$lVac};
+        \draw (12, -17) node[right] {$\uparrow$hVac};
+        \draw (6, -18) node[right] {\_\_};
+        \draw (6, -19) node[right] {$\updownarrow$low};
+        \draw (10, -19) node[right] {$\updownarrow$high};
+        \draw (6, -20) node[right] {\_\_};
+        \draw (6, -21) node[right] {$\updownarrow$hVac};
+        \draw (6, -22) node[right] {\_\_};
+        \draw (6.8, -23) node {lVac$\uparrow$hVac};
+        \draw (6, -24) node[right] {\_\_};
+        \draw (4, -25) node[left] {high$\uparrow$};
+        \draw (6, -25) node[right] {$\updownarrow$low};
+        \draw (6, -26) node[right] {\fcolorbox{black}{white}{45}};
+        \draw (20, -25) node[right]{{\textbf{while}}循环退出};
+        \draw (20, -26) node[right]{将pivot放到最终位置};
+        \foreach \y  in{-26-0.5, -28-0.5, -32-0.5, -34-0.5, -36-0.5}
+            \draw (0, \y) -- (26, \y);
+        \draw (0, -27) node[right]{在第一小节执行Partition（细节未显示）};
+        \draw (0, -27.8) node[right]{14};
+        \draw (2, -27.8) node[right]{\fcolorbox{black}{white}{20}};
+        \draw (4, -27.8) node[right]{33};
+        \draw (8, -29) node[right]{在第二小节执行Partition（细节未显示）};
+        \draw (8, -30) node[right]{75 $\leftarrow$ pivot};
+        \draw (8, -31) node[right]{\_\_};
+        \draw (10, -31) node[right]{96};
+        \draw (12, -31) node[right]{51};
+        \draw (14, -31) node[right]{84};
+        \draw (16, -31) node[right]{62};
+        \draw (8, -32) node[right]{62};
+        \draw (10, -32) node[right]{51};
+        \draw (12, -32) node[right]{\fcolorbox{black}{white}{75}};
+        \draw (14, -32) node[right]{84};
+        \draw (16, -32) node[right]{96};
+        \draw (8, -33) node[right]{左边执行Partition};
+        \draw (8, -34) node[right]{51};
+        \draw (10, -34) node[right]{\fcolorbox{black}{white}{62}};
+        \draw (14, -35) node[right]{右边执行Partition};
+        \draw (14, -36) node[right]{\fcolorbox{black}{white}{84}};
+        \draw (16, -36) node[right]{96};
+        \draw (0, -37) node[right]{最后的序列};
+        \draw (0, -38) node[right]{14};
+        \draw (2, -38) node[right]{20};
+        \draw (4, -38) node[right]{33};
+        \draw (6, -38) node[right]{45};
+        \draw (8, -38) node[right]{51};
+        \draw (10, -38) node[right]{62};
+        \draw (12, -38) node[right]{75};
+        \draw (14, -38) node[right]{84};
+        \draw (16, -38) node[right]{96};
+    \end{tikzpicture}
+    \caption{快速排序例子}
+    \label{Fig:ExampleOfQuicksort}
+\end{figure*}
+
+
 \subsection{快速排序的分析}\label{Sec:AnalysisofQuickSort}
 \subsubsection{最坏情况}
 Partition把每一个关键字与pivot比较，所以如果在它工作的范围有k个位置，它
@@ -478,14 +851,31 @@ Partition把每一个关键字与pivot比较，所以如果在它工作的范围有k个位置，它
 
 \subsubsection{平均行为}
 在4.2.3小节里面我们展示了如果排序算法每次比较至少从排列中移除一个倒置，则
-它在平均情况下至少要做(n2-n)/4次比较（定理4.1）。但是快速排序没有这个限制。
-Partition算法可以移动一个元素穿过整个数组，一次移动消除n-1个倒置。
+它在平均情况下至少要做(n2-n)/4次比较（定理\ref{Theorem:4_1}）。但是快速排序
+没有这个限制。Partition算法可以移动一个元素穿过整个数组，一次移动消除n-1个倒置。
 快速排序因为它的平均行为得到它的名字。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw (0,0) rectangle (4,0.8);
+        \draw (4,0) rectangle (5, 0.8);
+        \draw (5,0) rectangle (12, 0.8);
+        \node  at (0,1.2)[]  {first};
+        \node  at (12,1.2)[]  {last};
+        \node  at (4.5,1.2)[]  {splitPoint=first+i};
+        \node  at (2,-0.6)[]  {i keys};
+        \node  at (8,-0.6)[]  {k-i-1 keys(k=last-first+1)};
+    \end{tikzpicture}
+    \caption{快速排序的平均行为}
+    \label{Fig:AverageBehaviorofQuicksort}
+\end{figure*}
 
 我们假设关键字是不同的，且所有关键字的排列都是等概率出现。令k是数组要排序范围
 中的元素的个数，令A(k)是这个规模排序要做的平均关键字比较次数。假设下一次
-Partition将pivot移动到了本次子范围的第i个位置（图4.11），从0开始计数。
-Partion做了k-1次关键字比较，下一次要排序的子范围分别有i个元素和k-1-i个元素。
+Partition将pivot移动到了本次子范围的第i个位置（图\ref{Fig:AverageBehaviorofQuicksort}），
+从0开始计数。Partion做了k-1次关键字比较，下一次要排序的子范围分别
+有i个元素和k-1-i个元素。
 
 在Partiition完成之后对于我们的分析是很重要的，子范围（$first, \cdots, splitPoint-1$）
 内没有两个关键字相互进行过比较，所以这个子范围内所有的排列依然是等概率的。同理
@@ -498,7 +888,7 @@ Partion做了k-1次关键字比较，下一次要排序的子范围分别有i个元素和k-1-i个元素。
 \end{displaymath}
 检查和中的项以简化递归等式。形如A(n-1-i)的项run from A(n-1) down to A(0)，所以
 他们的和以A(i)的和同样。则我们可以丢弃A(0)项，得到
-\begin{equation}
+\begin{equation}\label{Equ:4_1}
 A(n)=n-1+\frac{2}{n}\sum_{i=1}^{n-1}A(i)  \qquad  n\geq 1
 \end{equation}
 这是一个比我们前面看到的要复杂的递归等式，因为A(n)的值依赖于早先的值。我们可以
@@ -516,25 +906,67 @@ $Q(n)\in \Theta(n\log n)$。所以如果E[first]每次都接近split位置，则快速排序的
 比较次数将在$\Theta(n\log n)$。这比$\Theta(n^2)$有显著的提高。但是如果关键字
 所有的排列都是等概率出现的话，还会得到这么好的结果吗？我们将证明之。
 
+\begin{theorem}
+令A(n)由递归等式\ref{Equ:4_1}定义。则，对于$n \geq 1$，$A(n)\leq cn\ln n$，
+c为常数。（注意：我们已经切换到自然数算法以简化证明中的一些计算。c的值将在证明中找到。）
 
+{\textbf{\emph{证明}}}  证明归纳要排序的元素个数n。基本情况是n=1。
+我们有$A(1)=0$，$c1\ln1=0$。
+
+当$n>1$时，假设$A(i) \leq ci\ln(i)$，对于$1\leq i<n$，c是某个常数。通过
+等式\ref{Equ:4_1}和归纳假设。
+\begin{displaymath}
+A(n)=n-1+\frac{2}{n}\sum_{i=1}^{n-1}A(i)\leq n-1+\frac{2}{n}\sum_{i=1}^{n-1}ci\ln(i)
+\end{displaymath}
+我们可以用积分划定边界（参看等式\ref{Equa:MonotonyFunctionA}）：
+\begin{displaymath}
+\sum_{i=1}^{n-1}ci\ln(i)\leq c\int_1^nx\ln x dx
+\end{displaymath}
+使用\ref{Sec:Calculous}小节给出的等式\ref{Equa:1_15}有
+\begin{displaymath}
+\int_1^nx\ln x dx =\frac{1}{2}n^2\ln(n)-\frac{1}{4}n^2
+\end{displaymath}
+于是
+\begin{displaymath}
+\begin{aligned}
+A(n)&\leq n-1 +\frac{2c}{n}\left(\frac{1}{2}n^2\ln(n)-\frac{1}{4}n^2\right)\\
+&=cn\ln n+n(1-\frac{c}{2})-1
+\end{aligned}
+\end{displaymath}
+
+为了满足$A(n)\leq cn\ln n$，第二项和第三项应该是负数或者0。对于$c\geq 2$的情况，
+第二项小于等于0。所以我们可以令c=2并得出结论$A(n)\leq 2n\ln n$。
+\end{theorem}
+
+对于$c<2$的情况可以做类似的分析$A(n)>cn\ln n$。既然$\ln n\approx 0.693\lg n$，
+我们有：
+
+\begin{corollary}
+在平均情况下，假设所有的输入的排列是等概率，快速排序（算法\ref{Algo:Quicksort}）
+做的平均比较次数对于大的n，近似为$1.386n\lg n$，n是输入集合的规模。
+\end{corollary}
 
 \subsubsection{更精确的平均行为*}
 尽管我们已经建立了快速排序的平均行为，回到递归等式（等式4.1）依然是有益的，
 尝试直接解这个等式可以得到更多的leading term。这一小节使用一些复杂的数学手段，
 可以跳过本节不会影响学习的连续性。
 
-由等式（4.1）我们有
+由等式\ref{Equ:4_1}我们有
 
-\begin{equation}\label{}
+\begin{equation}\label{Equ:4_2}
 A(n)=n-1+\frac{2}{n}\sum_{i-1}^{n-1}A(i)
 \end{equation}
 
-\begin{equation}
+\begin{equation}\label{Equ:4_3}
 A(n-1)=n-2+\frac{2}{n-1}\sum_{i-1}^{n-2}A(i)
 \end{equation}
 
-如果我们用（4.2）减去（4.3），大多数项都约掉了。既然和需要乘上不同的因子，
-我们需要一个slightly more complicated bit of algebra。非正式的，我们计算
+如果我们用\ref{Equ:4_2}减去\ref{Equ:4_3}，大多数项都约掉了。既然和需要
+乘上不同的因子，我们需要一个slightly more complicated bit of algebra。
+非正式的，我们计算
+\begin{displaymath}
+n \times \mbox{式(\ref{Equ:4_2})} -(n-1) \times \mbox{式(\ref{Equ:4_3})}
+\end{displaymath}
 于是
 \begin{displaymath}
 \begin{aligned}
@@ -555,7 +987,7 @@ B(n)=\frac{A(n)}{n+1}
 \begin{displaymath}
 B(n)=b(n-1)+\frac{2(n-1)}{n(n+1)} \qquad B(1)=0
 \end{displaymath}
-引用等式（1.11），我们过程留给读者验证
+引用等式\ref{Equa:HarmonicSeries}，我们过程留给读者验证
 \begin{displaymath}
 \begin{aligned}
 B(n)&=\sum_{i=1}^n\frac{2(i-1)}{i(i+1)}=2\sum_{i=1}^n\frac{1}{i}-4\sum_{i=1}^n\frac{1}{i(i+1)}\\
@@ -569,12 +1001,12 @@ A(n)\approx 1.386n\lg n -2.846n
 
 \subsubsection{空间使用}
 第一眼看去似乎快速排序是一种in-place排序。但是不是。当算法在子范围上工作时，所有
-其他范围的起至范围都要存放在frame stack中（译注：递归调用带来的），栈的规模
+其他范围的起至范围都要存放在frame stack中\footnote{译注：递归调用带来的}，栈的规模
 依赖于子范围的数量。当然就是依赖于n。在最坏情况下，Partition每次分隔一项；递归
 的深度是n。因此最坏情况下的空间使用数量是$\Theta(n)$。下面描述的一个算法的改进
 能显著的减少栈的尺寸。
 
-\subsection{基本快速排序算法的实现}
+\subsection{基本快速排序算法的改进}\label{Sec:ImprovementsOntheBasicQuicksortAlgorithm}
 \subsubsection{选择枢轴}
 我们已经看到如果Partition使用的pivot能分成两个基本一样大小的段时，快速排序
 就会很好。（它的位置是Partition返回的splitPoint。）选择E[first]作为pivot时可能
@@ -597,11 +1029,38 @@ A(n)\approx 1.386n\lg n -2.846n
 小的smallSize，当集合的大小小于或等于smallSize的时候采用简单非递归的排序，在
 改进过的算法中调用了smallSort。（此时插入排序是个不错的选择。）
 
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+quickSort(E, first, last)
+{
+    if( last -first)>smallsize)
+    {
+        pivotElement=E[first];
+        pivot=pivotElement.Key;
+        int splitPoint=partition(E, pivot, first, last);
+        E[splitPoint]= pivotElement;
+        quickSort(E, first, splitPoint-1);
+        quickSort(E, splitPoint+1, last);
+    }
+    else
+        smallSort(E, first, last);
+}
+\end{lstlisting}
+
+这个方案的一个变体是跳过调用smallSort。则当快速排序退出时，数组
+不是有序的，但是所有的元素都只需要移动小于smallSize的位置就能到
+达它正确（排序好的）的位置。（为什么？）因此作为后处理，进行一次
+插入排序将是非常有效的，而且不会像前面那个版本中的smallSort调用
+做很多相同的比较。
+
+smallSize该取多大呢？最好的选择依赖于算法具体的实现（也就是使用
+的计算机，以及程序的细节），因而我们可以在overhead和比较之间做
+一下取舍。10是一个合理的值。
 
 \subsubsection{堆栈空间优化}
 我们观察到Quicksort的递归调用深度可能很深，最坏情况下可能达到n（在Partition每次
 只分解一个元素的时候）。许多pushing和poping的都是不必要的。Partition之后，程序
-开始排序子范围E[first]….E[solitPoint-1]；之后它必须排序E[splitPoint+1]…E[last]。
+开始排序子范围$E[first], \cdots, E[solitPoint-1]$；之后它必须排序
+$E[splitPoint+1], \cdots, E[last]$。
 
 第二个递归调用是过程的最后一句话，所以可以用我们前面在插入排序中用于shiftVac的方式
 将第二个递归转换成迭代。第一个递归依然在那里，所以只是部分的消除了递归。
@@ -613,8 +1072,36 @@ A(n)\approx 1.386n\lg n -2.846n
 recursion optimization）”。想法是在每次partition之后，下一次递归将在小的那个
 子范围上，大的子范围将直接用while循环处理。
 
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+quickSortTRO(E, first, last)
+{
+    int first1, last1, first2, last2;
+
+    first2= first; last2= last;
+    while( last2- first2 >=1)
+    {
+        pivotElement = E[first2];
+        pivot= pivotElement.Key;
+        int splitPoint=partition(E, pivot, first2, last2);
+        E[splitPoint]= pivotElement;
+        if(splitPoint<= (first2+ last2)/2)
+        {
+            first1=first2; last1=splitPoint -1;
+            first2= splitPoint+1; last2 =last2;
+        }
+        else
+        {
+            first1= splitPoint +1; last1= last2;
+            first2= first2;  last2 =splitPoint-1;
+        }
+    }
+    return;
+}
+\end{lstlisting}
+
 \subsubsection{结合使用这些改进手段}
 前面我们独立的讨论几种修改方法，但是他们可以协调的组合在一个程序中。
+
 \subsubsection{Remarks}
 实际中，快速排序程序对大的n平均而言运行的很快，是广泛使用的一种排序方法。但是
 在最坏情况下，快速排序很糟糕。类似插入排序（参看\ref{Sec:InsertSort}小节），
@@ -628,46 +1115,75 @@ $\Theta(n\log n)$吗，或者我们可以建立最坏情况的底限就是$\Theta(n^2)$。让我们
 一个新的序列C。归并有序的子序列是归并排序的关键策略。归并有序子序列同样有许多的
 方法，在练习中有提及。衡量归并算法的度量是关键字比较的次数。
 
-令k和m是分别是A和B元素的数量。令n=k+m是"问题的规模"。假设A和B都不是空的，我们可以
+令k和m是分别是A和B元素的数量。令n=k+m是“问题的规模”。假设A和B都不是空的，我们可以
 立即决定C的第一个元素：就是A和B的第一个元素中小的那个。C剩下的部分呢？假设A的
 第一个元素是比B的小。则C剩下的部分肯定是A除第一个元素外所有的元素和B所有元素的
 归并。这只是我们开始那个问题的一个小一点的版本。如果C的第一个元素是来自B的，问题
-是对称的。两种情况下剩下问题的规模（构造C剩下的部分）都是n-1。Method99（3.2.2小节）。
+是对称的。两种情况下剩下问题的规模（构造C剩下的部分）都是n-1。
+Method99（\ref{Sec:HintsForRecursionMethod99}小节）。
 
 如果我们假定我们仅需要归并规模是100的问题，而且我们可以调用merge99来归并规模
 是99的问题，则问题就解决了。伪代码如下：
-\begin{figure}
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
-    merge(A,B,C)
-    {
-        if(A is null)
-            rest of C =rest of B;
+merge(A,B,C)
+    if(A is null)
+        rest of C =rest of B;
+    else
+        if(B is null)
+            rst of C =rest of A;
         else
-            if(B is null)
-                rst of C =rest of A;
+            if (first of A<= first of B)
+                first of C= first of A;
+                merge99(rest of A, b, rest of C);
             else
-                if (first of A<= first of B)
-                {
-                    first of C= first of A;
-                    merge99(rest of A, b, rest of C);
-                {
-                else
-                {
-                    first of C= first of B;
-                    merge99(A, rest of B,rest of C);
-                }
-        return;
-    }
+                first of C= first of B;
+                merge99(A, rest of B,rest of C);
+    return;
 \end{lstlisting}
-\end{figure}
-现在只需要讲merge99换成merge就是一个递归解决方案了。
 
-一旦有一个解决，我们就可以想办法讲它变成一个迭代解决方案。理想的情况是对于
+现在只需要将merge99换成merge就是一个递归解决方案了。
+
+一旦有一个解决方案，我们就可以想办法将它变成一个迭代解决方案。理想的情况是对于
 所有的连续数据结构可用，但是在不指明的情况下，我们的算法仅限于数组。我们在
 迭代每次开始的时候引入3个索引来跟踪“rest of A”,“reat of B”和“rest of C”。
 （这些索引在递归版本中是参数。）
 
+\begin{algorithm}\label{Algo:Merge}
+归并
 
+{\textbf{\emph{输入：}}}数组A有k个元素，B有m个元素，两个数组
+都是升序的。
+
+{\textbf{\emph{输出：}}}C，一个数组包含n=k+m个来自A和Ｂ的元素，
+同样以升序排列。C是传入的，算法填充它。
+\end{algorithm}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void merge(Element[] A, int k, Element[] B, int m, Element[] C)
+{
+    int n=k+m;
+    int indexA=0, indexB=0, indexC=0;
+    // `indexA是rest of A最开始的位置，B和C类似。`
+    while(indexA<k && indexB<M)
+    {
+        if(A[indexA].key<=B[indexB].key)
+        {
+            C[indexC]=A[indexA];
+            indexA++;
+            indexC++;
+        }
+        else
+        {
+            C[indexC]B[indexB];
+            indexB++;
+            indexC++;
+        }
+    }
+    if(indexA>=k)
+        `Copy B[indexB,…,m-1] to C[indexC,…,n-1].`
+    else
+        `Copy A[indexA,…,k-1] to C[indexC,…,n-1].`
+}
+\end{lstlisting}
 
 \subsection{最坏情况}
 只要A和B中的关键字有一次比较，至少有一个元素移动到C，而且不会在检查这个元素了。
@@ -677,49 +1193,600 @@ $\Theta(n\log n)$吗，或者我们可以建立最坏情况的底限就是$\Theta(n^2)$。让我们
 即A[k-1]和B[m-1]刚好是C的最后两个元素时。
 
 \subsection{归并的优化}
-下面我们将演示，当k=m=/2时在基于比较的算法的最坏情况下，算法4.4是最优的。就是
-说，对于任何基于比较的算法为了在k=m=n/2的时候要想所有的输入都正确，至少存在
-某些输入必须要做n-1次比较。（这并不是说，对于某些特定的输入有算法要比算法4.4
-要好。）考虑完k=m=n/2之后，我们在看看k和m的其他关系。
+下面我们将演示，当k=m=n/2时在基于比较的算法的最坏情况下，算法\ref{Algo:Merge}是
+最优的。就是说，对于任何基于比较的算法为了在k=m=n/2的时候要想所有的输入都
+正确，至少存在某些输入必须要做n-1次比较。（这并不是说，对于某些特定的输入
+有算法要比算法\ref{Algo:Merge}要好。）考虑完k=m=n/2之后，我们再看看k和m的
+其他关系。
 
-\begin{theorem}
+\begin{theorem}\label{Theorem:4_4}
 所有通过比较关键字归并两个含有k=m=n/2元素有序数组的算法，在最坏情况下至少要
 做n-1次比较。
 
-证明  假设我们给出任意归并算法。令ai和bi分别是A和B的第i个元素。我们发现这两个
-关键字被选出则，算法必须比较$a_i$到$b_i$（$0\leq i<m$），以及$a_i$到$b_{i+1}$
-（$0\leq i<m-1$）。
+{\textbf{\emph{证明}}}  假设我们给出任意归并算法。令$a_i$和$b_i$分别是A和B
+的第i个元素。我们可以选出一组keys，使得算法必须比较$a_i$到
+$b_i$（$0\leq i<m$），以及$a_i$到$b_{i+1}$（对于所有$0\leq i<m-1$）。
+特定的，按如下方式选出key，即任何时候当算法比较$a_i$和$b_i$，如果$i<j$，
+则结果是$a_i<b_j$，如果$i\geq j$，则结果是$b_j<a_i$。选择如下key
+\begin{equation}\label{Equ:4_4}
+b_0<a_0<b_1<a_1<\cdots b_i<a_i<b_{i+1}<\cdots b_{m-1}<a_{m-1}
+\end{equation}
+将满足条件。但是，对于某些i，算法永远不比较$a_i$和$b_i$，则等式\ref{Equ:4_4}
+的顺序选出keys，除了没有$a_i<b_j$，也将满足条件，但是算法不能得到正确的顺序。
+
+类似的，如果对于某些i，算法从不比较$a_i$和$b_{i+1}$，等式\ref{Equ:4_4}的排列，
+除了$b_{i+1}<a_i$，其他的关系都能由比较得到，但是算法还是不能决定正确的顺序。
+\footnote{译注：这里的证明过程实际上就是构造了一个输入序列满足等式\ref{Equ:4_4}，即
+最坏情况，然后证明，如果少于n-1次比较将不能得到正确的顺序。}
 \end{theorem}
 
-\subsection{空间使用}
-因为所有的元素都要拷贝到C，从算法4.4看出归并总数是n的条目需要2n个元素的空间。
-然而有些情况下，需要额外空间的数量可能减少。比如，序列是链表。则在合并完成之
-后A,B就不需要了，A和B的元素重新组成了C。
+我们能一般化这个结论吗？假设k和m是不相等的（就像我们在归并排序中遇到的）？
 
-假定输入的序列存储在数组中，且有$k\geq m$。如果A有足够的空间来放n=k+m个元素，则只
-需要A中的额外m个元素就可以了。
+\begin{corollary}\label{corollary:4_5}
+两个有序序列分别包含k和m个元素，k和m相差1，n=k+m，任意通过比较归并
+两个有序序列的算法，将至少做n-1次比较。
+
+{\textbf{\emph{证明}}} 证明过程和\ref{Theorem:4_4}类似，除了没有$a_{m-1}$
+\end{corollary}
+
+我们能更进一步的一般化我们的结论吗？如果我们能找到一种极端情况的行为，检查
+另一个极端通常是一个好主意。这里，第一个“极端”是k=m，所以另一个极端是k和m
+差的尽可能的大。让我们看另一种极端情况，k=1，m非常大，n=m+1。我们可以设想
+算法至少使用$\lceil\lg(m+1)\rceil$次比较(为什么？\footnote{译注：相当于做二分查找})
+于是显然n-1不是这种情况的底限。k=1的情况可以一般化为k远小于n的情况
+（练习4.24）。因此，定理\ref{Theorem:4_4}和推论\ref{corollary:4_5}的底限
+不能扩展到所有k和m的组合。等多可能性的情况在读完
+\ref{Sec:LowerBoundsForSortingByComparisonOfKeys}节后，参看练习4.33。
+
+\subsection{空间使用}\label{Sec:MergeSpaceUsage}
+因为所有的元素都要拷贝到C，从算法\ref{Algo:Merge}看出归并总数是n的条目
+需要2n个元素的空间。然而有些情况下，需要额外空间的数量可能减少。比如，
+序列是链表。则在合并完成之后A,B就不需要了，A和B的元素重新组成了C。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw[] (0,0) rectangle (6,1);
+        \draw[] (9,0) rectangle (12,1);
+        \draw[] (0,-0.5) node[right] {0};
+        \draw[] (6,-0.5) node[left] {n+m-1};
+        \draw[] (3,-1) node {Merged lists};
+        \draw[] (9,-0.5) node[right] {0};
+        \draw[] (12,-0.5) node[left] {m-1};
+        \draw[] (10.5,-1) node {B};
+        \draw[] (10.5,0.5) node {Empty};
+        \foreach \x in {0,...,5, 0.5,...,4.5}
+            \draw (\x, 1) -- (\x +1 , 0);
+        \draw (0, 0.5) -- (0.5 , 0);
+        \draw (5.5, 1) -- (6 , 0.5);
+        \foreach \x in {1,...,6, 1.5,...,5.5 }
+            \draw (\x, 1) -- (\x -1 , 0);
+        \draw (0.5, 1) -- (0 , 0.5);
+        \draw (5.5, 1) -- (6 , 0.5);
+        \draw[] (0,1.5) node[right] {完成};
+
+        \draw[] (0,4) rectangle (6,5);
+        \draw[] (9,4) rectangle (12,5);
+        \draw[] (2,4) rectangle (3,5);
+        \draw[] (9,4) rectangle (10,5);
+        \draw[] (0,3.5) node[right] {0};
+        \draw[] (6,3.5) node[left] {n+m-1};
+        \draw[] (4,3.5) node {n-1};
+        \draw[] (0,3) node[right] {A中剩下的keys};
+        \draw[] (6,3) node[left] {归并过的keys};
+        \draw[] (9,3.5) node[right] {0};
+        \draw[] (12,3.5) node[left] {m-1};
+        \draw[] (10.5,3) node {B};
+        \draw[] (0,5.5) node[right] {归并中};
+        \foreach \x in {9}
+            \draw (\x, 5) -- (\x +1 , 4);
+        \draw (9, 4.5) -- (9.5 , 4);
+        \draw (9.5, 5) -- (10,4.5);
+        \foreach \x in {1, 2, 1.5 }
+            \draw (\x, 5) -- (\x -1 , 4);
+        \draw (0.5, 5) -- (0 , 4.5);
+        \draw (2, 4.5) -- (1.5,4);
+
+        \foreach \x in {3,...,5, 3.5,...,4.5}
+            \draw (\x, 5) -- (\x +1 , 4);
+        \draw (3, 4.5) -- (3.5 , 4);
+        \draw (5.5, 5) -- (6 , 4.5);
+        \foreach \x in {4,...,6, 4.5,...,5.5 }
+            \draw (\x, 5) -- (\x -1 , 4);
+        \draw (3.5, 5) -- (3 , 4.5);
+        \draw (6, 4.5) -- (5.5 , 4);
+
+        \draw[] (0,7) rectangle (6,8);
+        \draw[] (9,7) rectangle (12,8);
+        \draw[] (4,7) rectangle (6,8);
+        \draw[] (0,6.5) node[right] {0};
+        \draw[] (6,6.5) node[left] {n+m-1};
+        \draw[] (4,6.5) node {n-1};
+        \draw[] (3,6) node {A};
+        \draw[] (9,6.5) node[right] {0};
+        \draw[] (12,6.5) node[left] {m-1};
+        \draw[] (10.5,6) node {B};
+        \draw[] (0,8.5) node[right] {归并之前};
+        \draw[] (5,7.5) node {Empty};
+        \foreach \x in {1,...,4, 1.5,...,3.5 }
+            \draw (\x, 8) -- (\x -1 , 7);
+        \draw (0.5, 8) -- (0 , 7.5);
+        \draw (4, 7.5) -- (3.5,7);
+        \foreach \x in {9, 9.5, 10, 10.5, 11}
+            \draw (\x, 8) -- (\x +1 , 7);
+        \draw (9, 7.5) -- (9.5 , 7);
+        \draw (11.5, 8) -- (12,7.5);
+    \end{tikzpicture}
+    \caption{归并使用Overlapping数组}
+    \label{Fig:Overlapping arrays for Merge}
+\end{figure*}
+
+假定输入的序列存储在数组中，且有$k\geq m$。如果A有足够的空间来放$n=k+m$
+个元素，则只需要A中的额外m个元素就可以了。简单的将C以A来标识，然后从A和B的
+右端开始做归并（大关键字的一端），如图\ref{Fig:Overlapping arrays for Merge}
+所示。最先移动到“C”$m$个条目将填充A额外的空间。从那时开始，A中的空位
+被使用了。在所有条目被归并完之前，在以归并完成的位置和A剩下的条目之间
+总会有一个gap（也就是说，有一些空位）。显然如果使用这种节省空间存储方式，
+归并算法的最后一行（\textbf{else} Copy A[indexA,…,k-1] to C[indexC,…,n-1]）
+可以被消除，因为：如果B比A先空，A中剩下的条目就在他们正确的位置，不需要移动。
+
+不管C有没有overlap到输入数组，当k=m=n/2时，归并算法使用的额外空间在$\Theta(n)$
 
 \section{归并排序}\label{Sec:Mergesort}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1]
+        \draw (0,0) rectangle (12,1);
+        \draw[] (6,0.5) node {Sorted};
+
+        \draw (0,3) rectangle (12, 4);
+        \draw[] (3,3.5) node {Sorted};
+        \draw[] (9,3.5) node {Sorted};
+        \draw[] (6,4)--(6,3);
+        \node  at (6,2)[]  {Merge};
+        \draw[->] (3,2.8)--(4,1.2);
+        \draw[->] (9,2.8)--(8,1.2);
+
+        \draw (0,6) rectangle (12, 7);
+        \node  at (0,7.2)[]  {first};
+        \node  at (12,7.2)[]  {last};
+        \draw[] (6,6)--(6,7);
+        \node  at (6,8)[]  {$\lfloor(first+last)/2\rfloor$};
+        \node  at (3,5)[]  {递归调用归并排序};
+        \node  at (9,5)[]  {递归调用归并排序};
+        \draw[->] (1.5,5.8)--(1.5,4.2);
+        \draw[->] (10.5,5.8)--(10.5,4.2);
+    \end{tikzpicture}
+    \caption{归并排序策略}
+    \label{Fig:MergesortStrategy}
+\end{figure*}
+
+Quicksort的问题是Partition不能总是将数组分成两个相等的部分。归并排序将
+数组分成两相等的部分，再分别排序（当然是递归的）。之后它归并两个已经
+有序的部分（参看图\ref{Fig:MergesortStrategy}）。因此，使用
+\ref{Sec:DividAndConquer}节的分而治之技术，“分”仅仅是计算
+子范围的中间索引没有任何关键字比较；“和”是归并。
+
+我们假定归并改成合并数组两个相邻的子范围，将合并之后的数组放回原来的
+空间。它的参数现在是E、要合并的子范围的索引是first、mid、last；排序的
+子序列是$E[first],\cdots ,E[mid]$和$E[mid+1],\cdots ,E[last]$，最后
+完成排序的序列是$E[first],\cdots ,E[last]$。这样修改之后，merge子例程
+还是需要分配额外的空间。其中一些主题在\ref{Sec:MergeSpaceUsage}小节
+中讨论过了。
+
+\begin{algorithm}
+归并排序
+
+{\textbf{\emph{输入：}}}数组E索引first，last，E[i]（$first\leq i \leq last$ ）
+
+{\textbf{\emph{输出：}}}E[first]…E[last] 是已经有序的元素。
+\end{algorithm}
+
+我们发现学生经常将Merge和Mergesort搞混。记住归并排序Mergesort是一种
+排序算法。它用于将\emph{一个}杂乱的数组排序。归并Merge用于将\emph{两个}
+已经有序的数组合成一个有序的数组。
+
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void mergeSort(Element[] E, int first, int last)
+{
+    if(first<last)
+    {
+        int mid=(first+last)/2;
+        mergeSort(E,first,mid);
+        mergeSort(E,mid+1, last);
+        merge(E,first,mid,last);
+    }
+}
+\end{lstlisting}
+
+\subsubsection{归并分析}
+首先找到最坏情况下Mergesort关键字比较的渐进阶。我们定义问题的规模
+$n=last-first+1$，要排序的元素个数。递归排序最坏情况的递归等式是
+\begin{equation}\label{Equ:4_5}
+\begin{aligned}
+W(n)&=W(\lfloor n/2\rfloor)+W(\lceil n/2\rceil)+n-1\\
+W(1)&=0
+\end{aligned}
+\end{equation}
+Master定理马上告诉我们$W(n)\in \Theta(n\log n)$。所以终于，我们有了一个
+最坏情况下在$\Theta(n\log n)$的排序算法。我们在这里就不开辟新的一小节
+来分析平均复杂性，我们将这个问题推迟到我们发展出更通用的
+定理\ref{Theorem::LowerBoundOfSort}之后再讨论，定理\ref{Theorem::LowerBoundOfSort}
+关注平均行为，就在后面的\ref{Sec:LowerBoundsForSortingByComparisonOfKeys}
+节讨论。
+
+归并排序一个可能的缺点是它需要辅助空间。因为归并需要的额外空间在$\Theta(n)$，
+归并排序不是一个in-place排序。
+
+\subsubsection{*更精确的归并排序分析}
+根据下一节（\ref{Sec:LowerBoundsForSortingByComparisonOfKeys}）求出的底限，
+有时候需要得到最坏情况下比较次数的的精确值。我们可以看出Mergesort非常
+接近低限。读者可以跳过本小节的细节直接去看主要结论，定理\ref{Theorem:4_6}。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm},
+                            do/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+    \node (P6)  at (0,0) [place] {$T(n)$};
+    \node (P5)  at (1.2,0) [place] {$n-1$};
+    \node (P4)  at (-2.4,-2) [place] {$T(\frac{n}{2})$};
+    \node (P3)  at (-1.2,-2) [place] {$\frac{n}{2}-1$};
+    \node (P2)  at (2.4,-2) [place] {$T(\frac{n}{2})$};
+    \node (P1)  at (3.6,-2) [place] {$\frac{n}{2}-1$};
+
+    \node (P41)  at (-4.6,-4) [place] {$T(\frac{n}{4})$};
+    \node (P31)  at (-3.4,-4) [place] {$\frac{n}{4}-1$};
+    \node (P21)  at (-1.6,-4) [place] {$T(\frac{n}{4})$};
+    \node (P11)  at (-0.4,-4) [place] {$\frac{n}{4}-1$};
+    \node (P42)  at (1.6,-4) [place] {$T(\frac{n}{4})$};
+    \node (P32)  at (2.8,-4) [place] {$\frac{n}{4}-1$};
+    \node (P22)  at (4.6,-4) [place] {$T(\frac{n}{4})$};
+    \node (P12)  at (5.8,-4) [place] {$\frac{n}{4}-1$};
+
+    \node (P83)  at (-4.6,-6) [do] {$T(\frac{n}{8})$};
+    \node (P73)  at (-3.4,-6) [do] {$T(\frac{n}{8})$};
+    \node (P63)  at (-1.6,-6) [do] {$T(\frac{n}{8})$};
+    \node (P53)  at (-0.4,-6) [do] {$T(\frac{n}{8})$};
+    \node (P43)  at (1.6,-6) [do] {$T(\frac{n}{8})$};
+    \node (P33)  at (2.8,-6) [do] {$T(\frac{n}{8})$};
+    \node (P23)  at (4.6,-6) [do] {$T(\frac{n}{8})$};
+    \node (P13)  at (5.8,-6) [do] {$T(\frac{n}{8})$};
+
+    \draw (P6.south)--(P4.north);
+    \draw (P5.south)--(P1.north);
+    \draw (P4.south)--(P41.north);
+    \draw (P3.south)--(P21.north);
+    \draw (P2.south)--(P42.north);
+    \draw (P1.south)--(P22.north);
+
+    \draw (P41.south)--(P83.north);
+    \draw (P31.south)--(P73.north);
+    \draw (P21.south)--(P63.north);
+    \draw (P11.south)--(P53.north);
+    \draw (P42.south)--(P43.north);
+    \draw (P32.south)--(P33.north);
+    \draw (P22.south)--(P23.north);
+    \draw (P12.south)--(P13.north);
+
+    \node (Px1)  at (7.5,0)  {n-1};
+    \node (Px2)  at (7.5,-2)  {n-2};
+    \node (Px3)  at (7.5,-3.5)  {n-4};
+    \node (Px5)  at (7.5,-6)  {n-8};
+    \node (Px4)  at (7.5,-6.5) {\underline{$\cdots$}};
+    \node (Px6)  at (7.5,-6.8)  {??};
+    \end{tikzpicture}
+    \caption{归并排序的递归树。}
+    \label{Fig:RecursionTreeForMergesort}
+\end{figure*}
+
+在等式\ref{Equ:4_5}的递归树（参看图\ref{Fig:RecursionTreeForMergesort}）
+中，我们观察到深度为$d$的节点s的非递归消耗的和是$n-2^d$（对于所有同
+深度节点，不包含基本情况。）。我们可以得出所有的基本情况在（$W(1)=0$）在
+深度$\lceil \lg(n+1)\rceil -1$或$\lceil\lg(n+1) \rceil$。恰好有n个基本情
+况节点。令最大深度为D，（也就是$D=\lceil\lg(n+1) \rceil$），令B是深度为
+$D-1$时基本情况的的数目。则在深度$D$有$n-B$个基本情况（而且在深度D没有
+其他的节点）。在深度$D-1$的每一个非基本情况节点都有两个孩子，于是在深度
+$D-1$有$(n-B)/2$个非基本情况节点。使用这些信息，我们计算最后几层深度的
+非递归消耗如下：
+\begin{enumerate}
+\item 深度$D-2$有$2^{D-2}$节点，其中没有一个基本情况节点。这一层的非递归
+    消耗是$n-2^{D-2}$。
+\item 深度$D-1$有$(n-B)/2$个非基本情况。每一个非基本情况节点的问题规模是2
+（其消耗是1），于是这一层的非递归消耗是$(n-B)/2$。
+\item 深度$D$有$n-B$个基本情况，消耗是0。
+\end{enumerate}
+你可以验证$B=2^D-n$（练习4.29）。因此
+
+\begin{equation}\label{Equ:4_6}
+\begin{aligned}
+W(n)&=\sum_{d=0}^{D-2}(n-2^d)+(n-B)/2\\
+&=n(D-1)-2^{D-1}+1+(n-B)/2
+&=nD-2^D+1
+\end{aligned}
+\end{equation}
+因为D是通过取整运算到一个整数的，且在指数项中出现，很难给出等式\ref{Equ:4_6}
+的行为在2的指数函数中的那个范围。我们证明下面的定理，它从指数中移除取整函数。
+
+\begin{theorem}\label{Theorem:4_6}
+最坏情况下归并排序的比较次数在$\lceil n\lg(n)-n+1 \rceil$和
+$\lceil n\lg(n)-0.914n \rceil$之间
+
+{\textbf{\emph{证明}}} 如果我们定义了$\alpha = 2^D/n$，则$1\leq \alpha <2$，
+且在等式\ref{Equ:4_6}中，将D替换成$(\lg(n))+lg(\alpha)$。这将得到
+$W(n)=n\lg(n)- (\alpha - \lg\alpha)n +1$。$(\alpha -\lg \alpha)$的最小值约
+是0.914（参见练习4.30），最大值在1之内。
+\end{theorem}
+
+归并排序在最坏情况下约比快速排序在平均情况下少30\%的比较次数。但是，平均情况下
+归并排序比快速排序移动元素的次数要多，所以有些时候它并不比快速排序要快（参看
+练习4.21和练习4.27）。
+
 \section{基于比较的排序的底限}\label{Sec:LowerBoundsForSortingByComparisonOfKeys}
 插入排序和快速排序做的关键字比较次数在最坏情况下在$\Theta(n^2)$。我们能用
 归并排序加以改进，使得最坏情况在$\Theta(n\log n)$。我们能做的更好吗？
 
-在本节中我们
-
+在本节中我们得到任何通过比较关键字来排序算法在最坏情况下和平均情况下必须做的比较
+次数的底限。这个结果告诉我们我们可以停止寻找更好的算法了。为了得到底限，我们假设
+待排序数组中的关键字是互不相同的。
 
 \subsection{排序算法的判定树}\label{Sec:DecisionTreesForSortingAlgorithms}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=8mm}
+        ,ex/.style={ellipse,draw, fill=white,inner sep=0pt,minimum size=8mm}]
+    \node (x3)  at (3.5,0) [ex] {$x_1,x_3,x_2$};
+    \node (x4)  at (6.5,0) [ex] {$x_3,x_1,x_2$};
+    \node (x7)  at (11.5,0) [ex] {$x_2,x_3,x_1$};
+    \node (x8)  at (14.5,0) [ex] {$x_3,x_2,x_1$};
+    \node (x21)  at (1,1.5) [ex] {$x_1,x_2,x_3$};
+    \node (x22)  at (5,1.5) [place] {1:3};
+    \node (x23)  at (9,1.5) [ex] {$x_2,x_1,x_3$};
+    \node (x24)  at (13,1.5) [place] {2:3};
+    \node (x31)  at (3,3) [place] {2:3};
+    \node (x32)  at (11,3) [place] {1:3};
+    \node (x41)  at (7,4.5) [place] {1:2};
+    \draw [thick] (x41) -- (x31);
+    \draw [thick] (x41) -- (x32);
+    \draw [thick] (x31) -- (x21);
+    \draw [thick] (x31) -- (x22);
+    \draw [thick] (x32) -- (x23);
+    \draw [thick] (x32) -- (x24);
+    \draw [thick] (x22) -- (x3);
+    \draw [thick] (x22) -- (x4);
+    \draw [thick] (x24) -- (x7);
+    \draw [thick] (x24) -- (x8);
+    \end{tikzpicture}
+    \caption{排序算法的决策树，n=3}
+    \label{Fig:DecsisionTreeForSorting}
+\end{figure*}
+
+令n是固定值，假设关键字是$x_1,x_2,\cdots, x_n$。我们将每一个算法和一个
+正整数$n$想关联，一颗（二叉树）决策树描述的比较关键字的序列就是算法对
+任意输入规模n的行为。令Sort是任意通过比较关键字排序的算法。每一次比较
+有两个分支（因为关键字是互不相同的），我们假设Sort有一个输出指令以输出
+重新排列之后的关键字s。Sort的决策树有如下递归定义，
+
 \subsection{最坏情况的底限}\label{Sec:LowerBoundOfWorstCase}
+\begin{lemma}\label{Lemma:4_7}
+令$L$是二叉树中叶子的数量，令$h$是二叉树的高。则$L\leq 2^h$。
+
+{\textbf{\emph{证明： }}}简单直接的归纳h即可。
+\end{lemma}
+
+\begin{lemma}\label{Lemma:4_8}
+令$L$和$h$如\ref{Lemma:4_7}的定义。则$h\geq \lceil\lg L\rceil$。
+
+{\textbf{\emph{证明： }}}将\ref{Lemma:4_7}中不等式的两边同时取对数得到
+$\lg L \leq h$。既然$h$是整数，则$h\geq \lceil \lg L\rceil$。
+\end{lemma}
+
+\begin{lemma}\label{Lemma:4_9}
+对于给定的$n$，通过比较关键字来排序的任意算法的决策树的高至少是
+$\lceil\lg n!\rceil$。
+
+{\textbf{\emph{证明： }}}将\ref{Lemma:4_8}中，取$L= n!$。
+\end{lemma}
+
+所以，最坏情况下比较的次数至少是$\lceil\lg n!\rceil$。
+
 \subsection{平均行为的底限}\label{Sec:LowerBoundOfAverageBehavior}
+
+\begin{theorem}\label{Theorem::LowerBoundOfSort}
+通过比较排序n个条目的算法使用的平均比较次数至少是$\lg(n!)$，
+约是$n\lg n -1.443n$。
+\end{theorem}
+
 \section{堆排序}\label{Sec:HeapSort}
+快速排序重新排列原来数组的元素，但是不能保证对一个个问题进行完全的分解，
+因此它有一个最坏的情况。归并排序可以保证问题的分解，对最坏的情况下也接近
+最优，但是它不能在原来数组重新排列；它需要相当大的辅助的空间。堆排序重新
+排列了数组的元素，它的最坏情况$\Theta(n\log n)$，这是最优的增长率，所以综合了
+快速排序和归并排序的优点。它的缺点是有比其他两个大的常数因子。但是新版本
+的Heapsort减少了常数因子，使得堆排序可以和快速和归并一起竞争了。我们称
+这个新版本叫Accelerated Heapsort。因此Accelerated Heapsort也是一种排序
+的选择方案。
+
 \subsection{堆}
+堆排序用到一种叫堆的数据结构，它是一颗特殊的二叉树。堆的定义包括数据结构
+和节点上数据的条件，叫做partial order tree property。非正式的，堆结构是
+一个完全二叉树，它的叶子节点的右面部分可能不全。（参见图4.17）堆提供了
+对ADT优先级队列的的有效实现（2.5.1小节）。在堆中，最高优先级的的数据放
+在根节点。根据这种优先排序的观点，根节点可以是最小值（小顶堆）或是
+最大值（大顶堆）。对于一个升序的堆排序排序的堆，我们需要建立一个大顶堆，
+我们将从这方面来描述堆，其他情况我们可能需要建立一个小顶堆。
+
+我们将使用两个术语，S是一个关键字是线型的元素的集合，T是高度为h的二叉树，它的节点属于S。
+
+
 \subsection{堆排序的策略}
+如果要排序的元素在一个堆中，则我们通过重复下面的过程构造一个逆序列：
+把堆的根元素（剩下的最大的元素）移出，移走了最大元素之后重新排列元素
+使得剩下的元素仍然是一个堆。这个操作就是优先级队列ADT的deleteMax操作。
+（我们可以用小顶堆来得到一个升序序列，之所以用大顶堆是因为我们在4.8.5
+要学习一种更有效率的实现方法。）
+
+既然第一步是要建立一个堆，之后不断调用deleteMax（这个函数调用某个重新
+构造一个逆序列堆排列元素），这看起来不象一个得到排序算法的有效的策略。
+但是把它发展成一个排序算法很容易。因此我们在这里大概的给出策略，等会
+给出细节。和往常一样，我们假设n个元素存放在数组E中，但是这次我们假设
+索引从1,…,n，因为这样我们看堆的实现方式时比较清楚。暂时我们假设
+堆（叫H）在别处。
+
+
 \subsection{修正堆}\label{Sec:FixHeap}
+\begin{figure*}[!t]
+    \centering
+    \subfloat[堆]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {50};
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] {30};
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] {18};
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+        \node (x03)  at (2.5,0) [place] {6};
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw [thick] (x12) -- (x03);
+        \end{tikzpicture}
+        \label{Fig:ReestablishingHeap_A}
+    }
+    \hfil
+    \subfloat[根的元素已经被移除；底层最右边叶子被移除了。$K=6$需要再次插入堆。]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] { };
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] {30};
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] {18};
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw (5,3) node {vacant};
+        \end{tikzpicture}
+        \label{Fig:ReestablishingHeap_B}
+    }
+    \hfil
+    \subfloat[vacant较大的孩子，30，比$K$大，所以30上移，vacant下移。]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {30};
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] { };
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] {18};
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw (5,2) node {vacant};
+        \end{tikzpicture}
+        \label{Fig:ReestablishingHeap_C}
+    }
+    \hfil
+    \subfloat[vacant较大的孩子，18，比$K$大，所以18上移，vacant下移。]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {30};
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] {18};
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] { };
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw (5,0.5) node {vacant};
+        \end{tikzpicture}
+        \label{Fig:ReestablishingHeap_D}
+    }
+    \hfil
+    \subfloat[最后，既然vacant已经是叶子了，$K$插入。]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {30};
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] {18};
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] {6};
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \end{tikzpicture}
+        \label{Fig:ReestablishingHeap_E}
+    }
+    \caption{删除根的元素，并重建partial order tree属性}
+    \label{Fig:ReestablishingHeap}
+\end{figure*}
 \subsection{构造堆}
 \subsubsection{正确性}
 \subsubsection{最坏情况分析}
 \subsection{堆的实现和堆排序}
+二叉树通常用链式结构实现，每个节点包含指针（或是其他种类的引用）指向它的子树。设置和使用每个结构需要额外的时间和额外的空间存放指针。但是，我们可以完全不用指针来存储和使用堆。在堆中，只有d-1层是满的情况下d层才可能有节点，所以一个堆可以可以按层存放在数组中，每一层从左自右一次存放节点。图4.20显示了如何存放图4.17中的两个堆。用这个方案，我们必须能快速的找到一个节点的子节点，以及快速的决定一个节点是不是叶子。将根存放在索引1，而不是0，是很重要的，这关系到我们将要讲到的公式。
+
 \subsubsection{堆排序分析}
 \subsection{加速堆排序}
+回忆一下，fixHeap处理根是空位，但是根的两个子树都满足partial order
+tree property。一个新的节点将插入，但是它可能太小不能放在根的位置。
+这个元素下降到左或右子树，直到它合适的位置。
+
+假设一个关键字开始的时候位置太低，就是说，对于它当前的位置它大了。
+bubbleUpHeap将它向根"升起"。事实上，"升起"会更简单，因为，元素只需要
+与它的父节点比较--不需要决定左孩子大还是右孩子大。bubbleUpHeap过程是
+对fixHeap（算法4.9）的自然的补充。在写出bubbleUpHeap的细节之后，我们
+将看到如何使用扩展因子来将Heapsort加速大约一倍。
+
+我们继续假设是大顶堆，因为这是Heapsort使用的类型。准确的说，bubbleUpHeap
+将给出元素K和一个空位位置，这样将元素放到空位的位置可能太低；
+K可能大于它的父节点。
+
+过程让空位到根的路径上的小的元素下降，空位上升，知道为新元素找到
+正确的位置。（对于索引i，父节点是 。）操作类似于插入排序中将一个新元素
+插入到前面已经有序序列中的过程。
+
+
 \subsubsection{分析}
 本质上，
 

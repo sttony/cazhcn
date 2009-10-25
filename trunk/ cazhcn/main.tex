@@ -8,8 +8,9 @@
 \usepackage{listings} %源代码支持
 \usepackage{xcolor} %使用颜色宏包
 \usepackage{pgf,tikz} %画图支持
-\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes}
 \usepackage{threeparttable}%表格内脚注支持
+\usepackage{multirow} %增强表格
 
 %------ 书签代码-----------
 %\usepackage[CJKbookmarks=true,dvipdfm,
@@ -20,11 +21,10 @@
 %          bookmarksopen=true,
 %          %colorlinks=true, %注释掉此项则交叉引用为彩色边框(将colorlinks和pdfborder同时注释掉)
 %          %pdfborder=001,   %注释掉此项则交叉引用为彩色边框
-%          citecolor=blue%
+%          citecolor=blue
 %          ]{hyperref}
 %\AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
 %--------分割线----------
-
 
 \newtheorem{example}{例}[chapter]
 \newtheorem{definition}{定义}[chapter]

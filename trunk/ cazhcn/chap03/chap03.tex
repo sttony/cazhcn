@@ -674,7 +674,7 @@ $n \geq 0$，$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ 。
 （参见\ref{Sec:LowerBoundOfAverageBehavior}小节）。
 External路径长度在一些其他的问题中自然的被提出。首先我们需要一些定义。
 
-\begin{definition}
+\begin{definition}\label{Def:ExternalNodeAnd2_tree}
 External节点和2-tree
 
 二叉树基本类型中除了空树外的基本情况，是只有一个节点的树， 这个节点的类型
@@ -1576,7 +1576,7 @@ T(n)=T(\frac{n}{2})+T(\frac{n}{2})+n
 写等式（在递归假设中有一个类似的辅助变量），这有助于避免替换错误。我们称这个
 递归等式为我们的\emph{工作拷贝}。
 
-\begin{equation}
+\begin{equation}\label{Equ:3_6}
 T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 \end{equation}
 只要节点的size域知道了一个节点就可以创建了；之后我们就可以用size域计算非
@@ -1609,7 +1609,7 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 
 既然同样深度的所有节点看上去一样，我们可以在分支中产生他们。一般情况下，每一个
 不完全节点必须根据自己的规模域产生。这里所有规模域都是n/2，所以我们用n/2代入
-等式（3.6）中的k，而且我们看到右边应该是T(n/4)+T(n/4)+n/2。所以现在我们有
+等式\ref{Equ:3_6}中的k，而且我们看到右边应该是T(n/4)+T(n/4)+n/2。所以现在我们有
 
 \begin{center}
 

@@ -1565,9 +1565,35 @@ $W(n)=n\lg(n)- (\alpha - \lg\alpha)n +1$。$(\alpha -\lg \alpha)$的最小值约
 正整数$n$想关联，一颗（二叉树）决策树描述的比较关键字的序列就是算法对
 任意输入规模n的行为。令Sort是任意通过比较关键字排序的算法。每一次比较
 有两个分支（因为关键字是互不相同的），我们假设Sort有一个输出指令以输出
-重新排列之后的关键字s。Sort的决策树有如下递归定义，
+重新排列之后的关键字s。Sort的决策树由一棵树归纳定义，树由每一个比较和
+每一个输出指令的构成。每一个和树关联的输出指令是一个节点，节点表示一个
+关键字s的重排。每一个和树关联的比较（$x_i$和$x_j$）是一颗树，其根是标
+记了$(i:j)$的节点，其左子树中所有的比较和输出都是当$x_i<x_j$时的情况，
+其右子树中所有的比较和输出都是当$x_i>x_j$的情况。Sort的决策树是第一次
+比较指令执行完之后的树。图\ref{Fig:DecsisionTreeForSorting}展示了一个
+$n=3$的决策树的例子。
+
+特定输入Sort的行为对应着从决策树的根沿着一条path到叶子。决策树必须
+有至少$n!$个叶子，因为对于$n$个关键字有$n!$种排列。既然每一个输入的
+的唯一路径仅依赖于输入中关键字的顺序（order），而不依赖于他们具体的值，
+实际执行Sort中，$n!$个叶子中的每一个都可以从根到达。我们将假设树中从
+没有被走过的路径将被移除。我们还假设仅有一个孩子的比较节点将被移除并
+被取代成孩子，这种“修剪”将一直持续到所有的internal节点的度都成2。
+修剪过的树表示的算法至少和原来的一样有效率，所以我们用恰好有$n!$个叶子
+的决策树得出的底限，和用所有的internal节点度都是2的决策树得出的底限将
+是对所有以比较关键字排序的算法都有效。到现在为止，我们假设Sort以这样一
+颗树来描述。
+
+对于特定输入来说Sort做比较的次数就是这套输入所有的路径上internal节点的
+数量。因此最坏情况下比较的次数就是最长的路径上internal节点的数量，也
+就是树的高度。比较的平均次数是所有从根到叶子路径的平均长度。（例如，对于
+$n=3$，图\ref{Fig:DecsisionTreeForSorting}中描述的算法在最坏情况下做
+3次比较，平均做$2\frac{2}{3}$次比较。）
 
 \subsection{最坏情况的底限}\label{Sec:LowerBoundOfWorstCase}
+为了得到通过比较排序的最坏情况的底限，我们先得到确定叶子数量后高度
+的底限，因为我们知道的关于决策树唯一的数量信息是叶子的数量。
+
 \begin{lemma}\label{Lemma:4_7}
 令$L$是二叉树中叶子的数量，令$h$是二叉树的高。则$L\leq 2^h$。
 
@@ -1588,14 +1614,133 @@ $\lceil\lg n!\rceil$。
 {\textbf{\emph{证明： }}}将\ref{Lemma:4_8}中，取$L= n!$。
 \end{lemma}
 
-所以，最坏情况下比较的次数至少是$\lceil\lg n!\rceil$。
+所以，最坏情况下比较的次数至少是$\lceil\lg n!\rceil$。迄今为止我们最好
+的sort是归并排序，但是$\lceil\lg n!\rceil$和$n\lg n$和有多接近？为了寻找
+答案，我们需要将$\lg n!$变成一种更方便的形式，并找打它的底限。有好几种
+变化方法。可能最简单的，但是不是非常精确的如下
+\begin{displaymath}
+n! \geq n(n-1)\cdots (\lceil n/2 \rceil) \geq \left( \frac{n}{2} \right)^{\frac{n}{2}}
+\end{displaymath}
+于是
+\begin{displaymath}
+\lg n! \geq \frac{n}{2}\lg\frac{n}{2}
+\end{displaymath}
+这是在$\Theta(n\log n)$。因此我们已经看到归并排序有最优的渐进阶。为了
+获得接近的底限，我们使用事实
+\begin{displaymath}
+\lg n! = \sum_{j=1}^n \lg (j)
+\end{displaymath}
+使用等式\ref{Equa:1_18}我们得到
+\begin{displaymath}
+\lg n! \geq n\lg n - (\lg e)n
+\end{displaymath}
+这里$e$表示自然对数，$\lg(e)$约是1.443。因此决策树的高度至少是
+$\lceil n\lg n -1.443n \rceil$。
+
+\begin{theorem}\label{Theorem:4_10}
+任何用比较来排序关键字的算法，在最坏情况下排序n个元素，至少要做
+$\lceil\lg n!\rceil$，约$\lceil n\lg n -1.443n \rceil$次比较。
+\end{theorem}
+
+So，归并排序是非常接近最优的。在归并排序的精确行为和底限之间依然
+有些偏差。考虑$n=5$的情况。插入排序在最坏情况下做10次比较，归并
+排序是8，但是底限是$\lceil\lg n! \rceil=\lceil \lg 120 \rceil=7$。
+是因为我们求得底限不够精确，还是我们可以让归并排序做的更好呢？我们
+鼓励你尝试去找到一种只用7次比较就能排序5个元素的方法（练习4.32）。
+
 
 \subsection{平均行为的底限}\label{Sec:LowerBoundOfAverageBehavior}
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat[给出$L$的2-tree]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+            \node (x31)  at (1,5) [place] { };
+            \draw [decorate,decoration=snake] (x31) -- (-1,2);
+            \draw [decorate,decoration=snake] (x31) -- (3,2);
+            \draw [] (-1,2) -- (-1.5,1.5);
+            \draw [] (3,2) -- (3.5,1.5);
+            \node (x21)  at (2.5,1) [place] {X};
+            \draw [] (3,2) -- (x21);
+            \draw [decorate,decoration=snake] (-1,2) -- (1,-1);
+            \node (y)  at (0,-2) [place] {Y};
+            \draw [] (1,-1) -- (y);
+            \node (y1)  at (-0.7,-2.7) [place] { };
+            \node (y2)  at (0.7,-2.7) [place] { };
+            \draw [] (y) -- (y1);
+            \draw [] (y) -- (y2);
+            \node (w1)  at (3.5,1) [right] {Level $k$};
+            \node (w2)  at (3.5,-2) [right] {Level $h-1$};
+            \node (w2)  at (3.5,-2.7) [right] {Level $h$};
+        \end{tikzpicture}
+        \label{Fig:ReducingExternalPathLength_A}
+    }
+    \hfil
+    \subfloat[修改2-trees的L个叶子，external path 长度降到$h-k-1$]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+            \node (x31)  at (1,5) [place] { };
+            \draw [decorate,decoration=snake] (x31) -- (-1,2);
+            \draw [decorate,decoration=snake] (x31) -- (3,2);
+            \draw [] (-1,2) -- (-1.5,1.5);
+            \draw [] (3,2) -- (3.5,1.5);
+            \node (x21)  at (2.5,1) [place] {X};
+            \draw [] (3,2) -- (x21);
+            \draw [decorate,decoration=snake] (-1,2) -- (1,-1);
+            \node (y)  at (0,-2) [place] {Y};
+            \draw [] (1,-1) -- (y);
+            \node (y1)  at (1.8,0.3) [place] { };
+            \node (y2)  at (3.2,0.3) [place] { };
+            \draw [] (x21) -- (y1);
+            \draw [] (x21) -- (y2);
+            \node (w1)  at (3.5,1) [right] {Level $k$};
+            \node (w2)  at (3.5,-2) [right] {Level $h-1$};
+            \node (w2)  at (3.5,0.3) [right] {Level $k+1$};
+        \end{tikzpicture}
+        \label{Fig:ReducingExternalPathLength_B}
+    }
+    \caption{约简external path长度}
+    \label{Fig:ReducingExternalPathLength}
+\end{figure*}
+
+我们需要一个决策树中所有从根到叶子路径的平均长度的底限。回顾定义
+\ref{Def:ExternalNodeAnd2_tree}，如果二叉树每一个节点的度都是0
+或者2，则这课二叉树称为\emph{2-tree}。这种树的叶子称为
+\emph{external nodes}，我们的决策树就是一颗2-tree，他们所有的叶子
+都是输出指令，而所有的internal 节点都是比较指令。
+
+回顾定义\ref{Def:ExternalNodeAnd2_tree}，树的external path length
+是所有根到external节点（也就是输出指令）的path长度的和；它被表示为
+$epl$。如果决策树有$L$个叶子，根到叶子的平均长度是$epl/L$。
+
+我们将找到所有的叶子数为$L$的决策树（2-trees）$epl$的底限，在
+某一时刻想$L$是固定值。我们可以讨论有$L$个叶子的树当尽可能的平衡
+时有最小的$epl$。假设我们有一个高度为$h$的2-tree，它有一个叶子$K$
+的深度是$k$，这里$k$比$h$少2或者更多。参看图
+\ref{Fig:ReducingExternalPathLength_A}。
+图\ref{Fig:ReducingExternalPathLength_B}展示了一个有同样数目叶子的
+2-tree但$epl$比较小。我们选择深度是$h-1$的节点$Y$，这不是一个叶子，
+移除它的两个孩子，附加到节点$X$上去。叶子的总数没有变，但$epl$变了。
+原来树中的3条paths，总长度是$h+h+k$，但现在不再算了（到$Y$的孩子和
+到$X$的paths）。新的paths（到$Y$的和到$X$的孩子的），总长度是
+$h-1+2(k+1)$。$epl$的变化是$k+1-h$，这个值是非负的，所以$epl$是
+减少的。因此如果2-tree在所有$L$个叶子中具有最小的$epl$，则它的external
+path length大约是$L\lg(L)$\footnote{译注：也就是平衡树时的情况}。
+
+引理\ref{Lemma:ExternalNodeCount}使得边界更加精确；它规定了（在我们
+的上下文中）任意$L$个叶子的决策树有$epl \geq L\lg(L)$，于是到输出指令
+节点的平均path length至少是$\lg(L)$。这马上导出下面的定理。
 
 \begin{theorem}\label{Theorem::LowerBoundOfSort}
 通过比较排序n个条目的算法使用的平均比较次数至少是$\lg(n!)$，
 约是$n\lg n -1.443n$。
 \end{theorem}
+
+与最坏情况直接唯一的区别在于平均情况不需要取整到一个整数——平均值可以
+不是整数，但是最坏情况必须是整数。尽管我们从没有分析过归并排序的平均
+情况，这个一般性的边界允许我们得出结论，归并排序的平均情况不可能比它
+的最坏情况低；主要阶的部分一致，次要阶部分只有约$0.5n$的差距。同样的，
+快速排序的平均情况对于任意的增强也只能提高大约30\%，比如小心的选择splitting
+元素。
 
 \section{堆排序}\label{Sec:HeapSort}
 快速排序重新排列原来数组的元素，但是不能保证对一个个问题进行完全的分解，
@@ -1608,33 +1753,170 @@ $\lceil\lg n!\rceil$。
 的选择方案。
 
 \subsection{堆}
+\begin{figure*}[!t]
+    \centering
+    \subfloat[一颗2-tree]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {};
+        \node (x21)  at (2,2) [place] {};
+        \node (x22)  at (6,2) [place] {};
+        \node (x11)  at (1,1) [place] {};
+        \node (x12)  at (3,1) [place] {};
+        \node (x13)  at (5,1) [place] {};
+        \node (x14)  at (7,1) [place] {};
+        \node (x03)  at (2.5,0) [place] {};
+        \node (x04)  at (3.5,0) [place] {};
+
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x12) -- (x03);
+        \draw [thick] (x12) -- (x04);
+
+        \end{tikzpicture}
+        \label{Fig:HeapAnd2_tree_A}
+    }
+    \hfil
+    \subfloat[完全二叉树]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {};
+        \node (x21)  at (2,2) [place] {};
+        \node (x22)  at (6,2) [place] {};
+        \node (x11)  at (1,1) [place] {};
+        \node (x12)  at (3,1) [place] {};
+        \node (x13)  at (5,1) [place] {};
+        \node (x14)  at (7,1) [place] {};
+        \node (x01)  at (0.5,0) [place] {};
+        \node (x02)  at (1.5,0) [place] {};
+        \node (x03)  at (2.5,0) [place] {};
+        \node (x04)  at (3.5,0) [place] {};
+        \node (x05)  at (4.5,0) [place] {};
+        \node (x06)  at (5.5,0) [place] {};
+        \node (x07)  at (6.5,0) [place] {};
+        \node (x08)  at (7.5,0) [place] {};
+
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw [thick] (x12) -- (x03);
+        \draw [thick] (x12) -- (x04);
+        \draw [thick] (x13) -- (x05);
+        \draw [thick] (x13) -- (x06);
+        \draw [thick] (x14) -- (x07);
+        \draw [thick] (x14) -- (x08);
+        \end{tikzpicture}
+        \label{Fig:HeapAnd2_tree_B}
+    }
+    \hfil
+    \subfloat[堆1]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {9};
+        \node (x21)  at (2,2) [place] {5};
+        \node (x22)  at (6,2) [place] {7};
+        \node (x11)  at (1,1) [place] {1};
+        \node (x12)  at (3,1) [place] {4};
+        \node (x13)  at (5,1) [place] {3};
+        \node (x14)  at (7,1) [place] {6};
+
+
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \end{tikzpicture}
+        \label{Fig:HeapAnd2_tree_C}
+    }
+    \hfil
+    \subfloat[堆2]{
+        \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x31)  at (4,3) [place] {50};
+        \node (x21)  at (2,2) [place] {24};
+        \node (x22)  at (6,2) [place] {30};
+        \node (x11)  at (1,1) [place] {20};
+        \node (x12)  at (3,1) [place] {21};
+        \node (x13)  at (5,1) [place] {18};
+        \node (x14)  at (7,1) [place] {3};
+        \node (x01)  at (0.5,0) [place] {12};
+        \node (x02)  at (1.5,0) [place] {5};
+        \node (x03)  at (2.5,0) [place] {6};
+
+        \draw [thick] (x31) -- (x21);
+        \draw [thick] (x31) -- (x22);
+        \draw [thick] (x21) -- (x11);
+        \draw [thick] (x21) -- (x12);
+        \draw [thick] (x22) -- (x13);
+        \draw [thick] (x22) -- (x14);
+        \draw [thick] (x11) -- (x01);
+        \draw [thick] (x11) -- (x02);
+        \draw [thick] (x12) -- (x03);
+        \end{tikzpicture}
+        \label{Fig:HeapAnd2_tree_D}
+    }
+    \caption{2-trees，完全二叉树和堆}
+    \label{Fig:HeapAnd2_tree}
+\end{figure*}
+
 堆排序用到一种叫堆的数据结构，它是一颗特殊的二叉树。堆的定义包括数据结构
 和节点上数据的条件，叫做partial order tree property。非正式的，堆结构是
-一个完全二叉树，它的叶子节点的右面部分可能不全。（参见图4.17）堆提供了
-对ADT优先级队列的的有效实现（2.5.1小节）。在堆中，最高优先级的的数据放
-在根节点。根据这种优先排序的观点，根节点可以是最小值（小顶堆）或是
-最大值（大顶堆）。对于一个升序的堆排序排序的堆，我们需要建立一个大顶堆，
-我们将从这方面来描述堆，其他情况我们可能需要建立一个小顶堆。
+一个完全二叉树，它的叶子节点的右面部分可能不全。
+（参见图\ref{Fig:HeapAnd2_tree}）堆提供了对ADT优先级队列的的有效
+实现（\ref{Sec:ADTPriorityQueue}）。在堆中，最高优先级的的数据放在根节点。
+根据这种优先排序的观点，根节点可以是最小值（小顶堆）或是最大值（大顶堆）。
+对于一个升序的堆排序排序的堆，我们需要建立一个大顶堆，我们将从这方面来
+描述堆，其他情况我们可能需要建立一个小顶堆。
 
-我们将使用两个术语，S是一个关键字是线型的元素的集合，T是高度为h的二叉树，它的节点属于S。
+我们将使用两个术语，S是一个关键字是线型的元素的集合，T是高度为h的二叉树，
+它的节点属于S。
 
+\begin{definition}
+堆结构
+
+二叉树T是一个\emph{堆结构}，当且仅当它符合下面的条件：
+\begin{enumerate}
+\item T的高度至少为h-1且为完全二叉树
+\item 所有的叶子的深度为h或h-1
+\item 所有到深度为h的叶子的路径都在到深度为h-1的叶子的路径的左侧
+\end{enumerate}
+
+深度为h-1的最右边的内部节点可能有左孩子，没有右孩子。其他的内部节点
+都有2个孩子。堆结构的另一个名字是\emph{左完全}二叉树。
+\end{definition}
+
+\begin{definition}
+partial order tree property
+
+树T是（大的）partial order tree 当且仅当每一个节点都大于等于它的每一个
+孩子（如果存在孩子）。
+\end{definition}
+
+一颗完全二叉树是一个堆结构。当添加新元素到堆时，他们必须从左自右加到
+最底层，而且如果移除节点，必须一处最底层最右边的节点，如果移除节点之后
+仍然是一个堆的话。注意根必须是堆中最大的元素。
 
 \subsection{堆排序的策略}
 如果要排序的元素在一个堆中，则我们通过重复下面的过程构造一个逆序列：
 把堆的根元素（剩下的最大的元素）移出，移走了最大元素之后重新排列元素
 使得剩下的元素仍然是一个堆。这个操作就是优先级队列ADT的deleteMax操作。
-（我们可以用小顶堆来得到一个升序序列，之所以用大顶堆是因为我们在4.8.5
-要学习一种更有效率的实现方法。）
+（我们可以用小顶堆来得到一个升序序列，之所以用大顶堆是因为我们在
+\ref{Sec:ImplementationOfHeapAndHeapsort}要学习一种更有效率的实现方法。）
 
 既然第一步是要建立一个堆，之后不断调用deleteMax（这个函数调用某个重新
 构造一个逆序列堆排列元素），这看起来不象一个得到排序算法的有效的策略。
 但是把它发展成一个排序算法很容易。因此我们在这里大概的给出策略，等会
 给出细节。和往常一样，我们假设n个元素存放在数组E中，但是这次我们假设
-索引从1,…,n，因为这样我们看堆的实现方式时比较清楚。暂时我们假设
+索引从$1, \cdots,n$，因为这样我们看堆的实现方式时比较清楚。暂时我们假设
 堆（叫H）在别处。
 
-
-\subsection{修正堆}\label{Sec:FixHeap}
 \begin{figure*}[!t]
     \centering
     \subfloat[堆]{
@@ -1760,11 +2042,163 @@ $\lceil\lg n!\rceil$。
     \caption{删除根的元素，并重建partial order tree属性}
     \label{Fig:ReestablishingHeap}
 \end{figure*}
+
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+heapSort(E, n)
+    Construct H from E, E`是要排序的n个元素的集合；`
+    for(i=0;i>=1; i--)
+        curMax=getMax(H);
+        deleteMax(H);
+        E[i]=curMax;
+\end{lstlisting}
+
+图\ref{Fig:ReestablishingHeap}的第一和最后的图片展示了一个例子，
+分别是for循环开始和结束之后的情况。中间的图片展示了deleteMax和
+fixHeap调用时重新排列的步骤，fixHeap由deleteMax调用。
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+deleteMax(H)
+{
+    `拷贝H最底层最右边的元素到K。`
+    `删除H最底层最右边的元素。`
+    fixHeap(H,K);
+}
+\end{lstlisting}
+显然，几乎所有的工作都由fixHeap完成。
+
+我们现在需要一个算法来构造堆，还需要一个算法来fixHeap。因为fixHeap
+可以用来解决构造堆的问题，所以我们下面考虑fixHeap。
+
+\subsection{修正堆}\label{Sec:FixHeap}
+fixHeap过程恢复堆结构的partial order tree property，堆结构必须是除了
+根以外其余部分都是符合要求的。特定的，当fixHeap开始的时候，我们有一个
+根是“空位”的堆结构。两个子树都是partial order tree，而我们有一个额外
+的元素，叫K，要插入到堆中。既然根是一个空位，我们从根开始，令
+K（空位节点）下降到它正确的位置。到空位正确的位置之后，
+K（准确的说是K的关键字）必须大于或等于它的两个孩子，这样每一步中K
+需要和当前空位节点的大的孩子比较。如果K大于（或是等于）它就要可以
+被插入到等前空位节点处。否则，大的孩子被移动到空位，重复之。
+
+\begin{example}
+FixHeap实战
+
+fixHeap的动作展示在图4.18的第二到第五图片中。稍微回退一点，
+第一图片展示了初始时的状态，即4.8.2小节中heapSort的for循环开始时
+的状态。首先，fixHeap将H的根关键字50拷贝到curＭax，使得树的根是
+一个空位；然后，它调用deleteMax，它将最底层最右边的关键字6拷贝到K，
+实际的删除该节点。
+
+这就到了第二图片，这是fixHeap(H,K)开始。空位节点的大的孩子是节点30，
+这比K大，所以30移到空位位置，空位下降，到第三图片。同样的，空位
+节点的大的孩子仍然大于K，所以空位节点继续下降。下一次，空位节点是
+一个叶子，所以K可以被插入到这个位置，H的partial order tree property
+就恢复了。
+\end{example}
+
+尽管堆的树结构是其本质且容易理解HeapSort，我们之后将用数组来
+表示堆和子堆，而没有显式的边。
+
+\begin{algorithm}
+FixHeap （Outline）
+
+{\textbf{\emph{输入：}}}一个非空二叉树带有一个“空位”根，且它
+的左子树和右子树都是partial order树，待插入元素K。H的type叫堆。
+H的节点假设类型为Element。
+
+{\textbf{\emph{输出：}}}一个二叉树H，其元素是K和原来H的元素，
+满足partial order tree property。
+
+{\textbf{\emph{注意：}}}H的结构不改变，但是节点的内容改变。
+\end{algorithm}
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+fixHeap(H, K)  //OUTLINEA
+{
+    if(`H是叶子`)
+        `插入K到H的根上`
+    else
+        `设置largerSubHeap 成leftSubtree(H)或rightSubtree(H)，
+        选择两者中根的关键字大的。只要rightSubtree不是空，则会有一次关键字比较。`
+        if( K.key >= root(largerSubHeap).key)
+            `将K插入H的根`
+        else
+        {
+            `插入root(largerSubHeap) 到H的根`;
+            fixHeap(largerSubHeap, K);
+        }
+        return;
+}
+\end{lstlisting}
+
+\begin{lemma}
+引理4.12 fixHeap过程对于高度是h的堆在最坏情况下比较关键字2h次。
+证明  每一次过程调用最多有两次关键字比较，每次递归调用树高减少1.（在决定largerSubHeap时有一次隐式比较。）
+\end{lemma}
+
+
 \subsection{构造堆}
+假设我们开始把所有的元素都任意的放入堆；就是说，
+partial order tree property对于任意子树都不是必须的。fixHeap算法可以
+通过分而治之策略来建立partial order tree property。两个子树可以被
+递归转换成堆，然后调用fixHeap来将根元素下降到它正确的位置，因此合并
+两个子堆和根就成了一个堆。基本情况是由一个节点组成的树（例如一个叶子）；
+它已经是一个堆了。下面的算法就是这种思想。
+
+\begin{algorithm}
+构造堆
+
+{\textbf{\emph{输入：}}}堆结构H但是不一定符合partial order tree property。
+
+{\textbf{\emph{输出：}}}有相同元素的H，已经重新排列使之满足partial order tree property。
+\end{algorithm}
+%\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+%void constructHeap(H)
+%{
+%    if (`H 不是叶子`)
+%    {
+%        constructHeap(`H的左子树`);
+%        constructHeap(`H的右子树`);
+%        `Element K=H的根`;
+%        fixHeap(H, K);
+%    }
+%    return;
+%}
+%\end{lstlisting}
+如果我们拆开这个分而治之的算法，我们会看到实际的工作从靠近叶子的
+节点开始。（这是一种后序遍历。）参见图4.19。练习4.38要求你实现
+一个迭代版本的constructHeap。
+
 \subsubsection{正确性}
+定理 4.13 过程constructHeap为它的参数H建立partial order tree property。
+
 \subsubsection{最坏情况分析}
-\subsection{堆的实现和堆排序}
-二叉树通常用链式结构实现，每个节点包含指针（或是其他种类的引用）指向它的子树。设置和使用每个结构需要额外的时间和额外的空间存放指针。但是，我们可以完全不用指针来存储和使用堆。在堆中，只有d-1层是满的情况下d层才可能有节点，所以一个堆可以可以按层存放在数组中，每一层从左自右一次存放节点。图4.20显示了如何存放图4.17中的两个堆。用这个方案，我们必须能快速的找到一个节点的子节点，以及快速的决定一个节点是不是叶子。将根存放在索引1，而不是0，是很重要的，这关系到我们将要讲到的公式。
+constructHeap的递归等式依赖于fixHeap耗费的时间。定义问题的规模
+是n，n是堆结构H中节点的数量，我们看到fixHeap需要大约2lg(n)次关键字
+比较。令r表示H右子堆的节点的数目。我们有
+\begin{displaymath}
+W(n)=W(n-r-1)+W(r)+2\lg(n)  \mbox{对于} n>1
+\end{displaymath}
+尽管堆是尽可能平衡的，r可以小到n/3。因此，当costructHeap是分而治之
+算法时，它的两个子问题不一定是相等的。对于任意的n在数学上解决这个
+递归式子有点困难。我们先解决$N=2^d-1$时的，就是说是一颗完全二叉树，
+则对于n在N/2到N之间，W(N)是W(n)的上界。
+
+对于N=2d-1，左子树和右子树的节点数量是相等的，所以递归等式变为
+\begin{displaymath}
+W(
+\end{displaymath}
+现在使用Master定理（定理3.17）。我们令b=2，c=2（N/2与(N-1)/2之间的区别可以忽略），E=1，以及f(N)=2lg(N)。现在选ε=0.1（或者任何小于1的小数）适用定理的情况1： 。则 。
+
+现在，回到一般的n，既然 ， 。因此，构造堆是线型时间！（另一个方法在练习4.39中。）
+
+现在仍然不清楚Heapsort是一个好的算法；它似乎需要额外的空间。下面考虑堆的实现。
+
+\subsection{堆的实现和堆排序}\label{Sec:ImplementationOfHeapAndHeapsort}
+二叉树通常用链式结构实现，每个节点包含指针（或是其他种类的引用）指向
+它的子树。设置和使用每个结构需要额外的时间和额外的空间存放指针。但是，
+我们可以完全不用指针来存储和使用堆。在堆中，只有d-1层是满的情况下d层
+才可能有节点，所以一个堆可以可以按层存放在数组中，每一层从左自右一次
+存放节点。图4.20显示了如何存放图4.17中的两个堆。用这个方案，我们必须
+能快速的找到一个节点的子节点，以及快速的决定一个节点是不是叶子。将根
+存放在索引1，而不是0，是很重要的，这关系到我们将要讲到的公式。
 
 \subsubsection{堆排序分析}
 \subsection{加速堆排序}
@@ -1793,7 +2227,7 @@ K可能大于它的父节点。
 \section{四种排序算法的比较}
 \begin{table}
 \centering
-\begin{tabular}{cccc}
+\begin{tabular}{lccl}
     \hline
     算法   &最坏情况 &平均情况 &空间使用 \\
     \hline

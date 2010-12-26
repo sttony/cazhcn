@@ -220,7 +220,7 @@ shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
 
 {\textbf{\emph{Remark：}}}shiftVac子例程的规范在图\ref{Fig:SpecificationsForShiftVac}中给出。
 
-
+\end{algorithm}
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     void insertionSort(Element[]E, int n){
         int xindex;
@@ -247,8 +247,6 @@ shiftVac过程是一个典型的\emph{普通搜索例程}（定义\ref{Def:GeneralSearch}）。
         return xLoc;
     }
 \end{lstlisting}
-
-\end{algorithm}
 
 \subsubsection{最坏情况复杂度}
 为了分析，我们使用i代表xindex。对于每一个i的值，关键字比较的最大次数是i
@@ -1330,7 +1328,7 @@ b_0<a_0<b_1<a_1<\cdots b_i<a_i<b_{i+1}<\cdots b_{m-1}<a_{m-1}
 归并算法的最后一行（\textbf{else} Copy A[indexA,…,k-1] to C[indexC,…,n-1]）
 可以被消除，因为：如果B比A先空，A中剩下的条目就在他们正确的位置，不需要移动。
 
-不管C有没有overlap到输入数组，当k=m=n/2时，归并算法使用的额外空间在$\Theta(n)$
+不管C有没有overlap到输入数组，当$k=m=n/2$时，归并算法使用的额外空间在$\Theta(n)$
 
 \section{归并排序}\label{Sec:Mergesort}
 
@@ -1512,7 +1510,7 @@ W(n)&=\sum_{d=0}^{D-2}(n-2^d)+(n-B)/2\\
 最坏情况下归并排序的比较次数在$\lceil n\lg(n)-n+1 \rceil$和
 $\lceil n\lg(n)-0.914n \rceil$之间
 
-{\textbf{\emph{证明}}} 如果我们定义了$\alpha = 2^D/n$，则$1\leq \alpha <2$，
+\noindent {\textbf{\emph{证明}}} 如果我们定义了$\alpha = 2^D/n$，则$1\leq \alpha <2$，
 且在等式\ref{Equ:4_6}中，将D替换成$(\lg(n))+lg(\alpha)$。这将得到
 $W(n)=n\lg(n)- (\alpha - \lg\alpha)n +1$。$(\alpha -\lg \alpha)$的最小值约
 是0.914（参见练习4.30），最大值在1之内。
@@ -1597,13 +1595,13 @@ $n=3$，图\ref{Fig:DecsisionTreeForSorting}中描述的算法在最坏情况下做
 \begin{lemma}\label{Lemma:4_7}
 令$L$是二叉树中叶子的数量，令$h$是二叉树的高。则$L\leq 2^h$。
 
-{\textbf{\emph{证明： }}}简单直接的归纳h即可。
+\noindent{\textbf{\emph{证明： }}}简单直接的归纳h即可。
 \end{lemma}
 
 \begin{lemma}\label{Lemma:4_8}
 令$L$和$h$如\ref{Lemma:4_7}的定义。则$h\geq \lceil\lg L\rceil$。
 
-{\textbf{\emph{证明： }}}将\ref{Lemma:4_7}中不等式的两边同时取对数得到
+\noindent{\textbf{\emph{证明： }}}将\ref{Lemma:4_7}中不等式的两边同时取对数得到
 $\lg L \leq h$。既然$h$是整数，则$h\geq \lceil \lg L\rceil$。
 \end{lemma}
 
@@ -1611,7 +1609,7 @@ $\lg L \leq h$。既然$h$是整数，则$h\geq \lceil \lg L\rceil$。
 对于给定的$n$，通过比较关键字来排序的任意算法的决策树的高至少是
 $\lceil\lg n!\rceil$。
 
-{\textbf{\emph{证明： }}}将\ref{Lemma:4_8}中，取$L= n!$。
+\noindent{\textbf{\emph{证明： }}}将\ref{Lemma:4_8}中，取$L= n!$。
 \end{lemma}
 
 所以，最坏情况下比较的次数至少是$\lceil\lg n!\rceil$。迄今为止我们最好
@@ -1749,7 +1747,7 @@ path length大约是$L\lg(L)$\footnote{译注：也就是平衡树时的情况}。
 排列了数组的元素，它的最坏情况$\Theta(n\log n)$，这是最优的增长率，所以综合了
 快速排序和归并排序的优点。它的缺点是有比其他两个大的常数因子。但是新版本
 的Heapsort减少了常数因子，使得堆排序可以和快速和归并一起竞争了。我们称
-这个新版本叫Accelerated Heapsort。因此Accelerated Heapsort也是一种排序
+这个新版本叫\emph{Accelerated Heapsort}。因此Accelerated Heapsort也是一种排序
 的选择方案。
 
 \subsection{堆}
@@ -2057,11 +2055,9 @@ heapSort(E, n)
 fixHeap调用时重新排列的步骤，fixHeap由deleteMax调用。
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
 deleteMax(H)
-{
     `拷贝H最底层最右边的元素到K。`
     `删除H最底层最右边的元素。`
     fixHeap(H,K);
-}
 \end{lstlisting}
 显然，几乎所有的工作都由fixHeap完成。
 
@@ -2100,14 +2096,14 @@ fixHeap的动作展示在图4.18的第二到第五图片中。稍微回退一点，
 \begin{algorithm}
 FixHeap （Outline）
 
-{\textbf{\emph{输入：}}}一个非空二叉树带有一个“空位”根，且它
+\noindent{\textbf{\emph{输入：}}}一个非空二叉树带有一个“空位”根，且它
 的左子树和右子树都是partial order树，待插入元素K。H的type叫堆。
 H的节点假设类型为Element。
 
-{\textbf{\emph{输出：}}}一个二叉树H，其元素是K和原来H的元素，
+\noindent{\textbf{\emph{输出：}}}一个二叉树H，其元素是K和原来H的元素，
 满足partial order tree property。
 
-{\textbf{\emph{注意：}}}H的结构不改变，但是节点的内容改变。
+\noindent{\textbf{\emph{注意：}}}H的结构不改变，但是节点的内容改变。
 \end{algorithm}
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
 fixHeap(H, K)  //OUTLINEA
@@ -2129,10 +2125,12 @@ fixHeap(H, K)  //OUTLINEA
 \end{lstlisting}
 
 \begin{lemma}
-引理4.12 fixHeap过程对于高度是h的堆在最坏情况下比较关键字2h次。
-证明  每一次过程调用最多有两次关键字比较，每次递归调用树高减少1.（在决定largerSubHeap时有一次隐式比较。）
-\end{lemma}
+fixHeap过程对于高度是h的堆在最坏情况下比较关键字2h次。
 
+{\textbf{\emph{证明}}} 每一次过程调用最多有两次关键字
+比较，每次递归调用树高减少1.（在决定largerSubHeap时有
+一次隐式比较。）
+\end{lemma}
 
 \subsection{构造堆}
 假设我们开始把所有的元素都任意的放入堆；就是说，
@@ -2145,9 +2143,9 @@ partial order tree property对于任意子树都不是必须的。fixHeap算法可以
 \begin{algorithm}
 构造堆
 
-{\textbf{\emph{输入：}}}堆结构H但是不一定符合partial order tree property。
+\noindent{\textbf{\emph{输入：}}}堆结构H但是不一定符合partial order tree property。
 
-{\textbf{\emph{输出：}}}有相同元素的H，已经重新排列使之满足partial order tree property。
+\noindent{\textbf{\emph{输出：}}}有相同元素的H，已经重新排列使之满足partial order tree property。
 \end{algorithm}
 %\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
 %void constructHeap(H)
@@ -2183,13 +2181,18 @@ W(n)=W(n-r-1)+W(r)+2\lg(n)  \mbox{对于} n>1
 
 对于N=2d-1，左子树和右子树的节点数量是相等的，所以递归等式变为
 \begin{displaymath}
-W(
+W(N)=2W(\frac{1}{2}(N-1))+2\lg(N)  \mbox{对于} N>1
 \end{displaymath}
-现在使用Master定理（定理3.17）。我们令b=2，c=2（N/2与(N-1)/2之间的区别可以忽略），E=1，以及f(N)=2lg(N)。现在选ε=0.1（或者任何小于1的小数）适用定理的情况1： 。则 。
+现在使用Master定理（定理3.17）。我们令b=2，c=2（N/2与(N-1)/2之间的
+区别可以忽略），E=1，以及f(N)=2lg(N)。现在选$\varepsilon=0.1$（或者
+任何小于1的小数）适用定理的情况1：$2\lg(N)\in O(n^{0.9})$。
+则$W(N)=\Theta(N)$。
 
-现在，回到一般的n，既然 ， 。因此，构造堆是线型时间！（另一个方法在练习4.39中。）
+现在，回到一般的n，既然$N\leq 2n$，$W(n)\leq W(N)\in \Theta(2n)=\Theta(n)$。
+因此，构造堆是线型时间！（另一个方法在练习4.39中。）
 
-现在仍然不清楚Heapsort是一个好的算法；它似乎需要额外的空间。下面考虑堆的实现。
+现在仍然不清楚Heapsort是一个好的算法；它似乎需要额外的空间。下面
+考虑堆的实现。
 
 \subsection{堆的实现和堆排序}\label{Sec:ImplementationOfHeapAndHeapsort}
 二叉树通常用链式结构实现，每个节点包含指针（或是其他种类的引用）指向
@@ -2217,9 +2220,51 @@ bubbleUpHeap将它向根"升起"。事实上，"升起"会更简单，因为，元素只需要
 K可能大于它的父节点。
 
 过程让空位到根的路径上的小的元素下降，空位上升，知道为新元素找到
-正确的位置。（对于索引i，父节点是 。）操作类似于插入排序中将一个新元素
-插入到前面已经有序序列中的过程。
+正确的位置。（对于索引i，父节点是$\lfloor i/2 \rfloor$ 。）操作类似
+于插入排序中将一个新元素插入到前面已经有序序列中的过程。
 
+\begin{algorithm}
+Bubble-Up Heap
+
+输入：一个表示堆结构的数组；整数表示的root和vacant，一个元素K要插入
+到vacant或是vacant的祖先，并且保持E的partial order tree property。作为一
+个precondition，如果不算vacant，E有partial order tree property。
+
+输出：以root为根且K已经插入的子堆，且有partial order tree property。
+
+注意：E的结构没有改变，但是它的节点的内容改变了。
+
+\end{algorithm}
+
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void bubbleUpHeap(Element[] E, int root, Element K, int vacant)
+{
+    if(vacant==root)
+        E[vacant]=K;
+    else
+    {
+        int parent= vacant/2;
+        if(K.key<=E[parent].key)
+            E[vacant]=k;
+        else
+        {
+            E[vacant]=E[parent];
+            bubbleUpHeap(E, root, K, parent);
+        }
+    }
+}
+\end{lstlisting}
+
+将一个元素通过bubbleUpHeap升起一层只需要一次比较。算法4.10可以用
+来实现在堆中插入一个元素（参见练习4.41）。
+
+联合bubbleUpHeap对fixHeap做一个简单的修改，允许我们将Heapsort比较
+的次数减约一半左右。这使得Heapsort可以在比较次数上和归并排序竞争了，
+他们的最坏情况下的系数一样了（1）。元素的移动次数，没有减少，但是
+数量级和归并一样了。堆排序的优点是不用辅助数组。
+
+主要的思想是简单的。fixHeap将一个元素下降一层需要两次比较。但是我们
+可以避免其中一次比较--
 
 \subsubsection{分析}
 本质上，
@@ -2323,6 +2368,386 @@ the less likely it is that the distribution will be even。）但是在最坏的情况下，
 失去的多。但是尽管递归分发关键字到桶是低效的，但有时利用这种思想还是很有用的。
 
 \subsection{基数排序}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={minimum height=2ex}]
+        \node at (0,0) [place] {Unsorted};
+        \node at (0,-0.5) [place] {file};
+        \node at (0,-1) [place] {48081};
+        \node at (0,-1.5) [place] {97342};
+        \node at (0,-2) [place] {90287};
+        \node at (0,-2.5) [place] {90583};
+        \node at (0,-3) [place] {53202};
+        \node at (0,-3.5) [place] {65215};
+        \node at (0,-4) [place] {78397};
+        \node at (0,-4.5) [place] {48001};
+        \node at (0,-5) [place] {00972};
+        \node at (0,-5.5) [place] {65315};
+        \node at (0,-6) [place] {41983};
+        \node at (0,-6.5) [place] {90283};
+        \node at (0,-7) [place] {81664};
+        \node at (0,-7.5) [place] {38107};
+
+        \foreach \x/\c in{2/First, 4/Second, 6/Third, 8/Fouth, 10/Fifth}
+            \node at (\x,0) [place] {\c};
+        \foreach \x/\c in{2/Pass, 4/Pass, 6/Pass, 8/Pass, 10/Pass}
+            \node at (\x,-0.5) [place] {\c};
+        \foreach \x/\c in{1.3/bkt, 3.3/bkt, 5.3/bkt, 7.3/bkt, 9.3/bkt}
+            \node at (\x,-0.5) [place] {\c};
+        \foreach \x in{1.5, 3.5, 5.5, 7.5, 9.5}
+            \draw (\x,-0.8) rectangle (\x+1,-7.8);
+
+        % First
+        \draw (1.5,-1.2) -- (1.5+1, -1.2);
+        \node at (1.3,-1.4) [place] {1};
+        \node at (2,-1.4) [place] {4808\emph{1}};
+        \node at (2,-1.8) [place] {4800\emph{1}};
+        \draw (1.5,-2.0) -- (1.5+1, -2.0);
+        \node at (1.3,-2.2) [place] {2};
+        \node at (2,-2.2) [place] {9743\emph{2}};
+        \node at (2,-2.6) [place] {5320\emph{2}};
+        \node at (2,-3.0) [place] {0097\emph{2}};
+        \node at (2,-3.4) [place] {9058\emph{2}};
+        \draw (1.5,-3.6) -- (1.5+1, -3.6);
+        \node at (1.3,-3.8) [place] {3};
+        \node at (2,-3.8) [place] {4198\emph{3}};
+        \node at (2,-4.2) [place] {9028\emph{3}};
+        \draw (1.5,-4.4) -- (1.5+1, -4.4);
+        \node at (1.3,-4.6) [place] {4};
+        \node at (2,-4.6) [place] {8166\emph{4}};
+        \draw (1.5,-4.8) -- (1.5+1, -4.8);
+        \node at (1.3,-5.0) [place] {5};
+        \node at (2,-5.0) [place] {6521\emph{5}};
+        \node at (2,-5.4) [place] {6531\emph{5}};
+        \draw (1.5,-5.6) -- (1.5+1, -5.6);
+        \draw (1.5,-6.0) -- (1.5+1, -6.0);
+        \node at (1.3,-6.2) [place] {7};
+        \node at (2,-6.2) [place] {9028\emph{7}};
+        \node at (2,-6.6) [place] {7839\emph{7}};
+        \node at (2,-7.0) [place] {3810\emph{7}};
+        \draw (1.5,-7.2) -- (1.5+1, -7.2);
+        \draw (1.5,-7.5) -- (1.5+1, -7.5);
+
+        % Second
+        \node at (3.3,-1) [place] {0};
+        \node at (4,-1) [place] {480\emph{0}1};
+        \node at (4,-1.4) [place] {532\emph{0}2};
+        \node at (4,-1.8) [place] {381\emph{0}7};
+        \draw (3.5,-2.0) -- (3.5+1, -2.0);
+        \node at (3.3,-2.2) [place] {1};
+        \node at (4,-2.2) [place] {652\emph{1}5};
+        \node at (4,-2.6) [place] {653\emph{1}5};
+        \draw (3.5,-2.8) -- (3.5+1, -2.8);
+        \draw (3.5,-3.1) -- (3.5+1, -3.1);
+        \draw (3.5,-3.4) -- (3.5+1, -3.4);
+        \node at (3.3,-3.6) [place] {4};
+        \node at (4,-3.6) [place] {973\emph{4}2};
+        \draw (3.5,-3.8) -- (3.5+1, -3.8);
+        \draw (3.5,-4.2) -- (3.5+1, -4.2);
+        \node at (3.3,-4.4) [place] {6};
+        \node at (4,-4.4) [place] {816\emph{6}4};
+        \draw (3.5,-4.6) -- (3.5+1, -4.6);
+        \node at (3.3,-4.8) [place] {7};
+        \node at (4,-4.8) [place] {009\emph{7}2};
+        \draw (3.5,-5.0) -- (3.5+1, -5.0);
+        \node at (3.3,-5.2) [place] {8};
+        \node at (4,-5.2) [place] {480\emph{8}1};
+        \node at (4,-5.6) [place] {905\emph{8}3};
+        \node at (4,-6.0) [place] {419\emph{8}3};
+        \node at (4,-6.4) [place] {902\emph{8}3};
+        \node at (4,-6.8) [place] {902\emph{8}7};
+        \draw (3.5,-7.0) -- (3.5+1, -7.0);
+        \node at (3.3,-7.2) [place] {9};
+        \node at (4,-7.4) [place] {783\emph{9}7};
+
+        % Third
+        \node at (5.3,-1) [place] {0};
+        \node at (6,-1) [place] {48\emph{0}01};
+        \node at (6,-1.4) [place] {48\emph{0}81};
+        \draw (5.5,-1.6) -- (5.5+1, -1.6);
+        \node at (5.3,-1.8) [place] {1};
+        \node at (6,-1.8) [place] {38\emph{1}07};
+        \draw (5.5,-2.0) -- (5.5+1, -2.0);
+        \node at (5.3,-2.2) [place] {2};
+        \node at (6,-2.2) [place] {53\emph{2}02};
+        \node at (6,-2.6) [place] {65\emph{2}15};
+        \node at (6,-3.0) [place] {90\emph{2}83};
+        \node at (6,-3.4) [place] {90\emph{2}87};
+        \draw (5.5,-3.6) -- (5.5+1, -3.6);
+        \node at (5.3,-3.8) [place] {3};
+        \node at (6,-3.8) [place] {65\emph{3}15};
+        \node at (6,-4.2) [place] {97\emph{3}42};
+        \node at (6,-4.6) [place] {78\emph{3}97};
+        \draw (5.5,-4.8) -- (5.5+1, -4.8);
+        \draw (5.5,-5.1) -- (5.5+1, -5.1);
+        \node at (5.3,-5.3) [place] {5};
+        \node at (6,-5.3) [place] {90\emph{5}83};
+        \draw (5.5,-5.5) -- (5.5+1, -5.5);
+        \node at (5.3,-5.7) [place] {6};
+        \node at (6,-5.7) [place] {81\emph{6}64};
+        \draw (5.5,-5.9) -- (5.5+1, -5.9);
+        \draw (5.5,-6.2) -- (5.5+1, -6.2);
+        \draw (5.5,-6.5) -- (5.5+1, -6.5);
+        \node at (5.3,-6.7) [place] {9};
+        \node at (6,-6.7) [place] {00\emph{9}72};
+        \node at (6,-7.1) [place] {41\emph{9}83};
+
+        %Fourth
+        \node at (7.3,-1) [place] {0};
+        \node at (8,-1) [place] {9\emph{0}283};
+        \node at (8,-1.4) [place] {9\emph{0}287};
+        \node at (8,-1.8) [place] {9\emph{0}583};
+        \node at (8,-2.2) [place] {0\emph{0}972};
+        \draw (7.5,-2.4) -- (7.5+1, -2.4);
+        \node at (7.3,-2.6) [place] {1};
+        \node at (8,-2.6) [place] {8\emph{1}664};
+        \node at (8,-3.0) [place] {4\emph{1}983};
+        \draw (7.5,-3.2) -- (7.5+1, -3.2);
+        \draw (7.5,-3.6) -- (7.5+1, -3.6);
+        \node at (7.3,-3.8) [place] {3};
+        \node at (8,-3.8) [place] {5\emph{3}202};
+        \draw (7.5,-4.0) -- (7.5+1, -4.0);
+        \draw (7.5,-4.4) -- (7.5+1, -4.4);
+        \node at (7.3,-4.6) [place] {5};
+        \node at (8,-4.6) [place] {6\emph{5}215};
+        \node at (8,-5.0) [place] {6\emph{5}315};
+        \draw (7.5,-5.2) -- (7.5+1, -5.2);
+        \draw (7.5,-5.6) -- (7.5+1, -5.6);
+        \node at (7.3,-5.8) [place] {7};
+        \node at (8,-5.8) [place] {9\emph{7}342};
+        \draw (7.5,-6.0) -- (7.5+1, -6.0);
+        \node at (7.3,-6.2) [place] {8};
+        \node at (8,-6.2) [place] {4\emph{8}001};
+        \node at (8,-6.6) [place] {4\emph{8}081};
+        \node at (8,-7.0) [place] {3\emph{8}107};
+        \node at (8,-7.4) [place] {7\emph{8}397};
+        \draw (7.5,-7.6) -- (7.5+1, -7.6);
+
+        %Fifth
+        \node at (9.3,-1) [place] {0};
+        \node at (10,-1) [place] {\emph{0}0972};
+        \draw (9.5,-1.2) -- (9.5+1, -1.2);
+        \draw (9.5,-1.6) -- (9.5+1, -1.6);
+        \draw (9.5,-2.0) -- (9.5+1, -2.0);
+        \node at (9.3,-2.2) [place] {3};
+        \node at (10,-2.2) [place] {\emph{3}8107};
+        \draw (9.5,-2.4) -- (9.5+1, -2.4);
+        \node at (9.3,-2.6) [place] {4};
+        \node at (10,-2.6) [place] {\emph{4}1983};
+        \node at (10,-3.0) [place] {\emph{4}8001};
+        \node at (10,-3.4) [place] {\emph{4}8081};
+        \draw (9.5,-3.6) -- (9.5+1, -3.6);
+        \node at (9.3,-3.8) [place] {5};
+        \node at (10,-3.8) [place] {\emph{5}3202};
+        \draw (9.5,-4.0) -- (9.5+1, -4.0);
+        \node at (9.3,-4.2) [place] {6};
+        \node at (10,-4.4) [place] {\emph{6}5215};
+        \node at (10,-4.8) [place] {\emph{6}5315};
+        \draw (9.5,-5.0) -- (9.5+1, -5.0);
+        \node at (9.3,-5.2) [place] {7};
+        \node at (10,-5.4) [place] {\emph{7}8397};
+        \draw (9.5,-5.6) -- (9.5+1, -5.6);
+        \node at (9.3,-5.8) [place] {8};
+        \node at (10,-6.0) [place] {\emph{8}1664};
+        \draw (9.5,-6.2) -- (9.5+1, -6.2);
+        \node at (9.3,-6.4) [place] {9};
+        \node at (10,-6.4) [place] {\emph{9}0283};
+        \node at (10,-6.8) [place] {\emph{9}0287};
+        \node at (10,-7.2) [place] {\emph{9}0583};
+        \node at (10,-7.6) [place] {\emph{9}7342};
+
+
+        \node at (12,0) [place] {Sorted};
+        \node at (12,-0.5) [place] {file};
+        \node at (12,-1) [place] {00972};
+        \node at (12,-1.5) [place] {38107};
+        \node at (12,-2) [place] {41983};
+        \node at (12,-2.5) [place] {48001};
+        \node at (12,-3) [place] {48081};
+        \node at (12,-3.5) [place] {53202};
+        \node at (12,-4) [place] {65215};
+        \node at (12,-4.5) [place] {65315};
+        \node at (12,-5) [place] {78397};
+        \node at (12,-5.5) [place] {81664};
+        \node at (12,-6) [place] {90283};
+        \node at (12,-6.5) [place] {90287};
+        \node at (12,-7) [place] {90583};
+        \node at (12,-7.5) [place] {97342};
+
+         \node at (12,0) [place] {Sorted};
+    \end{tikzpicture}
+    \caption{基数排序}
+    \label{Fig:RadixSort}
+\end{figure*}
+
+假设关键字是5位数字。一个递归的算法，就像刚建议的，可以首先根据最左边
+也是影响最大的首位数字将关键字分发到10个桶中，之后在递归的继续根据
+第二位的数字将他们分发到更多的桶中去。直到桶完全有序之后再合并，从而
+有一个很大的簿记量。令人吃惊的是，如果关键字首先按他们最小
+影响位（或者位域，字母，域）分发的桶中，则桶在再次分发之前就可以合并
+了。桶排序的问题就彻底解决了。如果关键字是5位，则算法分发关键字到桶中
+再合并桶5次就可以了。算法从右自左分发关键字，就像图\ref{Fig:RadixSort}
+所展示的。
+
+这样总能工作吗？在最后一趟中，当两个关键字分发到一个桶中是因为他们都
+以9开始，什么保证了他们之间的相对顺序是对的呢？在图\ref{Fig:RadixSort}
+中，关键字90283和90583仅在第三个数字不同，他们除了第三次每次都分发在
+不同的桶中。在第三趟之后，在桶按顺序合并之后，分发在同一个桶中两个
+关键字的相对顺序没有再改变，这些关键字之间保持着相对顺序。一般的，如果
+两个关键字不同的最左边的位是第i位（从右算），他们在第i趟之后其相对
+位置将保持不变。这个命题可以被直接的归纳证明。
+
+这种排序方法用于卡片排序机。一种古老的机器，这种机器做分发步骤；每次
+分发完之后收集合并继续分发。
+
+分发到堆或桶，可以通过卡片上的一列，一个数字位，或是关键字的位域来
+控制。算法之所以叫\emph{基数排序}是因为它将数字看作特定基数的数字。在
+图\ref{Fig:RadixSort}的例子中，基数是10。如果关键字是32位正整数，
+算法可以使用4位位域，即把基数当作16。它将分发他们到16个桶中。因此
+基数也是桶的个数。在下面的基数排序算法中，我们假设分发是基于位域的。
+位域先从关键字的低位提取。如果可能位域的数目保持在常数不依赖
+于n（输入元素的个数）。一般情况下，基数（桶的个数）随着n而增长。通用
+的选择是最大的整数$w$，$2^W\leq n$。则每一个域有$w$位宽。如果关键字
+分布的稠密（例如，在一个n的多项式范围内），这种策略有一个常数的域。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+
+        \foreach \x/\y in {-2/L, 6/remL}
+            \draw (\x, 4.5) node {\y};
+        \foreach \x in {-2, 6}
+            \draw [thick, ->] (\x, 4.3) -- (\x+0.2, 3.8);
+
+        \foreach \x in {-2, 3}
+            \draw [dash pattern=on 3pt off 3pt] (\x, 3) rectangle (\x+2, 3.8) ;
+        \foreach \x in {-2, 3}
+            \draw [dash pattern=on 3pt off 3pt] (\x+2, 3) rectangle (\x+2.6, 3.8);
+        \foreach \x in {-2, 0, 3}
+            \draw [thick, ->, dash pattern=on 3pt off 3pt] (\x+2.3, 3.4) -- (\x+3, 3.4);
+        \draw [thick, dash pattern=on 1pt off 1pt] (1.2, 3.4) -- (2, 3.4);
+
+        \foreach \x in {6, 9, 12, 15}
+            \draw (\x, 3) rectangle (\x+2, 3.8);
+        \foreach \x/\y in {6/41983, 9/90283, 12/90287, 15/78397}
+            \draw (\x+1, 3.4) node {\y};
+        \foreach \x in {6, 9, 12, 15}
+            \draw (\x+2, 3) rectangle (\x+2.6, 3.8);
+        \foreach \x in {6, 9, 12}
+            \draw [thick, ->] (\x+2.3, 3.4) -- (\x+3, 3.4);
+        \draw (15+2.3, 3.4) node {nil};
+
+        \draw (0.3, 1.2) node{{\textbf{buckets}}};
+        \foreach \x in {0, ..., 9}
+            \draw (-0.3, -\x*1+0.5) node{\x};
+        \foreach \x in {0, ..., 9}
+            \draw (0,-\x*1) rectangle (1,-\x*1+1);
+        \foreach \x in {0, 1, 2, 3, 5, 6, 9}
+            \draw [thick, ->] (0.8,-\x*1+0.5) -- (1.8,-\x*1+0.5);
+        \foreach \x in {4, 7, 8}
+            \draw (0.5,-\x*1+0.5) node {nil};
+
+        \foreach \x in {0, 1, 2, 3, 5, 6, 9}
+            \draw (1.8, -\x*1+0.5-0.4) rectangle (3.8,-\x*1+0.5+0.4);
+        \foreach \x/\y in {0/48081, 1/38107, 2/65215, 3/97342, 5/90583, 6/81664, 9/00972}
+            \draw (2.8, -\x*1+0.5) node {\y};
+        \foreach \x in {0, 1, 2, 3, 5, 6, 9}
+            \draw (3.8, -\x*1+0.5-0.4) rectangle (4.8,-\x*1+0.5+0.4);
+        \foreach \x in {1, 5, 6, 9}
+            \draw (4.3,-\x*1+0.5) node {nil};
+        \foreach \x in {0, 2, 3}
+            \draw [thick, ->] (4.2,-\x*1+0.5) -- (5.2,-\x*1+0.5);
+
+        \foreach \x in {0, 2, 3}
+            \draw (5.2, -\x*1+0.5-0.4) rectangle (7.2,-\x*1+0.5+0.4);
+        \foreach \x/\y in {0/48001, 2/53202, 3/65315}
+            \draw (6.2, -\x*1+0.5) node {\y};
+        \foreach \x in {0, 2, 3}
+            \draw (7.2, -\x*1+0.5-0.4) rectangle (8.2,-\x*1+0.5+0.4);
+        \foreach \x in {0, 2, 3}
+            \draw (7.7,-\x*1+0.5) node {nil};
+
+        \end{tikzpicture}
+    \caption{Radix Sort算法在分发第3个数字时的数据结构}
+    \label{Fig:4_28DataStructOfRadix}
+\end{figure*}
+
+数据结构展示在图\ref{Fig:4_28DataStructOfRadix}中，图中显示的是
+图\ref{Fig:RadixSort}例子中的第三步。注意每一个桶list都是逆序的，因为
+新元素都是附加在list的前面。但是合并过程在合并的时候再次反转他们，所以
+最后合并是正确的顺序。
+
+\begin{algorithm}
+基数排序
+
+{\textbf{\emph{输入：}}}未排序list L，分发用的桶的数量radix，关键字分发
+次数numFields。
+
+{\textbf{\emph{输出：}}}排序的list, newL。
+
+{\textbf{\emph{注意：}}}distribute过程反转桶中的lists，combine过程再次
+反转它们（以逆序循环），所以合并完得到了想要的顺序。用List ADT的
+操作来操作链表（参看图\ref{Fig:ListADTSpecification}）.
+
+\end{algorithm}
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+List radixSort(List L, int radix, int numFields){
+    List[] buckets= newList[radix];
+    int field;  // `关键字中域的数量`
+    List newL;
+
+    newL= L;
+    for(field=0; field<numFields; field++){
+        `将桶数组初始化为空；`
+        distribute(newL, buckets, radix, field);
+        newL=combine(buckets, radix);
+    }
+    return newL;
+}
+\end{lstlisting}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void distribute(List L, list[] buckets, int radix, int field){
+    List remL;
+    remL=L;
+    while(remL!=null){
+        Element K=first(remL);
+        int b=maskShift(field, radix, K.key);
+        // `maskShift(f, r, key)选择key中第f个域（从右开始），`
+        // `基于基数r。`
+        // `结果b的范围是$0,\cdots, radix-1, b$是K所在的桶。`
+        buckets[b]=cons(K, buckets[b]);
+        remL= rest(remL):
+    }
+    return;
+}
+\end{lstlisting}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+List combine(List[] buckets, int radix){
+    int b;  //`桶的数量`
+    List L, remBucket;
+
+    L= null;
+    for(b= radix-1; b>=0; b--){
+        remBucket=buckets[b];
+        while(remBucket!=null){
+            Key K= first(remBucket);
+            L=cons(K, L);
+            remBucket= rest(remBucket);
+        }
+    }
+    return L;
+}
+\end{lstlisting}
+\end{figure}
+
 \subsubsection{分析与注意事项}
 分发一个关键字需要解析出一个域，还有一个连接操作；步数是一个常数。所以对所有的
 关键字，分发是$\Theta(n)$步。类似的，合并也是$\Theta(n)$步。分发和合并的趟数

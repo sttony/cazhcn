@@ -71,7 +71,58 @@ Object。最开始我们如下够这个类的对象：
 一个常数时间低限。平摊时间分析在下一节解释。.
 
 \section{Amortized 时间分析}
+就像我们在前一节看到的，下面的情况可能发生：对于同一种类型操作做的工作量
+变化很大，但是一个很长操作序列的总时间远小于序列的长度乘以每个操作的
+最坏时间。这些情况在动态集和他们相关的操作中这种情况经常出现。此时，一种
+称为\emph{平摊时间分析amortized time analysis}的技术可以为这种情况提供更
+精确的时间分析。名字\emph{amortized}来自于（很宽松的解释）商业记账实践中
+分解一个大帐单，which was actually incurred in a single time period, over multiple time periods that are related to the reason for incurring the cost. 在算法分析的时候，一个大的操作被展开成许多操作，这里其他操作没有这么耗时。这一小节给出amortized时间分析的一个大概框架。技术在概念上简单的，尽管为了对不同的问题得到有效的方案需要做点创新。
 
+假设我们有一个ADT，我们想用amortized来分析它的操作。我们使用术语individual
+operation(单体操作)来表示一个操作的一个执行步骤。平摊时间分析基于下面的等式：
+\begin{equation}
+amortized cost= actual cost + accounting cost
+\end{equation}
+它采用了整个计算的过程中每一个单体操作。创新的部分是要为每一个单体操作设计
+一个accounting costs系统，以达到下面两个目标。
+\begin{enumerate}
+\item 合法的操作序列中的每一个（从创建ADT对象开始分析起）操作的accounting
+    costsd的和是非负。
+\item 尽管actual cost可能在很大范围内波动，分析每一个amortized cost是
+    可行的（例如，它相当的有规律）
+\end{enumerate}
+如果这两个目标都达到了，则序列总的amortized cost（从创建ADT开始）就是总的
+actual cost，且总的amortized cost是经得起分析的。
+
+直观的来说，总的accounting cost类似与储蓄账户。当好天气的时候，我们为雨季
+存储一些。当雨季来的时候，就是比较昂贵但是不常出现的的操作，we make a withdrawal。
+但是，为了保持偿付能力，不能忽视保持我们帐户的平衡。
+
+设计一个accounting costs系统的主要思想是"正常"操作必须有一个正的accounting cost，
+
+\begin{example}
+用成倍增长的数组实现栈accounting 方案
+
+考虑栈ADT，它有两个操作，push和pop，它以数组实现。（这个例子中，我们将忽略
+访问的代价，因为他们不改变栈，所以代价是$O(1)$。在必要的时候使用在\ref{Sec:ArrayDoubleSize}节
+中描述的数组翻倍来扩大数组。当没有发生数组大小变化时push或者pop的实际消耗
+都是1。如果进行了数组翻倍（从n到了2n）拷贝了n个元素到新的数组，则此时push的
+实际消耗是1+nt其中t是一个常数。（练习6.2 考虑了一种方案，push和pop都可能
+导致数组改变大小。）
+
+最坏情况下push的实际时间是$\Theta(n)$。看到这个最坏情况实际时间，似乎这个
+实现是及其低效的，因为这些操作都可能在$\Theta(1)$时间内完成。但是amortized
+时间分析会给出一个更精确的结果。我们可以用下面的记账方案：
+\begin{enumerate}
+\item 不需要数组翻倍的push的accounting cost是2t。
+\item 需要将n扩展到2n的push的accounting cost是-nt+2t.
+\item pop的accounting cost是0
+\end{enumerate}
+accounting costs中的系数2可以在栈创建的时候选到足够大，accounting costs的和可以永不为负。非正式的用假设简化问题，假设在栈的大小为N、2N、4N、8N…的时候会有数组翻倍发生。考虑最坏情况，只有push发生。"account balance"--accounting costs的净和--会增长到2Nt，之后第一个负的变化会将他减少到Nt+2t，之后在第二次数组翻倍之前它又会增长到3Nt，到数组翻倍的时候又降到Nt+2t。当它增长到5Nt时，会减少到Nt+2t，增长到9Nt时会减少到Nt+2t，等等。因此这时一个有效的栈ADT的accounting方案（）。
+
+\end{example}
+
+越复杂的数据结构通常需要越复杂的计数方案，就需要更创新的方法去想出来。在本章的后面的小节中（6.6.6和6.7.2小节）我们将遇到需要平摊时间分析来展示其效率的ADTs以及实现
 
 \section{红黑树}
 红黑树是满足特定结构要求的二叉树。这些结构要求暗示有n个节点的红黑树的高不
@@ -166,7 +217,7 @@ black-height的规范。
 
 \begin{example}
 红黑树插入的第一步
-    
+
 在写出完整的算法之前，让我们考虑看看在图6.5的红黑树中插入关键字70会产生
 什么情况。在整个树中，70与根比较，大，所以下降到右子树。然后70与60比较，
 接着下降到右子树，这里70与80比较。现在转到了左子树，且遇到了external节点。
@@ -232,11 +283,195 @@ key       &1775   &   &   &1055  &$\frac{1492}{1812}$   &1945  &1918  & \\
 \subsection{哈希函数}
 
 \section{动态等价关系和联合查找程序}\label{Sec:DynamicEquivalenceRelationAndUnionSearch}
+动态等价关系出现在集合和图的各种问题里面。联合查找抽象数据类型为处理
+动态等价关系提供了一种方法。尽管它有非常高效（也很简单！）的实现，
+但分析是很麻烦的。
+
+其应用包括最小生成树，在\ref{Sec:KruskalMST}节讨论，以及本章最后提到的一些问题。
+
 \subsection{动态等价关系}
+集合S上的一个等价关系R是一个S上的二元关系，且是自反，对称和传递的（1.3.1小节）。
+就是说，对于所有的S中的s，t和u，都符合下面的属性：如果$sRt$且$tRs$，则$sRs$；
+如果$sRt$且$tRu$则sRu。S中一个元素s的等价类是S的一个子集，其中包含所有等价
+与s的元素。等价类是S的一个划分，就是说他们是不相交的，他们的联合是S。符号$\equiv$
+将用来表示等价关系。
+
+本小节的问题是表示、修改在计算过程中改变的等价关系以及回答相关的问题。等价
+关系开始是相等关系，就是说，集合中的每一个元素都与自己相等。问题是处理一个
+指令的序列，指令有两种类型，这里$s_i$和$s_j$都是S的元素：
+\begin{enumerate}
+\item $s_i \equiv s_j$?
+\item MAKE $s_i\equiv s_j$（这里$s_i \equiv s_j$是false的）。
+\end{enumerate}
+问题1的回答是"是"或"不是"。正确的回答依赖于已经收到的类型2的指令；回答是“是”
+当且仅当指令“MAKE”已经收到或是 can be derived by applying the reflexive,
+symmetric,and transitive properties to pairs that were explicitly made equivalent
+by the second type of instruction. The response to the latter, that is, the MAKE指令,
+is to modify the data structure that represents the equivalence relation
+so that later instructions of the first type will be answered correctly.
+
+考虑下面的例子这里S={1, 2, 3, 4, 5}。指令的序列在左列。右列显示了回答--yes或no，或者是这里定义的关系的等价类。
+开始时的等价类：{1}, {2}, {3}, {4}, {5}
+1.  IS  ?                   No
+2.  IS  ?                   No
+3.  MAKE            {1}, {2}, {3,5}, {4}
+4.  MAKE            {1}, {2, 3, 5}, {4}
+5.  IS ?                    Yes
+6.  MAKE                {1,4}, {2, 3, 5}
+7.  IS  ?               No
+
+
 \subsection{一些浅显的实现}
-\subsection{联合－查找程序}
+为了比较不同实现策略，我们将计算每一个策略对于不同类型的操作的次数，假设我们
+要处理一个包含n个元素的集合S，其中MAKE或IS指令的总数有m个。我们从检查两种简单
+的数据结构开始：矩阵和数组。
+
+一个矩阵表示一个等价关系需要$n^2$个单元（或者已经是对称的情况下，需要$n^2/2$）。
+对于一个IS指令只需要检查一个条目；但是一个MAKE指令可能需要拷贝整个行。一个m条
+MAKE指令的序列（考虑最坏情况有m条MAKE指令1条IS指令）可能需要至少mn步操作。
+
+通过使用数组空间的使用数量可以减少到n。eqClass，这里eqClass[i]是一个包含等价类$s_i$
+的标签或是名字。指令$s_i \equiv s_j$?需要查找和比较eqClass[i]和eqClass[j]。对于
+MAKE $s_i \equiv s_j$  ，每一个条目都必须与eqClass[i]比较，如果相等赋值为eqClass[j]。
+此时，一个包含m条MAKE指令的m（当然最坏情况）至少需要mn步操作。
+
+两种方法都有低效率的一方面--第一个的拷贝过程第二个的查找过程（对于eqClass[i]）
+里面的元素。更好的解决方案是使用连接来避免额外的操作。
+
+\subsection{联合－查找程序}\label{Sec:Union-Find}
+MAKE指令的效果是将S的两个子集合并成一个。如果我们有办法找到一个元素是否在
+一个集合中，我们就能简单的回答IS指令。联合查找ADT（\ref{Sec:2_3_2Union_Find}小节）
+提供了这些操作。一开始，对每一个S的元素运行makeSet，得到n个单独的集合。
+查找和联合操作将用于实现下面的等价指令：
+
+\begin{tabular}{cc}
+IS $s_i\equiv s_j$  &MAKE $s_i \equiv s_j$  \\
+\hline
+$t = find(s_i)$; & $t=find(s_i)$\\
+$u = find(s_j)$; & $u=find(s_j)$\\
+$(t==u)?$ & $union(t,u)$
+\end{tabular}
+
+我们认为$create(n)$是
+\begin{displaymath}
+create(0), makeSet(1), makeSet(2), \cdots, makeSet(n)
+\end{displaymath}
+的简写。这假定$S={1, \cdots, n}$。这个结果是一个集合的聚集，每一个包含一个
+单独的元素$i$, $i\leq i\leq n$ 。如果在程序运行期间需要一个一个的增加元素，不是
+一开始就包含所有的，我们假定makeSet运行在一个可数的序列上，是没有间隔的：
+$makeSet(1), makeSet(2), ..., makeSet(k)$。如果元素的数目不是自然数，字典
+ADT（\ref{Sec:2_5_3DictionaryADT}小节）可以用来进行翻译。
+
+因此我们将注意力转到makeSet，union和find操作，以及可以简单实现他们特定的
+数据结构。我们将通过in-tree来表示每一个等价类或子集。回顾
+In-Tree ADT（\ref{Sec:In-treeADT}小节）提供了下面的操作：
+
+\begin{tabular}{ll}
+makeNode    &构造一个只有一个节点的树\\
+setParent      & 改变节点的父节点\\
+setNodeData &为节点设置整数值\\
+isRoot      &如果节点没有父节点返回true\\
+parent      &返回节点的父节点\\
+nodeData        &返回节点的数据
+\end{tabular}
+
+每一个根将被作为一个树的标签或标识符。指令r=find(v)找到包含v的根，然后将
+它赋值给$r$。union的参数必须是根；union(t,u)将根$t$和$u(t \neq u)$的树
+合并到一起。
+
+In-Tree ADT使得它实现union和find很简单。为了合并根t和u得到将u作为根的in-tree，
+就像union要求的简单的执行in-tree操作setParent(t,u)。为了找到节点的根，
+使用重复的使用parent操作，直到找到一个祖先它的isRoot操作返回{\textbf{true}}。
+实现create和makeSet也是简单的，使用in-tree操作makeNode就可以。
+
+如果in-tree的节点是$1, \cdots, n$，这里$n=|S|$，我们可以在一个$n+1$个元素的
+数组中实现in-tree。既然这是实践中的通常情况，而且为了更好的关注的本质问题，
+本小节剩下的部分我们将采用这个假设。我们可以“具体化”（un-abstract）in-tree，
+用简单的访问数组元素parent[i]来代替调用parent(i)和setParent(i)。我们将
+一个节点的parent值设置为-1表示其是in-tree的根，所以isRoot不用额外的数组。
+另一个数组保存nodeData，但是这个名字对于这个应用过于宽泛了，所以我们将给出
+一个更具体的名字权（weight），预计weighted union方法将在后面描述。如果不知道
+会有多少元素时，可以使用数组翻倍（\ref{Sec:ArrayDoubleSize}节）技术。
+
+使用数组方便编码；但是，为了理解算法的逻辑，最好还是技术底层的in-tree结构，
+将数组元素的访问理解成in-tree的操作。使用数组实现in-tree将在好多算法中使用，
+所以它是值得记住的。
+
+一个create(n)操作（认为它是n个makeSet）紧跟着m个任意顺序的union或find操作
+是输入，或者一个长度m的联合查找程序（Union-Find Program）。就是说一开始
+的makeSet不计算在输入的长度里面。为了简化讨论，我们假设在create之后没有
+makeSet。如果makeSet在后面出现，也将得出相同的分析结论（练习6.31）。
+
+我们用访问 parent的次数来衡量工作的多少；每一次访问不管是查找还是赋值，
+我们假设他们的时间都是$O(1)$。（这使得总的操作次数和parent的访问次数
+是成比例的这一点变的清楚。）每一个makeSet和union做一次parent赋值，每
+一个find(i)做d+1次parent查找，这里d是节点i在树总的深度。parent赋值和
+查找连起来叫做link操作。
+
+图6.19的程序创建了图6.20(a)显示的树，做了n+n-1+(m-n+1)n次link操作。使用
+这个方法的范例，在最坏情况下Union-Find程序是Ω(mn)。（我们知道m>0；否则
+我们要写$\Omega(mn+n)$。）不难证明没有程序能超过mn+n次link操作所以
+最坏情况是$\Theta(mn)$。这与前面描述的方法比没有优势。我们将改进
+union和find操作的实现。
+
 \subsection{Weighted Union}
+图6.19中程序的消耗之所以高是因为由union指令构造的树，图6.20(a)展示的，
+有太高的高度。通过更巧妙的union的实现可以保持树很矮，从而减少消耗。
+令wUnion（"weighted union"）是策略：将节点数量少的树作为节点数量多的树
+的子树（同时，如果两个树的节点相同，令第一颗树是第二课树的子树）。
+（练习6.22检查了使用高度来代替节点数量做weight的可能性。）为了区别union
+操作的两个实现，我们叫第一个unwUnion。对于wUnion，每一个树的节点数量存储
+在weight数组里面（对应ADT中的nodeData）。实际上，仅根需要值。wUnion
+必须比较节点的数量，计算新树的大小，为parent和weight赋值。wUnion的消耗
+仍然是一个小的常数，包括一个link操作。现在如果我们返回到图6.19（叫做P）
+来看使用wUnion需要多少工作量，我们会发现P不在是一个正确的程序，因为union
+的参数从3到n-1都不是根了。我们可以扩展P到P`来，需要将行如union(i,j)的
+程序替换成下面3个指令：
+t=find(i);
+u=find(j);
+union(t,u);。
+则使用wUnion，P`仅需要2m+2n-1次link操作！图6.20展示了使用unwUnion和
+wUnion的P和P`构造的树。我们不能得出结论wUnion在任何情况下都是线型时间；
+P`不是wUnion的最坏情况。下面的引理帮助我们得到最坏情况的上界。
+
+\begin{lemma}
+如果union(t,u)通过wUnion实现--就是说，根为u的树作为子树附加到根为t的
+树上，当且仅当根为u的树节点数量较少，否则就是根为t的树作为子树附加到
+根为u的树上--则，在任意序列的union指令之后，任何有k的节点的高最多是
+$\lfloor \lg k\rfloor$
+
+{\textbf{\emph{证明}}} 用k的归纳来证明之。$k=1$的情况；一个节点的树
+是高度0，就是$\lfloor \lg 1\rfloor$。现在假设$k>1$，并且任何由union
+指令构造包含$m$个节点的树，对于$m<k$有最多$\lfloor \lg m\rfloor$的高。
+考虑图6.21中的树$T$，有$k$个节点高度是$h$，它由树$T_1$和$T_2$通过
+union指令构成。如图中的假设，$T_2$的根$u$附加到$T_1$的根t。令$k_1$和
+$h_1$分别是$T_1$的节点数量和高度，同样的$k_2$和$h_2$分别是$T_2$的
+节点数量和高度。通过归纳假设，$h_1\leq \lfloor \lg k_1\rfloor$，
+且$h_2\leq \lfloor \lg k_2\rfloor$。新树的高度$h=\max(h_1, h_2+1)$。
+显然，$h_1\leq \lfloor \lg k_1\rfloor$。因为$k_2\leq k/2$, $h_2\leq \lfloor \lg k\rfloor-1$,
+且$h_2+1 \leq \lfloor \lg k\rfloor$。所以两种情况下都有$h\leq \lfloor \lg k\rfloor$。
+
+\end{lemma}
+
+\begin{theorem}
+一个作用在n个元素上的，规模m的Union-Find程序，如果使用wUnion和
+直接查找，最坏情况下要执行$\Theta(n+m\log n)$次link操作。
+
+{\textbf{\emph{证明}}}  对于n个元素，创建一个最多有n个节点的树，最多
+有n-1次wUnion指令可以用。由于引理，每一颗树至少有高度$\lfloor \lg n \rfloor$，
+所以每一个查找最多是$\lfloor \lg n \rfloor+1$。每一个wUnion做一次
+link操作，所以m个wUnion或find操作花费的上界就是m个find操作的花费。
+因此link操作的总的数量小于$m(\lfloor \lg n \rfloor+1)$，在$O(n+m\log n)$。
+\end{theorem}
+
+练习6.23的程序需要Ω(n+mlogn)步来构造。
+    wUnion（与create和makeSet一样）的算法非常容易写；我们留在练习中。
+
+
 \subsection{路径压缩}
+通过称为路径压缩的过程还可以改进find操作的实现，从而更进一步的提高Union-Find程序
+的执行速度。给出参数v，cFind（"压缩（compressing）查找"）parent
+
 \subsubsection{wUnion和cFind的兼容性}
 \subsection{*wUnion和cFind的分析}
 \subsection{应用}
@@ -244,6 +479,17 @@ key       &1775   &   &   &1055  &$\frac{1492}{1812}$   &1945  &1918  & \\
 \section{优先级队列with a Decrease Key Operation}
 回顾优先权队列ADT（2.5.1小节）的主要access函数是getBest，
 这里best可能是最大或者最小。一个完整的最小化优先权队列ADT的操作有：
+构造器：            create
+Access函数：        isEmpty, getMin, getPriority
+Manipulation 过程： insert, deleteMin, decreaseKey
+
+
+这些名字适合最大化优先权队列。还可以增加一个delete操作，这个操作删除任意关键字。
+
+Partial order tree（定义4.2）是经常用于实现优先权队列的一类数据结构。“最好”元素在partial
+order树的根，所以它可以在常数时间内得到。Partial
+order数的几种实现已经发展了很多年了。"堆"这个词经常出现在这些实现的名字中，因为最早的partial
+order树的结构被它的发明者命名为"堆"。 二分堆
 
 
 \subsection{The Decrease Key Operation}\label{Sec:TheDecreaseKeyOperation}

@@ -15,57 +15,236 @@
 继续我们不严格的分类，“中级”图问题需要多项式时间解决，但是需要比一次图
 遍历更多的工作量。就是说，对于每一个“中级”问题，算法在一个固定幂的多项式
 时间内解决问题，比如$n^2$或$n^d$（其中d是一个固定数）。许多此类问题的在后面
-的章节中讲到；参见第8，9，14章。在今天强劲的计算机上解决比较大的问题是可以
-实现的（比如上k或10k个节点）。
+的章节中讲到；参见第\ref{Sec:Chap8}，\ref{Sec:Chapter9}，
+\ref{Sec:Chapter:ParallelAlgorithm}章。在今天强劲的计算机上解决比较大的
+问题是可以实现的（比如上k或10k个节点）。
 
 当然我们有“困难”图问题，目前不知道有在多项式时间内解决的方法。此类问题
-当图有50个或是100个节点时就没有已知的方法可以解决了，即使允许计算机运行
-一年的时间。然而，我们当前的知识不能排除找到有效算法的可能性。这些问题真正
+即使允许计算机运行一年的时间，当图有50个或是100个节点时就没有已知的方法
+可以解决了。然而，我们当前的知识不能排除找到有效算法的可能性。这些问题真正
 代表了我们知识的前沿，我们将在第13章的讨论他们中的一些。
 
 图问题一个迷人的方面是：只要稍微改变一下问题的形式，可能问题就会改变分类
 简单，中级，困难。因此一个问题和已知问题的类似程度，以及改变一个问题的那个
 方面会使的他们变的简单，中级或是困难对于解决一个新问题是很有帮助的。
 
-\section{定义和表示}
+\section{定义和表示}\label{Sec:GraphDefinitionsAndRepresentations}
 非正式的，一个图是点（顶点或节点）的有限集合，他们中的一部分通过线或是
-箭头（边）连接起来。如果边是无向的或是"双向的"，则图是无向图。如果边是有
-向的或是“单边的”，则图是有向图。“有向图”一般简写成\emph{digraph}。“无向图”
-有时简称“图”，但是这有时候会引起误解因为人们经常将无向图和有向图都简单的
-称为“图”。我们经常在可能有歧义的上下文中使用特定的属于。一般的讨论“图”
-既指无向图也指有向图。
+箭头（边）连接起来。如果边是无向的或是"双向的"，则图是\emph{无向图}。
+如果边是有向的或是“单边的”，则图是\emph{有向图}。“有向图”一般简
+写成\emph{digraph}。“无向图”有时简称“图”，但是这有时候会引起误解
+因为人们经常将无向图和有向图都简单的称为“图”。我们经常在可能有歧义
+的上下文中使用特定的属于。一般的讨论“图”既指无向图也指有向图。
 
 \subsection{一些例子}
 图是许多问题和结构的形象的抽象，包括运筹学、计算机科学、电子、经济、数学、
 物理、化学、通信、博弈论和许多其他的方面。考虑下面的例子：
 
-\begin{example}
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={shape=ellipse,draw, fill=white,inner sep=0pt,minimum width=10ex,minimum height=5ex}]
+        \node (SAC)  at (2,11) [place] {SAC};
+        \node (SF)  at (-2.4,9.7) [place] {SF};
+        \node (STK)  at (4.6,10) [place] {STK};
+        \node (OAK)  at (-0.4,9) [place] {OAK};
+        \node (FRES)  at (3,5) [place] {FRES};
+        \node (LA)  at (-1.4,1) [place] {LA};
+        \node (SD)  at (0,0) [place] {SD};
+
+        \draw [thick] (SAC) -- (SF);
+        \draw [thick] (SF) -- (STK);
+        \draw [thick] (SF) -- (LA);
+        \draw [thick] (SF) -- (SD);
+        \draw [thick] (SF) -- (FRES);
+        \draw [thick] (LA) -- (OAK);
+        \draw [thick] (LA) -- (FRES);
+        \draw [thick] (LA) -- (SD);
+        \draw [thick] (SD) -- (FRES);
+        \draw [thick] (LA) -- (SAC);
+        \draw [thick] (STK) -- (FRES);
+        \draw [thick] (SD) -- (OAK);
+        \end{tikzpicture}
+    \caption{加州各城市之间的飞行哈航路图（假象的）}
+    \label{Fig:7_1}
+\end{figure*}
+
+\begin{example}\label{Example:AirRouteMap}
 航空路线图
 
-一个航空路线图可以用无向图表示。点表示城市；两个城市用线连接当且仅当一个中途
-不停的飞机在他们之间相互通行。图7.1（假想的）是California几个城市的航空路线。
+一个航空路线图可以用无向图表示。点表示城市；两个城市用线连接
+当且仅当一个中途不停的飞机在他们之间相互通行。图\ref{Fig:7_1}
+（假想的）是California几个城市的航空路线。
 \end{example}
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat[流程图]{
+       \begin{tikzpicture}[nonterminal/.style={rectangle,minimum width=20mm,inner sep=2mm, very thick,
+                                        draw=red!50!black!50,top color=white,bottom color=red!50!black!20,
+                                        text width=20mm,text centered},
+                terminal/.style={rectangle,minimum size=6mm,rounded corners=3mm,inner sep=2mm,very thick,
+                                    draw=black!50, top color=white,bottom color=black!20,
+                                    text width=8mm,text centered},
+                judgement/.style={diamond,minimum width=16mm,inner sep=1mm,very thick,
+                                    draw=black!50, top color=white,bottom color=black!20,
+                                    text centered}]
+
+            \node (x1) at (0,0) [terminal] {Start};
+            \node (x2) at (0,-2) [nonterminal] {$knt$:=0 \\ \vspace{-1ex}$i$:=1};
+            \node (x3) at (0,-4) [judgement] {a[i]$<$0};
+            \node (x5) at (0,-7) [judgement] {i=num};
+            \node (x7) at (0,-9) [nonterminal] {i:=i+1};
+            \node (x4) at (4,-4) [nonterminal] {knt:=knt+1};
+            \node (x6) at (4,-7) [terminal] {Stop};
+            \node () at ($(x1.north west)+ (-2mm,0)$) [] {1};
+            \node () at ($(x2.north west)+ (-2mm,0)$) [] {2};
+            \node () at ($(x3.north west)+ (-2mm,0)$) [] {3};
+            \node () at ($(x4.north west)+ (-2mm,0)$) [] {4};
+            \node () at ($(x5.north west)+ (-2mm,0)$) [] {5};
+            \node () at ($(x6.north west)+ (-2mm,0)$) [] {6};
+            \node () at ($(x7.north west)+ (-2mm,0)$) [] {7};
+
+            \draw [thick, ->] (x1) -- (x2);
+            \draw [thick, ->] (x2) -- (x3);
+            \draw [thick, ->] (x3) -- (x4)node[above,text centered,midway]{$True$};
+            \draw [thick, ->] (x3) -- (x5)node[right,text centered,midway]{$False$};
+            \draw [thick, ->] (x5) -- (x6)node[above,text centered,midway]{$True$};
+            \draw [thick, ->] (x5) -- (x7)node[right,text centered,midway]{$False$};
+            \draw [thick, ->] (x7.south)-- (0,-9.8) -- (-2,-9.8) -- (-2,-4) -- (x3.west);
+            \draw [thick, ->] (x4.south)-- ($ (x5.north) + (40mm,0) $)-- (x5.north);
+        \end{tikzpicture}
+        \label{Fig:7_2_A}
+    }
+    \hfil
+    \subfloat[有向图]{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x1)  at (0,0) [place] {1};
+        \node (x2)  at (0,-2) [place] {2};
+        \node (x3)  at (0,-4) [place] {3};
+        \node (x4)  at (2,-4) [place] {4};
+        \node (x5)  at (0,-6) [place] {5};
+        \node (x6)  at (2,-6) [place] {6};
+        \node (x7)  at (0,-8) [place] {7};
+
+
+        \draw [thick, ->] (x1) -- (x2);
+        \draw [thick, ->] (x2) -- (x3);
+        \draw [thick, ->] (x3) -- (x4);
+        \draw [thick, ->] (x3) -- (x5);
+        \draw [thick, ->] (x5) -- (x6);
+        \draw [thick, ->] (x5) -- (x7);
+        \draw [thick, ->] (x7) to [out=130,in=235] (x3);
+        \draw [thick, ->] (x4) -- (x5);
+        \end{tikzpicture}
+        \label{Fig:7_2_B}
+    }
+    \caption{一个流程图和它对应的有向图：箭头标注了流程的方向}
+    \label{Fig:7_2}
+\end{figure*}
 
 \begin{example}
 流程图
 
 流程图表示了一个过程内的控制流，或是一个过程中数据或物质的流动。流程图的
-框是点；流程图的箭头是边。图7.2 以Pascal语法显示了一个例子。
+框是点；流程图的箭头是边。图\ref{Fig:7_2}以Pascal语法显示了一个例子。
 \end{example}
 
-\begin{example}
+\begin{example}\label{Example:BinRelation}
 二元关系
 
 二元关系在\ref{Sec:Relationship}小节中定义。定义R是集合$S={1, \cdots, 10}$上的由
-有序对(x,y)组成的二元关系，其中x是y的整数倍；就是说$x\neq y$且$y/x$的余数是0。回忆
-$xRy$是$(x,y)\in R$的一种表示。在图7.3的有向图中，点是S的元素，当且仅当$xRy$时
-x和y之间有连接边。注意R是传递的：如果$xRy$且$yRz$，则$xRz$。
+有序对(x,y)组成的二元关系，其中x是y的proper factor；就是说$x\neq y$且$y/x$的
+余数是0。回忆$xRy$是$(x,y)\in R$的一种表示。在图\ref{Fig:7_3}的有向图中，
+点是S的元素，当且仅当$xRy$时x和y之间有连接边。注意R是传递的：如果$xRy$且$yRz$，则$xRz$。
 \end{example}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.6,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x1)  at (0,0) [place] {1};
+        \node (x2)  at (-4,3) [place] {2};
+        \node (x3)  at (2,3.5) [place] {3};
+        \node (x4)  at (-2,3) [place] {4};
+        \node (x5)  at (-4.5,0) [place] {5};
+        \node (x6)  at (1.4,8) [place] {6};
+        \node (x7)  at (3.5,0) [place] {7};
+        \node (x8)  at (0,3) [place] {8};
+        \node (x9)  at (8,3.5) [place] {9};
+        \node (x10)  at (-9,3) [place] {10};
+
+        \draw [thick, ->] (x1) -- (x2);
+        \draw [thick, ->] (x1) -- (x3);
+        \draw [thick, ->] (x1) -- (x4);
+        \draw [thick, ->] (x1) -- (x5);
+        \draw [thick, ->] (x1) -- (x6);
+        \draw [thick, ->] (x1) -- (x7);
+        \draw [thick, ->] (x1) -- (x8);
+        \draw [thick, ->] (x1) -- (x9);
+        \draw [thick, ->] (x1) -- (x10);
+        \draw [thick, ->] (x2) -- (x4);
+        \draw [thick, ->] (x2) -- (x6);
+        \draw [thick, ->] (x2) to [out=30,in=135] (x8);
+        \draw [thick, ->] (x2) -- (x10);
+        \draw [thick, ->] (x3) -- (x6);
+        \draw [thick, ->] (x3) -- (x9);
+        \draw [thick, ->] (x4) -- (x8);
+        \draw [thick, ->] (x5) -- (x10);
+    \end{tikzpicture}
+    \caption{例\ref{Example:BinRelation}中的关系$R$，表示“x是y的proper factor”}
+    \label{Fig:7_3}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat[一个星形网络]{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=6mm}]
+            \node[name=s,shape=circle, minimum size=30mm] {};
+            \draw[shift=(s.center)]node[name=c,place] {};
+            \draw[shift=(s.18)]node[name=x1,place] {};
+            \draw[shift=(s.90)]node[name=x2,place] {};
+            \draw[shift=(s.162)]node[name=x3,place] {};
+            \draw[shift=(s.234)]node[name=x4,place] {};
+            \draw[shift=(s.306)]node[name=x5,place] {};
+
+            \draw [thick] (c) -- (x1);
+            \draw [thick] (c) -- (x2);
+            \draw [thick] (c) -- (x3);
+            \draw [thick] (c) -- (x4);
+            \draw [thick] (c) -- (x5);
+        \end{tikzpicture}
+        \label{Fig:7_4_A}
+    }
+    \hfil
+    \subfloat[一个环状网络]{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+            \node[name=s,shape=circle, minimum size=30mm] {};
+            \draw[shift=(s.39)]node[name=x1,place] {};
+            \draw[shift=(s.90)]node[name=x2,place] {};
+            \draw[shift=(s.142)]node[name=x3,place] {};
+            \draw[shift=(s.193)]node[name=x4,place] {};
+            \draw[shift=(s.245)]node[name=x5,place] {};
+            \draw[shift=(s.296)]node[name=x6,place] {};
+            \draw[shift=(s.341)]node[name=x7,place] {};
+
+            \draw [thick, ->] (x1) -- (x2);
+            \draw [thick, ->] (x2) -- (x3);
+            \draw [thick, ->] (x3) -- (x4);
+            \draw [thick, ->] (x4) -- (x5);
+            \draw [thick, ->] (x5) -- (x6);
+            \draw [thick, ->] (x6) -- (x7);
+            \draw [thick, ->] (x7) -- (x1);
+        \end{tikzpicture}
+        \label{Fig:7_4_B}
+    }
+    \caption{计算机网络}
+    \label{Fig:7_4}
+\end{figure*}
 
 \begin{example}
 计算机网络
 
-点是计算机。线（无向图）或箭头（有向图）是通信线路。图7.4展示了两个例子。
+点是计算机。线（无向图）或箭头（有向图）是通信线路。图\ref{Fig:7_4}展示
+了两个例子。
 \end{example}
 
 \begin{example}
@@ -80,8 +259,8 @@ x和y之间有连接边。注意R是传递的：如果$xRy$且$yRz$，则$xRz$。
 
 这些例子同时提出了一些我们可能希望回答的关于所表示的对象以及关系的问题，
 这些问题可以转换成图的术语。这样的问题可以通过工作在图上的算法回答。例如，
-问题“在San Diego和 Sacramento之间有直通航线吗？”可以转换成“图7.1中顶点
-SD和SAC和有边吗？”考虑下面的问题：
+问题“在San Diego和 Sacramento之间有直通航线吗？”可以转换成“图\ref{Fig:7_1}
+中顶点SD和SAC和有边吗？”考虑下面的问题：
 \begin{enumerate}
 \item 从San Diego飞到Sacramento最便宜的路线是那条？
 \item 那条路有最短的飞行时间？
@@ -109,25 +288,26 @@ SD和SAC和有边吗？”考虑下面的问题：
 在文本中我们简单的写作$vw$。
 \end{definition}
 
-在二元关系例子中（例7.3，图7.3），
+在二元关系例子中（例\ref{Example:BinRelation}，图\ref{Fig:7_3}），
 \begin{displaymath}
 \begin{aligned}
-&V={1,2, \cdots, 10}\\
-&E={(1,2), \cdots, (1,10), (2,4),(2,6), (2,8), (2,10),(3,6),(3,9),(4,8),(5,10)}
+&V=\{1,2, \cdots, 10\}\\
+&E=\{(1,2), \cdots, (1,10), (2,4),(2,6), (2,8),
+(2,10),(3,6),(3,9),(4,8),(5,10)\}
 \end{aligned}
 \end{displaymath}
 
 \begin{definition}
 无向图
 
-一个\emph{无向图或graph}是一个pair $G=(V,E)$，这里$V$是一个集合，它
+一个\emph{无向图graph}是一个pair $G=(V,E)$，这里$V$是一个集合，它
 的元素是\emph{顶点}，$E$也是一个集合它的元素是$V$元素的无序对。顶点通常也叫
 \emph{节点}。E的元素叫\emph{边}，或是为了强调叫做\emph{无向边}。每一个边都
 可以认为是包含两个元素$V$的子集；因此符号${v, w}$表示无向边。用v-w表示。在文本
 中我们简单的写作$vw$。当然对于无向图$wv=vw$。
 \end{definition}
 
-例如对于例子7.1和图7.1，我们有
+例如对于例子\ref{Example:AirRouteMap}和图\ref{Fig:7_1}，我们有
 \begin{displaymath}
 \begin{aligned}
 &V=\{SF,OAK, SAC, STK, FRES, LA, SD\}\\
@@ -137,43 +317,1416 @@ SD和SAC和有边吗？”考虑下面的问题：
 \end{aligned}
 \end{displaymath}
 无向图的定义暗示了不存在连接顶点自己的图：边定义为包含两个元素，一个集合
-不能有重复的元素（定义1.3.1）。
+不能有重复的元素（\ref{Sec:SetTupleRelation}小节）。
 
-定义7.3 子图,对称图,完全图
+\begin{definition}
+子图,对称图,完全图
 
-一个图G=(V,E)的子图$G'=(V',E'),V'\subseteq V, E'\subseteq E$。由图的定义
-还需要满足$E' \subseteq  V'\times V'$.
+一个图$G=(V,E)$的子图$G'=(V',E'),V'\subseteq V, E'\subseteq
+E$。由图的定义 还需要满足$E' \subseteq  V'\times V'$.
 
-对称图是这样的有向图:右边VW则必有反方向边WV.每个无向图有对应的对称图,把
+对称图是这样的有向图:有边$vw$则必有反方向边$wv$.每个无向图有对应的对称图,把
 无向边解释成相反方向的一对有向边.
 
-完全图(通常是无向图)是每对顶点都有边的图.
+完全图(正常是无向图)是每对顶点都有边的图.
 
-边VW可说它是依附于顶点V和W的.
+边$vw$可说它是依附于顶点$v$和$w$的.
+\end{definition}
+
+\begin{definition}
+邻接关系
+
+图或有向图$G=(V,E)$的边引出了一种在顶点集合上的关系A，称之为\emph{邻接关系}。
+令$v$和$w$是$V$的元素。则$vAw$（读作“$w$是$v$的邻接”）当且仅当$vw$在$E$
+中。换句话说，$vAw$意味着可以从$v$出发通过$G$的边到达$w$。如果$G$是无向图，
+关系是A是对称的。（就是说$wAv$当且仅当$vAw$。）
+\end{definition}
+
+路径path的概念在许多应用中非常有用，包括那些牵涉到人、电话（或者电子）消息、
+手机漫游、管道中的油和气等等的route问题，以及其他路径表示抽象的属性的问题
+（参看练习7.3）。再次考虑\ref{Fig:7_1}，假设我们希望做飞机从Los Angeles（LA）
+到Fresno（FRES）。有一条边\{LA, FRES\}是可能的路由，但是也有其他的。我们可以
+从LA到SAC到SF到FRES，或者我们可以从LA到SD到FRES。图中LA到FRES的都称为“路径”。
+
+\begin{definition}\label{Def:PathinGraph}
+图中路径
+
+图$G=(V,E)$中一条\emph{从v到w路径}是边$v_0v_1, v_1v_2, \cdots, v_{k-1}vk$的
+序列，这里$v=v_0$和$v_k =w$。路径的长度是$k$。一个孤立顶点$v$可以认为是一条
+长度为0的自己到自己的路径。一条\emph{简单路径}指$v_0, v_1, \cdots, v_k$都是
+不同。
+
+说一个顶点$w$从$v$\emph{可到达}，当从$v$到$w$有一条路径。
+\end{definition}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={shape=ellipse,draw, fill=white,inner sep=0pt,minimum width=10ex,minimum height=5ex}]
+        \node (SAC)  at (2,11) [place] {SAC};
+        \node (SF)  at (-2.4,9.7) [place] {SF};
+        \node (STK)  at (4.6,10) [place] {STK};
+        \node (OAK)  at (-0.4,9) [place] {OAK};
+        \node (FRES)  at (3,5) [place] {FRES};
+        \node (LA)  at (-1.4,1) [place] {LA};
+        \node (SD)  at (0,0) [place] {SD};
+
+        \draw [ultra thick] (SAC) -- (SF);
+        \draw [thick] (SF) -- (STK);
+        \draw [thick] (SF) -- (LA);
+        \draw [thick] (SF) -- (SD);
+        \draw [ultra thick] (SF) -- (FRES);
+        \draw [thick] (LA) -- (OAK);
+        \draw [thick] (LA) -- (FRES);
+        \draw [thick] (LA) -- (SD);
+        \draw [ultra thick] (SD) -- (FRES);
+        \draw [thick] (LA) -- (SAC);
+        \draw [thick] (STK) -- (FRES);
+        \draw [thick] (SD) -- (OAK);
+        \end{tikzpicture}
+    \caption{SD到SAC的路径}
+    \label{Fig:7_5}
+\end{figure*}
+
+路径\{SD, FRES\}, \{FRES, SF\}, \{SF, SAC\}展示在图\ref{Fig:7_5}。我们通
+列出路径穿过的所有顶点来标注一条路径（但是记住路径的长度是它穿过的边的
+数量）。因此在图\ref{Fig:7_5}是SD,FRES,SD,SAC，长度是3。
+
+\begin{definition}
+连通，强连通
+
+\emph{连通性connectivity}的定义需要特别注意，因为有向图的连通性和无向图的
+连通性有区别。
+
+无向图的是\emph{连同}的，当且仅当对于每一对顶点$v$和$w$都存在一条路径从
+$v$到$w$。
+
+有向图的是强联通的，当且仅当对于每一对顶点$v$和$w$都存在一条路径从$v$到$w$。
+\end{definition}
+
+分成两个读起来差不多的独立定义的原因是，在无向图中，如果存在从$v$到$w$的路径
+则自动存在从$w$到$v$的路径。在有向图中，这就不一定是真，因此限定词“强”用来
+表示条件是强的。如果我们将无向图视为双向街道系统，将有向图视为单向街道系统，
+则强连通性意味着我们可以从一点到任意一点，即使沿着单行街道的单行方向。这显然
+是比双向街道更严格的条件。
+
+\begin{definition}
+图中的回路cycle in graph
+
+\emph{回路}的定义需要特别注意，因为有向图的回路和无向图的回路有区别。
+
+对于有向图，一条\emph{回路}仅是一条非空的路径，也就是路径的起始顶点是一样，
+一条\emph{简单回路}是一条顶点不重复的回路，除了起始顶点是一样的。
+
+对于有向图定义是类似的，但是增加了要求：如果同一条边出现超过一次，它总是
+以同样的方向出现。就是说，使用定义\ref{Def:PathinGraph}的标记表示，如果$v_i=x$
+和$v_{i+1}=y$其中$0\leq i <k$，则不存在$j$使得$v_j=y$且$v_{j+1}=x$。
+
+一个图是\emph{无环的acyclic}，如果它没有回路。
+
+一个\emph{无环无向图}叫\emph{无向森林}。如果图还是联通的，它是\emph{自由树}，
+或\emph{无向树}。
+
+一个\emph{有向}无环图通常简写为\emph{DAG}。（一个DAG并不假设满足任何连通性
+条件。）
+\end{definition}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={minimum height=2ex}]
+        \node (c1)  at (0,0) [place] {C};
+        \node (c2)  at (1,0) [place] {C};
+        \node (h1)  at (-1,0) [place] {H};
+        \node (h2)  at (0,1) [place] {H};
+        \node (h3)  at (0,-1) [place] {H};
+        \node (h4)  at (1,1) [place] {H};
+        \node (h5)  at (1,-1) [place] {H};
+        \node (h6)  at (3,0) [place] {H};
+        \node (o1)  at (2,0) [place] {O};
+
+        \draw [] (c1) -- (h1);
+        \draw [] (c1) -- (h2);
+        \draw [] (c1) -- (h3);
+        \draw [] (c1) -- (c2);
+        \draw [] (c2) -- (h4);
+        \draw [] (c2) -- (h5);
+        \draw [] (c2) -- (o1);
+        \draw [] (o1) -- (h6);
+        \end{tikzpicture}
+    \caption{自由树，表示酒精的分子式}
+    \label{Fig:7_6}
+\end{figure*}
+
+图\ref{Fig:7_6}是一个自由，或无向树。注意根据树的定义，没有顶点被选作根。一颗
+\emph{rooted tree}是一颗树，它有一个顶点设计成了根。一旦根指定之后，树常用的
+父子关系就可以派生出来。
+
+定义\emph{对称有向图}和\emph{对称无向图}的原因牵涉到回路。如果回路的概念不重要，
+则a procedure intended for directed graphs can often be used on the 对称有向图
+that corresponds to an undirected graph. 但是对于那些回路概念很重要的问题，这种
+代入并不好用。例如，简单的无向图有一条边$ab$，且没有回路，但是它的对称对应图有
+两条边$ab$和$ba$，且有一个回路。
+
+\begin{definition}\label{Def:Connected_Component}
+连同分量connected component
+
+无向图$G$的\emph{连同分量}是$G$的\emph{最大}连同子图，相关概念很多，它的定义
+延缓到定义\ref{Def:CondensationGraph}。
+\end{definition}
+
+我们必须澄清连同分量中“最大”的含义。说一个图在某些图的集合中是\emph{最大的}，
+当它不是集合中任意图的真子图。它不需要有在图集合中最多的顶点数或者最多的边数。
+在定义\ref{Def:Connected_Component}中，“集合collection”是$G$中所有连同子图。
+
+当术语\emph{分量}用于图的连同时和其他抽象结构时，它通常隐含包括了在组中的最大性。
+我们将在本章的后面遇到术语“强连同分量”和“二连同分量”。两种情况中都有最大性
+的概念。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=black,inner sep=0pt,minimum size=2mm}]
+        \node (x1) at (0,0) [place] {};
+        \node (x2) at (3,0.5) [place] {};
+        \node (x3) at (6,1) [place] {};
+        \node (x5) at (1,-3) [place] {};
+        \node (x6) at (5,-3) [place] {};
+        \node (x7) at (2,-2.6) [place] {};
+        \node (x8) at (4,-2.6) [place] {};
+        \node (x4) at (3,-1) [place] {};
+        \node (x9) at (3.5,0) [place] {};
+        \node (x10) at (5.5,0.5) [place] {};
+        \node (x11) at (5,-2) [place] {};
+
+        \draw [] (x1)-- (x2);
+        \draw [] (x2)--(x3);
+        \draw [] (x1)-- (x5);
+        \draw [] (x3)--(x6);
+        \draw [] (x5)-- (x6);
+        \draw [] (x2)--(x6);
+        \draw [] (x2)--(x5);
+        \draw [] (x7)-- (x8);
+        \draw [] (x8)--(x4);
+        \draw [] (x4)--(x7);
+        \draw [] (x9)--(x11);
+        \draw [] (x10)--(x11);
+
+    \end{tikzpicture}
+    \caption{有三个连同分量的图}
+    \label{Fig:7_7}
+\end{figure*}
+
+如果无向图不是连同的，它可以划分为独立的连同分量，且这个划分是唯一的。图
+\ref{Fig:7_7}有三个连同分量。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={shape=ellipse,draw, fill=white,inner sep=0pt,minimum width=10ex,minimum height=5ex}]
+        \node (SAC)  at (2,11) [place] {SAC};
+        \node (SF)  at (-2.4,9.7) [place] {SF};
+        \node (STK)  at (4.6,10) [place] {STK};
+        \node (OAK)  at (-0.4,9) [place] {OAK};
+        \node (FRES)  at (3,5) [place] {FRES};
+        \node (LA)  at (-1.4,1) [place] {LA};
+        \node (SD)  at (0,0) [place] {SD};
+
+        \draw [ultra thick] (SAC) -- (SF)node[above,text centered,midway]{48};
+        \draw [thick] (SF) -- (STK)node[above,text centered,midway]{48};
+        \draw [thick] (SF) -- (LA)node[left,text centered,midway]{100};
+        \draw [thick] (SF) -- (SD)node[above,text centered,midway]{128};
+        \draw [ultra thick] (SF) -- (FRES)node[above,text centered,midway]{64};
+        \draw [thick] (LA) -- (OAK)node[above,text centered,midway]{100};
+        \draw [thick] (LA) -- (FRES)node[above,text centered,midway]{80};
+        \draw [thick] (LA) -- (SD)node[above,text centered,midway]{48};
+        \draw [ultra thick] (SD) -- (FRES)node[above,text centered,midway]{120};
+        \draw [thick] (LA) -- (SAC)node[above,text centered,midway]{100};
+        \draw [thick] (STK) -- (FRES)node[right,text centered,midway]{48};
+        \draw [thick] (SD) -- (OAK)node[right,text centered,midway]{128};
+        \end{tikzpicture}
+    \caption{图的权值表示了票价}
+    \label{Fig:7_8}
+\end{figure*}
+
+在许多图的应用中很自然的为每条边关联到一个数字，通常成为\emph{权值weight}。
+数字表示以某种方式使用边带来的消耗或者收益。再次考虑图\ref{Fig:7_1}，假设
+我们想从SD飞到SAC。有一个不停站飞行，但是可以使用好几种route和路径。那种
+最好？为了回答这个问题，我们需要一个比较不同路径的标准。可能的标准有
+\begin{enumerate}
+\item 中途停的次数
+\item 总的票价
+\item 总的飞行时间
+\end{enumerate}
+在选择了标准之后，我们可以赋值给每一条边一个值，代表通过这条边旅行的消耗
+（停的次数，钱或时间）。一条特定路径的总消耗是这条route遍历到所有边消耗
+的和。图\ref{Fig:7_8}展示的航空图（假象的）上带上了每条边机票的价格。你
+可以验证最便宜的从SD到SAC的方式是在LA中转一次。寻找“最好”路径的一般性
+问题在\ref{Sec:single-source-shortest-path}节和\ref{Sec:AllParisShortestPathsinGraphs}
+节学习。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=black,inner sep=0pt,minimum size=2mm}]
+        \node (x1) at (0,0) [place] {};
+        \node (x2) at (12,1) [place] {};
+        \draw [] (x1) -- (x2)
+            node[above, text centered, midway]{20};
+
+        \node (xa1) at (-0.2,1) [place] {};
+        \node (xb1) at (-1.2,0) [place] {};
+        \draw [] (x1) -- (xa1)
+            node[above, text centered, midway]{18};
+        \draw [] (x1) -- (xb1)
+            node[above, text centered, midway]{20};
+
+        \node (xa2) at (12.2,2) [place] {};
+        \node (xb2) at (13.2,-0.1) [place] {};
+        \draw [] (x2) -- (xa2)
+            node[above, text centered, midway]{15};
+        \draw [] (x2) -- (xb2)
+            node[above, text centered, midway]{20};
+
+        \node (x3) at (0.3,-1) [place] {};
+        \draw [] (x1) -- (x3)
+            node[above, text centered, midway]{18};
+
+        \node (x4) at (0.6,-2.3) [place] {};
+        \draw [] (x3) -- (x4)
+            node[above, text centered, midway]{18};
+
+        \node (x5) at (0.9,-3.6) [place] {};
+        \draw [] (x4) -- (x5)
+            node[above, text centered, midway]{18};
+        \node (xa5) at (-0.6,-3.6) [place] {};
+        \draw [] (x5) -- (xa5)
+            node[above, text centered, midway]{10};
+
+        \node (x6) at (1.9,-7.4) [place] {};
+        \draw [] (x5) -- (x6)
+            node[above, text centered, midway]{18};
+        \node (xa6) at (-0.3,-8.0) [place] {};
+        \draw [] (x6) -- (xa6)
+            node[above, text centered, midway]{6};
+
+        \node (x7) at (2.6,-10) [place] {};
+        \draw [] (x6) -- (x7)
+            node[above, text centered, midway]{18};
 
 
-\subsection{图的表示和数据结构}
+    \end{tikzpicture}
+    \caption{显示交通能力的街道地图}
+    \label{Fig:7_9}
+\end{figure*}
+
+图\ref{Fig:7_9}\footnote{译注：对原图有简化}，展示了城市中的一些街道，可能被
+用于自动交通流的研究。赋予边的数字指示了交通的量，即相同时间间隔内能通过街道
+的流量。数字取决于路的类型和大小，速度限制，两个街区之间交通灯的数量，街区在
+图中以顶点指示（假设不是所有的街道都显示在途中），以及其他的因素。
+
+The assignment of numbers of edges occurs often enough in applications to
+merit a definition.
+
+\begin{definition}
+带权图
+
+带权图是一个三元组$(V,E,W)$，这里$(V,E)$是图（有向或者无向图）而$W$是一个
+E到$\mathbf{R}$（实数）的函数。（其他权的类型，比如有理数或整数，可以适用与
+有些问题。）对于边$e$，$W(e)$叫$e$的\emph{权值}。
+\end{definition}
+
+函数这个术语可能听起来很技术化，但是只要我们回顾\ref{Sec:Calculous}小节就很容易
+理解，概念上，函数仅仅是一张双列的表：函数的参数和参数对应的函数的值。这种情况
+下每条边表示在第一列中的某一行，它的权值在第二列中同样的行中。数据结构表示上
+可能会不同，但是权值代表着同样的信息。在图的图形表示中，我们简单的将每条边的权
+写在边的旁边，就像我们在图\ref{Fig:7_8}和\ref{Fig:7_9}。在有些应用中权将表示消耗
+或者其他边的负面东西，而有些问题中权是能力或者边的有益属性。（随着应用的不同；
+因此术语\emph{cost}, \emph{length}, or \emph{capacity} 可以替代为\emph{weight}。）
+在许多应用中，权不能自然认为是负的，as when 他们表示距离时。有些算法的正确性
+依赖严格的权值的非负性，而有些算法能处理负值。
+
+
+\subsection{图的表示和数据结构}\label{Sec:GraphRepresentationsAndDataStructures}
+我们有两种在纸上表示图的方法：画张图片，图片中顶点用点表示，边用线或者箭头表示；
+列出顶点和边。这一小节讨论通常在计算机程序中用来表示图的数据结构。令$G=(V,E)$是图，
+其中$n=|V|$, $m=|E|$, 和$V={v_1, v_2, \cdots, v_n}$。
+
 \subsubsection{邻接矩阵}
+\begin{figure*}[!t]
+    \centering
+    \subfloat[一个无向图]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x1)  at (0,0) [place] {1};
+        \node (x2)  at (2,0) [place] {2};
+        \node (x3)  at (0,-2) [place] {3};
+        \node (x4)  at (2,-2) [place] {4};
+        \node (x5)  at (-1,-4) [place] {5};
+        \node (x6)  at (1,-4) [place] {6};
+        \node (x7)  at (3,-4) [place] {7};
+
+        \draw [thick] (x1) -- (x2)
+            node[right,text centered,midway]{};
+        \draw [thick] (x2) -- (x3)
+            node[above,text centered,midway]{};
+        \draw [thick] (x2) -- (x4)
+            node[left,text centered,midway]{};
+        \draw [thick] (x3) -- (x1)
+            node[above,text centered,midway]{};
+        \draw [thick] (x3) -- (x6)
+            node[text centered,midway]{};
+        \draw [thick] (x4) -- (x3)
+            node[text centered,midway]{};
+        \draw [thick] (x6) -- (x5)
+            node[text centered,midway]{};
+        \draw [thick] (x6) -- (x4)
+            node[text centered,midway]{};
+        \draw [thick] (x7) -- (x6)
+            node[text centered,midway]{};
+        \end{tikzpicture}
+        \label{Fig:7_10_A}
+    }
+    \hfil
+    \subfloat[它的邻接矩阵]{
+        $\left(
+           \begin{array}{ccccccc}
+             0 & 1 & 1 & 0 & 0 & 0 & 0 \\
+             1 & 0 & 1 & 1 & 0 & 0 & 0 \\
+             1 & 1 & 0 & 1 & 0 & 1 & 0 \\
+             0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+             0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+             0 & 0 & 1 & 1 & 1 & 0 & 1 \\
+             0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+           \end{array}
+         \right)
+        $
+        \label{Fig:7_10_B}
+    }
+    \hfil
+    \subfloat[它的邻接表结构]{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \draw (0, 0.3) node{{\textbf{adjVertices}}};
+        \foreach \x in {1, ..., 7}
+            \draw (-0.3, -\x*1.5+0.75) node{\x};
+        \foreach \x in {1, ..., 7}
+            \draw (0,-\x*1.5) rectangle (1,-\x*1.5+1.5);
+        \foreach \x in {1, ..., 7}
+            \draw [thick, ->] (0.8,-\x*1.5+0.75) -- (1.8,-\x*1.5+0.75);
+        \foreach \x in {1, ..., 7}
+            \draw (1.8, -\x*1.5+0.75-0.4) rectangle (2.8,-\x*1.5+0.75+0.4);
+        \foreach \x in {1, ..., 7}
+            \draw (2.8, -\x*1.5+0.75-0.4) rectangle (3.8,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {1/2, 2/1, 3/1, 4/2, 5/6, 6/3, 7/6}
+            \draw (2.3, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {5/nil, 7/nil}
+            \draw (3.3, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {1, 2, 3, 4, 6}
+            \draw [thick, ->] (3.6,-\x*1.5+0.75) -- (4.6,-\x*1.5+0.75);
+        \foreach \x in {1, 2, 3, 4, 6}
+            \draw (4.6, -\x*1.5+0.75-0.4) rectangle (5.6,-\x*1.5+0.75+0.4);
+        \foreach \x in {1, 2, 3, 4, 6}
+            \draw (5.6, -\x*1.5+0.75-0.4) rectangle (6.6,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {1/3, 2/3, 3/2, 4/3, 6/4}
+            \draw (5.1, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {1/nil}
+            \draw (6.1, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {2, 3, 4, 6}
+            \draw [thick, ->] (6.4,-\x*1.5+0.75) -- (7.4,-\x*1.5+0.75);
+        \foreach \x in {2, 3, 4, 6}
+            \draw (7.4, -\x*1.5+0.75-0.4) rectangle (8.4,-\x*1.5+0.75+0.4);
+        \foreach \x in {2, 3, 4, 6}
+            \draw (8.4, -\x*1.5+0.75-0.4) rectangle (9.4,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {2/4, 3/4, 4/6, 6/5}
+            \draw (7.9, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {2/nil, 4/nil}
+            \draw (8.9, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {3, 6}
+            \draw [thick, ->] (9.2,-\x*1.5+0.75) -- (10.2,-\x*1.5+0.75);
+        \foreach \x in {3, 6}
+            \draw (10.2, -\x*1.5+0.75-0.4) rectangle (11.2,-\x*1.5+0.75+0.4);
+        \foreach \x in {3, 6}
+            \draw (11.2, -\x*1.5+0.75-0.4) rectangle (12.2,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {3/6, 6/7}
+            \draw (10.7, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {3/nil, 6/nil}
+            \draw (11.7, -\x*1.5+0.75) node {\y};
+
+        \end{tikzpicture}
+        \label{Fig:7_10_C}
+    }
+    \caption{边不带权的无向图的两种表示，邻接矩阵和邻接表。它也可以是一个对称有向图。}
+    \label{Fig:7_10}
+\end{figure*}
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat[一个带权有向图]{
+        \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \node (x1)  at (0,0) [place] {1};
+        \node (x2)  at (2,0) [place] {2};
+        \node (x3)  at (0,-2) [place] {3};
+        \node (x4)  at (2,-2) [place] {4};
+        \node (x5)  at (-1,-4) [place] {5};
+        \node (x6)  at (1,-4) [place] {6};
+        \node (x7)  at (3,-4) [place] {7};
+
+        \draw [thick, ->] (x1) -- (x2)
+            node[right,text centered,midway]{25};
+        \draw [thick, ->] (x2) -- (x3)
+            node[above,text centered,midway]{10};
+        \draw [thick, ->] (x2) -- (x4)
+            node[left,text centered,midway]{14};
+        \draw [thick, ->] (x3) -- (x1)
+            node[above,text centered,midway]{5};
+        \draw [thick, ->] (x3) -- (x6)
+            node[text centered,midway]{16};
+        \draw [thick, ->] (x4) -- (x3)
+            node[text centered,midway]{18};
+        \draw [thick, ->] (x6) -- (x5)
+            node[text centered,midway]{42};
+        \draw [thick, ->] (x6) -- (x4)
+            node[text centered,midway]{32};
+        \draw [thick, ->] (x7) -- (x6)
+            node[text centered,midway]{11};
+        \end{tikzpicture}
+        \label{Fig:7_11_A}
+    }
+    \hfil
+    \subfloat[它的邻接矩阵]{
+        $\left(
+           \begin{array}{ccccccc}
+             0 & 25.0 & \infty & \infty & \infty & \infty & \infty \\
+             \infty & 0 & 10.0 & 14.0 & \infty & \infty & \infty \\
+             5.0 & \infty & 0 & \infty & \infty & 16.0 & \infty \\
+             \infty & 6.0 & 18.0 & 0 & \infty & \infty & \infty \\
+             \infty & \infty & \infty & \infty & 0 & \infty & \infty \\
+             \infty & \infty & \infty & 32.0 & 42.0 & 0 & 14.0 \\
+             \infty & \infty & \infty & \infty & \infty & 11.0 & 0 \\
+           \end{array}
+         \right)
+        $
+        \label{Fig:7_11_B}
+    }
+    \hfil
+    \subfloat[它的邻接表结构]{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=5mm}]
+        \draw (0, 0.3) node{{\textbf{adjInfo}}};
+        \foreach \x in {1, ..., 7}
+            \draw (-0.3, -\x*1.5+0.75) node{\x};
+        \foreach \x in {1, ..., 7}
+            \draw (0,-\x*1.5) rectangle (1,-\x*1.5+1.5);
+        \foreach \x/\y in {5/nil}
+            \draw (0.5, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {1, ..., 4, 6, 7}
+            \draw [thick, ->] (0.8,-\x*1.5+0.75) -- (1.8,-\x*1.5+0.75);
+        \foreach \x in {1, ..., 4, 6, 7}
+            \draw (1.8, -\x*1.5+0.75-0.4) rectangle (2.8,-\x*1.5+0.75+0.4);
+        \foreach \x in {1, ..., 4, 6, 7}
+            \draw (2.8, -\x*1.5+0.75-0.4) rectangle (3.8,-\x*1.5+0.75+0.4);
+        \foreach \x in {1, ..., 4, 6, 7}
+            \draw (3.8, -\x*1.5+0.75-0.4) rectangle (4.8,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {1/2, 2/3, 3/1, 4/2, 6/4, 7/6}
+            \draw (2.3, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {1/25.0, 2/10.0, 3/5.0, 4/6.0, 6/32.0, 7/11.0}
+            \draw (3.3, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {1/nil, 7/nil}
+            \draw (4.3, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {2, 3, 4, 6}
+            \draw [thick, ->] (4.6,-\x*1.5+0.75) -- (5.6,-\x*1.5+0.75);
+        \foreach \x in {2, 3, 4, 6}
+            \draw (5.6, -\x*1.5+0.75-0.4) rectangle (6.6,-\x*1.5+0.75+0.4);
+        \foreach \x in {2, 3, 4, 6}
+            \draw (6.6, -\x*1.5+0.75-0.4) rectangle (7.6,-\x*1.5+0.75+0.4);
+        \foreach \x in {2, 3, 4, 6}
+            \draw (7.6, -\x*1.5+0.75-0.4) rectangle (8.6,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in {2/4, 3/4, 4/6, 6/5}
+            \draw (6.1, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {2/14.0, 3/16.0, 4/18.0, 6/42.0}
+            \draw (7.1, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {2/nil, 3/nil, 4/nil}
+            \draw (8.1, -\x*1.5+0.75) node {\y};
+
+        \foreach \x in {6}
+            \draw [thick, ->] (8.4,-\x*1.5+0.75) -- (9.4,-\x*1.5+0.75);
+        \foreach \x in {6}
+            \draw (9.4, -\x*1.5+0.75-0.4) rectangle (10.4,-\x*1.5+0.75+0.4);
+        \foreach \x in {6}
+            \draw (10.4, -\x*1.5+0.75-0.4) rectangle (11.4,-\x*1.5+0.75+0.4);
+        \foreach \x in {6}
+            \draw (11.4, -\x*1.5+0.75-0.4) rectangle (12.4,-\x*1.5+0.75+0.4);
+        \foreach \x/\y in { 6/7}
+            \draw (9.9, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {6/14.0}
+            \draw (10.9, -\x*1.5+0.75) node {\y};
+        \foreach \x/\y in {6/nil}
+            \draw (11.9, -\x*1.5+0.75) node {\y};
+        \end{tikzpicture}
+        \label{Fig:7_11_C}
+    }
+    \caption{带权有向图的两种表示。}
+    \label{Fig:7_11}
+\end{figure*}
+
+$G$可以表示为$n\times n$矩阵$A=(a_{ij})$，称为$G$的\emph{邻接矩阵}。A定义为
+\begin{displaymath}
+a_{ij}=\left\{\begin{array}{l}
+                   1 \qquad\mbox{if } v_iv_j \in E\\
+                   \raggedleft 0 \qquad\mbox{otherwise}
+                 \end{array}
+\right.\qquad\mbox{for }1\leq i, j\leq n.
+\end{displaymath}
+无向图的邻接矩阵是对称的（仅有一半需要存储）。如果$G=(V,E,W)$是带权图，权可以
+存储在邻接矩阵中，只需改动一下定义：
+\begin{displaymath}
+\begin{aligned}
+a_{ij}=\left\{\begin{array}{ll}
+                   W(v_iv_j) &\mbox{if } v_iv_j \in E\\
+                   c &\mbox{otherwise}
+                 \end{array}
+\right.\qquad\mbox{for }1\leq i, j\leq n.
+\end{aligned}
+\end{displaymath}
+这里\emph{c}常数，它的值以来与权的实现以及要解决的问题。如果权是一种消耗，$c$
+可以选择$\infty$（或者其他特别大的数）因为遍历不存在的边的消耗可能高的惊人。
+如果权是能力，选择$c=0$通常是合适的，因为不存在的边不会有任何效果。 参看
+图\ref{Fig:7_10_A},\ref{Fig:7_10_B}和\ref{Fig:7_11_A},\ref{Fig:7_11_B}。
+
+有些在图上解决问题的算法需要检查每一条边并且以某种方式处理边一次。如果使用
+邻接矩阵的表示，我们可以把graph想像成每一对顶点之间都有边，因为许多算法将会
+检查矩阵的每一个条目以判断这条边是否存在。既然有向图中边可能的数量是$n^2$，或者
+无向图是$n(n-1)/2$，这样的算法的复杂性在$\Omega(n^2))$。
+
 \subsubsection{邻接表数组}
+邻接矩阵表示之外另一种方法是用顶点的编号来索引的数组，数组中包含了链表，称之为
+\emph{邻接表（adjacency lists）}。对于每一个顶点$v_i$，第$i$个数组元素包含一个
+list，list中是图$G$中所有从$v_i$出发的边的信息。在有向图中，这意味着$v_i$是边的
+尾；在无向图中，边是关联到$v_i$的。$v_i$的list包含每条边的一个元素。为了确定性
+的表述，我们称这个数组是{\textbf{adjInfo}}。它有以下定义：
+\begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+    List[] adjInfo = new List[n+1];
+\end{lstlisting}
+我们将使用索引$1,\cdots, n$，所以我们分配了$n+1$个位置，但是不使用第0个位置。
+现在adjInfo[i]将是一个list，list中包含从$v_i$出发的边的信息。
+
+邻接表结构的长处是，$G$中不存在的边也不会存在于我们的数据结构中。如果$G$是
+稀疏的（包含的边远小于$n^2$），邻接表处理起来比较迅速。注意，如果邻接表中的元素
+以不同的顺序出现，邻接表结构依然表示的是同一个图，但是使用list的算法将以不同的
+顺序遇到元素，并且可能有不同的行为。一个算法必须不假定list中有特定的顺序（当然，
+除非算法自己以特定的方式构造一个邻接表结构）。
+
+邻接表中的数据因为要解决问题的不同而千差万别，但是有比较标准的基本结构，适用于
+许多算法。假设我们定义了{\textbf{EdgeInfo}}为一种组织者类（参看\ref{Sec:OrganizerClass}
+小节），类{\textbf{EdgeInfo}}中的数据域是我们想维护的关于边的信息。则每一个
+邻接表的元素将是一个{\textbf{EdgeInfo}}的对象。三个基本的元素是{\textbf{from}}，
+{\textbf{to}}和{\textbf{weight}}，用于记录一条从$v_{from}$到$v_{to}$的边，而
+“{\textbf{weight}}”是边的权值。我们将把这个信息写成(from, to, weight)的形式。
+当然，在每一条list中，所有边的from域都一样的。也就是，list adjInfo[i]素有的元素
+都有from=i。因此from域是冗余的，通常在邻接表中都是省略的。
+
+对于不带权的图，没有weight域。因此{\textbf{EdgeInfo}}就减到一个域了，to，这时
+我们不需要一个组织者类。我们简单的使用一个整数链表，类似{\textbf{IntList}}
+（参看\ref{Sec:ListADT}）。既然现在除了顶点外没有其他“信息”了，我们将数组
+重新命名为{\textbf{adjVertices}}。每一个元素，比如j，在list adjVertices[i]中
+表示图$G$中存在一条边$v_iv_j$。例如，如果6在adjVertices[7]中，它表示边(7,6)。
+展示无向图（也可以是一个对称有向图）的数据结构如图\ref{Fig:7_10}所示。
+
+对于带权图，我们可能希望定义一个类的lists，它的元素是{\textbf{EdgeInfo}}对象，
+称这个类是{\textbf{EdgeList}}。让我们将{\textbf{EdgeInfo}}的对象表示为(to, weight)。
+这种情况下邻接表adjInfo[i]中的元素$(j, w_{ij})$表示边$(v_i, v_j)$边的权是$w_{ij}$。
+图\ref{Fig:7_11}展示一个带权图的概念性结构。还可以添加额外的域到数组项或者
+链表中去，如果算法需要的话。
+
+在无向图中，每一条边被表示了两次；也就是说，如果$vw$是一条边，那么在$w$的
+邻接表中有元素$v$，在$v$的邻接表中有元素$W$。因此有$2m$个邻接表元素，$n$个
+邻接表。对于有向图，每条边被表示一次。注意表示无向图的邻接表结构和表示对应
+的\emph{对称有向图}的邻接表结构是一致的。
+
 \section{图的遍历}
-大部分算法是为解决检查或处理图的顶点和边的问题的.广度优先查找和深度优先查找
+大部分算法是为解决检查或处理图的顶点和边的问题的。广度优先查找和深度优先查找
 提供了一种高效访问每个顶点和边仅一次的访问策略.（术语深度优先查找和深度优先
-遍历是可互换的,广度优先查找和广度优先遍历也是类似的）。从而,许多算法以此为基础
-运行在随输入图的大小呈线性增长的时间里。
-\subsection{深度优先查找}
-例7.6 深度优先查找
-让我们从下图中的顶点A开始深度优先查找。为了简化，当我们有多条边可以探索时，我们将按字母顺序选择一条
-\subsection{广度优先查找}
+遍历是可互换的,广度优先查找和广度优先遍历也是类似的）。从而，许多以此为基础
+的算法运行在随输入图的大小呈线性增长的时间里。
+
+\subsection{深度优先查找（Depth-First Search）}\label{Sec:DFS}
+深度优先查找的价值由John Hopcroft和Robert Tarjan阐述，他们发明了许多现在使用
+的重要算法。其中的许多将在本章剩下的部分中出现。
+
+深度优先查找是一般树遍历（\ref{Sec:TreeADT}）的一种泛化。起始顶点可能由问题
+决定，或者是任意选定的。如树的遍历，深度优先查找常被可视化为一条环绕图的
+旅途。树的遍历比较容易类推到有想吐的遍历，因为边是有方向的，树的边也有方向。
+我们将从有向图开始描述深度优先查找，之后在{Sec:DFSOnUndirectedGraphs}小节
+看到如何将它应用到无向图。
+
+想象有向图如同一族由桥连接的岛。我们将假设每一个桥的交通都是单向的，但是我们
+做一个徒步旅行，因此我们可以朝两个方向走。当然我们决定一种策略，即我们总是在
+\emph{第一次}穿过桥的时候沿着交通规定的方向；我们称第一次穿过叫\emph{exploring}
+边（桥）。如果以反方向穿过桥，之后我们必须回到我们原来的地方，称之为
+\emph{backtracking}。DFS的主旨就是如果可能explore，否则backtrack 。我们必须给
+explore加上一些限制，但是we'll do that as we "walk" through an example in the
+persona of Terry the tourist.
+
+\begin{example}\label{Example:DFS}
+深度优先查找
+
+让我们从下图中的顶点A开始深度优先查找。为了简化，当我们有多条边可以探索时，
+我们将按字母顺序选择一条
+
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [->] (B1) -- (C1);
+    \draw [->] (B1) -- (D1);
+    \draw [->] (D1) -- (A1);
+    \draw [->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (-0.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [double, ->] (A2) -- (B2);
+    \draw [->] (A2) -- (C2);
+    \draw [->] (A2) to [out=-70,in=70] (F2);
+    \draw [->] (B2) -- (C2);
+    \draw [->] (B2) -- (D2);
+    \draw [->] (D2) -- (A2);
+    \draw [->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (5,-0.2) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [double, ->] (A3) -- (B3);
+    \draw [->] (A3) -- (C3);
+    \draw [->] (A3) to [out=-70,in=70] (F3);
+    \draw [double, ->] (B3) -- (C3);
+    \draw [->] (B3) -- (D3);
+    \draw [->] (D3) -- (A3);
+    \draw [->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [->] (F3) to [out=110,in=-110] (A3);
+    \draw [->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (9,-1.4) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+\end{tikzpicture}
+
+Terry the tourist begins at A in the 左边的diagram，explore to B中间的，
+之后到C右边的。双实线标记了被explored的边，并指向没有发现的顶点，或者岛。
+我们说A，B，C是在当Terry第一次到达的时候\emph{已经发现的}。
+
+记住探索必须以交通的方向，到C的时候没有地方可以探索了。我们称之
+为\emph{dead end}。所以Terry 回溯(backtracks)了。回溯总是在第一次来到
+这个岛的桥上进行。一旦岛C被回溯，它就不会在被重新访问，称为完成的（finished）。
+一条粗线用来标记一条边即被探索过又被回溯过。
+
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [double, ->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [very thick, ->] (B1) -- (C1);
+    \draw [->] (B1) -- (D1);
+    \draw [->] (D1) -- (A1);
+    \draw [->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (1,-0.2) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [double, ->] (A2) -- (B2);
+    \draw [->] (A2) -- (C2);
+    \draw [->] (A2) to [out=-70,in=70] (F2);
+    \draw [very thick, ->] (B2) -- (C2);
+    \draw [double,->] (B2) -- (D2);
+    \draw [->] (D2) -- (A2);
+    \draw [->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (6.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [double, ->] (A3) -- (B3);
+    \draw [->] (A3) -- (C3);
+    \draw [->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [double, ->] (B3) -- (D3);
+    \draw [double, minimum size=20mm, dash pattern=on 3pt off 3pt, ->] (D3) -- (A3);
+    \draw [->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [->] (F3) to [out=110,in=-110] (A3);
+    \draw [->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (8.3,0.1) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+\end{tikzpicture}
+
+在上面插图的左边，Terry回溯到B，重新开始使用探索规则。到D的桥还没有被探索，
+所以这是下一步动作，也就是中的图。现在我们所在的位置有三个可选项了。右边的
+图显示Terry从D到了A。这会完成一个回路，但是显然树是没有回路的。由于这个原因，
+当遍历图时，有必要记录下那些顶点我们到过——我们必须区分出来未发现的顶点和
+已经发现的顶点。我们可能在这个回路中永远转下去，如果我们没有记住，我们已经
+发现过A的话。
+
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [double, ->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [very thick, ->] (B1) -- (C1);
+    \draw [->] (B1) -- (D1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (A1);
+    \draw [->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (2.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [double, ->] (A2) -- (B2);
+    \draw [->] (A2) -- (C2);
+    \draw [->] (A2) to [out=-70,in=70] (F2);
+    \draw [very thick, ->] (B2) -- (C2);
+    \draw [double,->] (B2) -- (D2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (A2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (6.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [double, ->] (A3) -- (B3);
+    \draw [->] (A3) -- (C3);
+    \draw [->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [minimum size=20mm, dash pattern=on 3pt off 3pt, ->] (D3) -- (A3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [->] (F3) to [out=110,in=-110] (A3);
+    \draw [->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (9,-0.2) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \end{tikzpicture}
+
+假设Terry认识到A刚才已经访问过了，接着又回溯到D，如上图左边的所展示的。
+我们使用虚线标记着条边已经探索过了，但是边指向一个已经发现的顶点。
+
+因为旅途的隐喻，我们说一条边被探索了和回溯了，即使是访问一个之前已经访问
+过的顶点。然而，当我们考虑搜索算法时，我们将这条边是\emph{已经检查过checked}的，
+而仅当边是已经探索过的，而且这边指向一个没有发现过的顶点才使用术语
+\emph{回溯backtrack}。
+
+类似的，从\emph{D}到\emph{C}的边是已经发现的，但是C之前已经被发现过，
+而且已经完成了，所以发生回溯，而没有访问，也就是中间的图。我们还是称
+\emph{D}是一个死胡同，即使它有一条出去的边，因为他们仅到已经发现的顶点。
+
+注意到边\emph{DA}和\emph{DC}都指向已经发现的顶点，但是他们是区别的：到A的
+边指向一个已经发现的顶点，但是没有完成，而到C的边却指向一个完成的顶点。
+这个区别在很多DFS应用中都是重要的。
+
+从D开始已经没有可以探索的了，所以Terry回溯到发现D的桥上去，回到B，在右图中。
+依然没有桥可以探索了，于是下一步回溯到A。
+
+
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [very thick, ->] (B1) -- (C1);
+    \draw [->] (B1) -- (D1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (A1);
+    \draw [->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (-0.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A2) -- (B2);
+    \draw [dash pattern=on 3pt off 3pt,->] (A2) -- (C2);
+    \draw [->] (A2) to [out=-70,in=70] (F2);
+    \draw [very thick, ->] (B2) -- (C2);
+    \draw [very thick,->] (B2) -- (D2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (A2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (3.7,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A3) -- (B3);
+    \draw [minimum size=20mm, dash pattern=on 3pt off 3pt,->] (A3) -- (C3);
+    \draw [double, ->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [minimum size=20mm, dash pattern=on 3pt off 3pt, ->] (D3) -- (A3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [->] (F3) to [out=110,in=-110] (A3);
+    \draw [->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (7.7,-1.1) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \end{tikzpicture}
+在左边的图中Terry回溯到A，准备回溯到新的方向。桥\emph{AC}是第三个通向已经
+发现顶点桥导引，但是同样的，AC与其他有一些小的区别。在\emph{DC}的情况中，
+没有前置的路径从D从旅行到C。中图展示了\emph{AC}被探索过和被回溯的情形。右图
+Terry探索过了A F, 到达了未发现的顶点。
+
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A1) -- (B1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (A1) -- (C1);
+    \draw [double, ->] (A1) to [out=-70,in=70] (F1);
+    \draw [very thick, ->] (B1) -- (C1);
+    \draw [very thick, ->] (B1) -- (D1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (A1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (-0.3,-1.1) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A2) -- (B2);
+    \draw [dash pattern=on 3pt off 3pt,->] (A2) -- (C2);
+    \draw [double, ->] (A2) to [out=-70,in=70] (F2);
+    \draw [very thick, ->] (B2) -- (C2);
+    \draw [very thick,->] (B2) -- (D2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (A2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F2) to [out=110,in=-110] (A2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (3.7,-1.1) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A3) -- (B3);
+    \draw [very thick, ->] (A3) -- (C3);
+    \draw [very thick, ->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [minimum size=20mm, dash pattern=on 3pt off 3pt, ->] (D3) -- (A3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) to [out=110,in=-110] (A3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (7.7,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \end{tikzpicture}
+从F岛，首先FA被探索，并回溯（左图上），然后FC被探索并被回溯（中图）。类似
+D，F是一个死路。注意到Terry从来没有到E或是G。
+
+检查最后一个图，我们看到,那些在查找过程中，从已经发现的树指向未发现顶点的
+边画成了粗实线。这是合理的，因为顶点只能发现一次，顶点只能有一条入边（或者
+一条没有，起始顶点只有出边。）每个顶点只有一条入边是树的一种属性。在查找
+过程中，指向未发现顶点的边组成了一颗树，称为深\emph{度优先查找树}，或简称
+为DFS树。DFS树的细节将在\ref{Sec:DFS_Trees}小节讨论。
+
+\end{example}
+
+尽管我们把DFS当作一个旅途来介绍，我们的例子展示这个旅途有一个特定的结构：
+我们总是从我们走过的路返回。换句话说，如果第一步是A到B，则最终我们从B回到
+A。在这期间发生了什么呢？实际上，我们以B开始执行了将A排除在外的DFS。
+
+更一般的，无论何时旅途回到（backtrack）A，增加到进一步exploration的条件是
+访问过的顶点将\emph{不能}再访问。例如AC边导致发现顶点，但是AF不会，所以从
+F开始的DFS将执行。根据规则，不能重新访问已经发现的顶点，从F开始的exploration
+在backtracking到A之前将不访问A或C。相反，FA和FC将\emph{被检查}。这些观察
+在建议我们用一个递归来分解查找过程：
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=black,inner sep=0pt,minimum size=1mm},
+                               G1/.style={diamond,minimum width=20mm,minimum height=20mm,inner sep=1mm,
+                                    draw=black,
+                                    text centered},
+                               G2/.style={diamond,minimum width=10mm,minimum height=16mm,inner sep=1mm,
+                                    draw=black,
+                                    text centered},
+                               G3/.style={rectangle,minimum width=20mm,minimum height=16mm,inner sep=1mm,
+                                    draw=black,
+                                    text centered}]
+    \node (G)  at (0,0) {G};
+    \node (G)  at (0.5, -2.9) {$\nu$};
+
+    \node (P1)  at (1.5, 0)[place] {};
+    \node (P2)  at (0.8, -1)[place] {};
+    \node (P3)  at (0.5, -2) [place]{};
+    \node (P4)  at (0.7, -3) [place]{};
+
+    \node (P5)  at (-0.1, -3.2) [place]{};
+    \node (P6)  at (0, -4) [place]{};
+    \node (P7)  at (2, -3.3) [place]{};
+    \node (P8)  at (3, -2.8) [place]{};
+
+    \node (P9)  at (-0.9, -4.2) [place]{};
+    \node (Pa)  at (3.6, -3.0) [place]{};
+    \draw [->] (P1) -- (P2);
+    \draw [->] (P2) -- (P3);
+    \draw [->] (P3) -- (P4);
+    \draw [->] (P4) -- (P5);
+    \draw [->] (P4) -- (P6);
+    \draw [->] (P4) -- (P7);
+    \draw [->] (P4) -- (P8);
+
+    \draw [->] (P9) -- (P3);
+    \draw [->] (Pa) -- (P2);
+
+    \node (G1) at (-0.1, -4.2) [G1] {$G_1$};
+    \node (G2) at (2, -4.1) [G2] {$G_2$};
+    \node (G3) at (4, -3.6) [G3] {$G_3$};
+
+    \end{tikzpicture}
+    \caption{DFS的结构：$G_1$是在explore$G_2$和$G_3$之前完整遍历的。既然$G$可以不是树，则将要访问的子图中有可能存在到已经访问过节点的边。}
+    \label{Fig:7_12}
+\end{figure*}
+
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+dfs(G, V) //OUTLINE
+    `标记v为“已经发现的”`
+    `foreach vertex w in 边vw在图G中:`
+        if `w 是还没发现的:`
+            dfs(G, w);//`就是说，explore vw，访问w,`
+                      //`从w explore尽可能多的顶点，backtrack w 到 v`
+        else
+            `“检查” vw 但是不访问w.`
+    `将v标记为“完成的”`
+\end{lstlisting}
+
+为了得到DFS结构进一步的理解，请看图\ref{Fig:7_12}。假设在DFS中从$v$出发
+到达的顶点可以被划分为几个子图，$G_1$，$G_2$，$G_3$，且在$G_1$，$G_2$，
+$G_3$之间没有连接（经过未发现的顶点）。我们还假设对于这个例子，$v$的
+邻接表恰好如此的排列，以至于$G_1$中的有些顶点先于$G_2$发现，而$G_2$中
+的一些顶点先于$G_3$发现。
+
+DFS策略总是在回溯（backtracking）之前探索一条路径上尽可能远的顶点（在再次
+回溯之前探索可选的路径尽可能的远），这种策略将影响所有$G_1$顶点的访问，
+在访问$v$的新邻接子图之前，在这个例子中是$G_2$或$G_3$。则所有$G_2$中的顶点
+将在访问$G_3$的顶点之前被访问。这类比于树的遍历，树的遍历时先访问子树所有
+的顶点再访问下一颗子树的。当我们在\ref{Sec:Depth-firstSearchandRecursive}
+学习DFS更多的细节属性时我们回到这个类比。
+
+我们是如此的关注有向图。DFS也同样用于无向图。然而，我们在说边的“前向”和
+“后向”时有些模棱两可，因为现在无向图中边是无向的。我们将在
+\ref{Sec:DFSonUndirectedGraph}中讨论无向图的DFS。
+
+最后，我们需要注意：从一个顶点出发DFS并不一定可以到达图中的所有顶点。我们
+看例\ref{Example:DFS}中的$E$和$G$。下面的伪码描述了如何处理之。
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+dfsSweep(G, V) //OUTLINE
+    `将$G$中所有的顶点初始化为“已经发现的”`
+    `foreach vertex $v\in G$，以一定的顺序:`
+        if `$v$ 是还没发现的:`
+            dfs(G, v); `就是说，从$v$开始执行DFS；`
+            `所有在先前的DFS中发现的顶点都能重新访问；`
+            `所有在dfs中访问的顶点都归类为“已发现的”`
+\end{lstlisting}
+给出DFS的非正式描述，我们看到dfsSweep（最后调用了dfs）访问了$G$中所有的顶点
+恰好一次，并前向遍历$G$中所有的边一次，回溯所有的边一次。但是，当边连接已经
+发现的顶点时，我们不说边被访问之后立刻又回溯了，我们说边被\emph{checked}。
+
+\subsection{广度优先查找（Breadth-First Search）}
+广度优先查找在发现顶点的顺序上与深度优先查找完全不同。与DFS一个人的旅途
+不同，广度优先查找最好看作许多同时的（或者近似同时的）从一个共同顶点开始的
+探索，这些探索独立扩散。在给出一个非正式的介绍之后，我们为典型的应用开发一种
+BFS算法，找到一种广度优先生成树。
+
+\begin{example}\label{Example:BFS}
+广度优先查找
+
+让我们看看广度优先查找如何工作，我们使用\ref{Example:DFS}中同样的图，并从$A$
+开始。作为Terry旅程的代替，旅程的\emph{busload}\footnote{译注：巴士乘客，
+指广度优先遍历先遍历多个相邻顶点。}从左图的A开始。他们分散开去，探索从A出发的
+每一条边，for
+bargains。（我们依然将边想想为单向的桥，但是现在单向的。）
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [->] (B1) -- (C1);
+    \draw [->] (B1) -- (D1);
+    \draw [->] (D1) -- (A1);
+    \draw [->] (D1) -- (C1);
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (-0.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A2) -- (B2);
+    \draw [very thick, ->] (A2) -- (C2);
+    \draw [very thick, ->] (A2) to [out=-70,in=70] (F2);
+    \draw [->] (B2) -- (C2);
+    \draw [->] (B2) -- (D2);
+    \draw [->] (D2) -- (A2);
+    \draw [->] (D2) -- (C2);
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (3.7,-1.1) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A3) -- (B3);
+    \draw [very thick, ->] (A3) -- (C3);
+    \draw [very thick, ->] (A3) to [out=-70,in=70] (F3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [->] (D3) -- (A3);
+    \draw [->] (D3) -- (C3);
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) to [out=110,in=-110] (A3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) -- (C3);
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (10.3,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \end{tikzpicture}
+在中图中不同的组到达了B，C和F。我们将假设只有\emph{最先}到达岛上的组能
+找到最好的交易-之后的组都离开了。尽管他们继续扩散开去，唯一意外的事情是
+从B出发的组到达了为发现的D，如右图所示。
+
+虚线显示了那些探索过的边，但是这些边通向之前发现过的顶点。（再一次，在
+算法的描述里面，我们会说这条边\emph{checked}，而不是\emph{explored}。）
+到达C（或者回到A）的旅程已经迟到了得不到任何交易。不仅如此，一旦他们回到
+已经到过的岛，他们又迟到了以致不能到\emph{新的岛}了，于是他们放弃了寻求
+交易了。
+
+在搜索的最后一阶段（没有画图演示），边DA和DC将被同时探索。深度优先遍历，
+不回溯，E和G不可达，所以，搜索将在最两条边探索之后结束。
+
+在最后一张图中，我们看到在搜索中，到达未发现顶点的边都涂成粗线，再一次
+形成了树，尽管它不同于例\ref{Example:DFS}的树。如果到一个特定的顶点，有
+两条或者多条路径，the tie is broken
+somehow，而且只有一条边被认为是顶点的“发现者”。选择哪一条依赖于程序
+运行时具体实现和数据结构的细节。
+\end{example}
+
+如我们在例子中所看到的，在BFS中，顶点访问顶点的顺序是以顶点到开始顶点的
+距离（记为\emph{s}）来决定的，距离小的先于距离大的。这里讨论的距离只是
+最短路径中边的数目。现在我们开始更详细的过程。初始化所有顶点为未发现的。
+
+从$d=0$开始重复直到没有新顶点被发现，BFS首要的步骤是考察一轮中到$s$距离
+是$d$的每一个顶点$v$，检查从$v$到邻接顶点的每一条边。对于每一条边$vw$，如果
+$w$是未发现的，则添加$w$到顶点集合，切$w$离开始顶点的距离是$d+1$；否则，
+不再考虑$w$，它的距离是已知的了。
+
+在所有距离是$d$的顶点处理过之后，在处理所有距离是$d+1$的顶点，如此反复。当
+某个距离$d$所有的顶点都没有新的顶点加入集合的时候，搜索结束。
+
+\begin{example}
+广度优先距离
+
+在例\ref{Example:BFS}的BFS中，$A$的距离是0，$B$，$C$，$F$的距离是1，$D$的距离
+是2。在练习7.5中，你将被要求计算例\ref{Example:BFS}中图的广度优先距离，以$G$
+作为开始顶点。
+\end{example}
+
+因为BFS比DFS应用的少，我们将通过一个典型程序来总结我们的presentation。下面
+的算法将前面描述的BFD付诸实施，算法寻找以特定的顶点$s$为根的
+\emph{广度优先生成树breath-first spanning tree}。树以in-tree的形式存在数组
+{\textbf{parent}}。ADT in-tree在\ref{Sec:In-treeADT}小节，先前我们已经在
+\ref{Sec:Union-Find}小节中遇到过如何实现in-tree。
+
+一颗\emph{广度优先生成树}包含图中从$s$能到达的所有的顶点，因此叫“生成树”。
+此外，从$s$到树中任意顶点的路径包含可能的最小的边；因此树中$v$的深度就是
+它到$s$的最小边距离。在例\ref{Example:BFS}插图的最后部分，粗线条边组成了
+广度优先生成树。
+
+作为in-tree中开始顶点$s$到任意顶点$v$的路径都可以通过{\textbf{parent}}数组
+中从$v$到$s$的条目的反转来发现。$s$的parent设置为-1，表示$s$是根。
+
+\begin{algorithm}\label{Algo:BFS}
+广度优先搜索
+
+{\textbf{\emph{输入：}}}$G=(V,E)$，一个由邻接链表表示的图，{\textbf{adjVertices}}，
+如同\ref{Sec:GraphRepresentationsAndDataStructures}小节所描述的，这里$V={1, \cdots, n}$；
+$s\in V$，s是开始顶点。
+
+{\textbf{\emph{输出：}}}一颗广度优先生成树，存储在parent数组中。数组传入，
+算法填充之。
+
+{\textbf{\emph{Remarks：}}}对于队列$Q$，我们假设使用Queue抽象数据类型
+（\ref{Sec:QueueADT}）。数组$color[1], \cdots, color[n]$标记所有当前
+顶点的搜索状态。没有发现的顶点是白的；那些发现了，但是没有处理的是灰的；
+处理过的则是黑色的。
+\end{algorithm}
+
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void breathFirstSearch(IntList[] adjVertices,
+                int n, int s, int[] parent)
+{
+    int[] color =new int[n+1];
+    Queue pending=create(n);
+    for(int i=0; i<n+1; i++)
+        color[i]=white;
+    parent[s]=-1;
+    color[s]=gray;
+    enqueue(pending, s);
+    while(pending is nonempty){
+        v= front(pending);
+        dequeue(pending);
+        foreach(vertex w in adjVertices[v]){
+            if(color[w]== white)
+                color[w]=gray;
+                enqueue(pending, w);
+                parent[w]=v; //`处理vw边`
+            //`继续list`
+        }
+        //`这里处理顶点v`
+        color[v]=black;
+    }
+    return ;
+}
+\end{lstlisting}
+
+算法\ref{Algo:BFS}就是所有BFS应用的骨架。注释指示了处理顶点和树的边（到未发现
+顶点的边，这些边构成了广度优先生成树）的代码应该插入的位置。如果需要处理不是
+生成树的边，if需要一个else；当然，这种需求在BFS中一般并不常见。
+
+对于BFS需要的队列pending，练习2.16的最后一部分提供了一个简单高效的实现，因为仅
+有$n$在整个算法中仅有n次出队列。
+
+如同我们在例\ref{Example:BFS}所见，并不是所有的顶点从开始顶点出发都可以到达。
+如果必须探索整个图，需要一个类似\ref{Sec:DFS}小节中出现的dfsSweep那样的“wrapper”。
+
+\subsubsection{BFS的分析}
+我们假设$G$有$n$个顶点和$m$条边，假设搜索能到达$G$所有的部分。同时，我们假设
+每一个查询操作花费常数时间。最后，我们假设应用程序处理每一个单独的顶点和边花费
+常数时间；否则，每个处理操作的时间要乘上适当的消耗。
+
+每条边在{\textbf{while}}循环总被处理了一次，消耗在$\Theta(m)$。每一个顶点入队列
+一次，出队列一次，处理一次，消耗在$\Theta(n)$。数组{\textbf{color}}和队列需要
+额外的空间，也在$\Theta(n)$。
+
+
 \subsection{深度优先查找和广度优先查找的比较}
+在进一步讨论特定的问题和算法之前，让我们从比较高的层次看看两种遍历算法的异同点。
+
+两种遍历方法的描述有些模棱两可。例如，如果有两个顶点与$v$相邻，先访问哪个？答案
+依赖于具体的实现细节，例如，依赖顶点是如何编号的，或是$G$的表示形式。一个对两种
+方法都高效实现必须保存那些已经被发现但是它的邻接顶点还没有被全部发现的顶点。
+
+注意，当一个DFS到达一个死胡同后，在从早先发现的顶点探索新的路径时，它应该先从
+\emph{最近}发现的顶点开始分支。因此还没有完成探索的顶点以后进先出（LIFO）的顺序
+处理，恰好是堆栈的特征。另一方面，在BFS中，为了保证接近$v$的顶点在离$v$远的顶点
+之前被访问，要探索的顶点要组织成一个FIFO的队列。
+
+我们在前面的小节表述了两种方法的高层算法。许多变体和扩展都可以添加到这些算法，
+依赖于算法用于什么目的。例如，通常必须在处理每条边之前必须做某种排序。算法的描述
+没有显式的提到所有的边，但是
+
 
 \section{有向图的深度优先查找}
+我们开始细致的学习有向图上的DFS。我们将开发一种通用的DFS骨架，这个骨架可以用于
+解决很多问题，我们将用它解许多标准问题。
+
+
 \subsection{深度优先查找和递归}\label{Sec:Depth-firstSearchandRecursive}
-\subsection{使用深度优先查找连同分量}
+我们已经看过了DFS可以被简单描述为一个递归算法。事实上，在递归和DFS之间有自然的联系。
+在一个递归过程中，
+
+\begin{example}
+斐波纳契数
+
+
+\end{example}
+
+\begin{example}
+棋盘上的8皇后
+
+\end{example}
+
+
+
+
+\subsection{使用深度优先查找连同分量}\label{Sec:DFSOnUndirectedGraphs}
+
+\subsection{DFS树}\label{Sec:DFS_Trees}
+
+\subsection{通用DFS骨架}
+
+\subsection{有向无环图}
+
+\subsubsection{拓扑顺序}
 
 \section{有向图的强连通分支}
-\section{无向图的深度优先查找}
+\begin{definition}\label{Def:CondensationGraph}
+Condensation graph
+
+令
+\end{definition}
+
+\section{无向图的深度优先查找}\label{Sec:DFSonUndirectedGraph}
 \section{无向图的二连通分支}
-在7.2节，我们提出了这些问题：
+在\ref{Sec:GraphDefinitionsAndRepresentations}节，我们提出了这些问题：
 \begin{enumerate}
 \item 如果一个城市的机场因为坏天气而关闭了，你仍然能在其他的任意两个城市之间飞行吗？
 \item 如果网络中一台计算机崩溃了，消息仍然能在其他的任意两台网络中计算机之间传递吗？

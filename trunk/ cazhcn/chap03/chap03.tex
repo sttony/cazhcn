@@ -289,19 +289,19 @@ rest(L)就完成了目标。
 
 现在我们就用Method99来实现delete过程。
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
-    IntList delete(IntList L, int x)
-    {
-        IntList newL, fixedL;
-        if(L==nil)
-            newL=L;
+IntList delete(IntList L, int x)
+{
+    IntList newL, fixedL;
+    if(L==nil)
+        newL=L;
+    else
+        if(x==first(L))
+            newL=rest(L);
         else
-            if(x==first(L))
-                newL=rest(L);
-            else
-                fixedL= delete99(rest(L, x);
-                newL= cons(fisrt(L, fixedL);
-            return newL;
-    }
+            fixedL= delete99(rest(L, x);
+    newL= cons(fisrt(L, fixedL);
+    return newL;
+}
 \end{lstlisting}
 Ok，为了完成工作，只需要将子例程的99去掉，改成递归调用。
 

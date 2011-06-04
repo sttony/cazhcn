@@ -947,7 +947,7 @@ list，list中是图$G$中所有从$v_i$出发的边的信息。在有向图中，这意味着$v_i$是边的
 遍历是可互换的,广度优先查找和广度优先遍历也是类似的）。从而，许多以此为基础
 的算法运行在随输入图的大小呈线性增长的时间里。
 
-\subsection{深度优先查找（Depth-First Search）}\label{Sec:DFS}
+\subsection{深度优先查找（Depth-First Search）概述}\label{Sec:OverViewofDFS}
 深度优先查找的价值由John Hopcroft和Robert Tarjan阐述，他们发明了许多现在使用
 的重要算法。其中的许多将在本章剩下的部分中出现。
 
@@ -1670,54 +1670,881 @@ void breathFirstSearch(IntList[] adjVertices,
 \subsection{深度优先查找和广度优先查找的比较}
 在进一步讨论特定的问题和算法之前，让我们从比较高的层次看看两种遍历算法的异同点。
 
-两种遍历方法的描述有些模棱两可。例如，如果有两个顶点与$v$相邻，先访问哪个？答案
+两种遍历方法的描述有些模棱两可。例如，如果有两个顶点与$\nu$相邻，先访问哪个？答案
 依赖于具体的实现细节，例如，依赖顶点是如何编号的，或是$G$的表示形式。一个对两种
 方法都高效实现必须保存那些已经被发现但是它的邻接顶点还没有被全部发现的顶点。
 
 注意，当一个DFS到达一个死胡同后，在从早先发现的顶点探索新的路径时，它应该先从
 \emph{最近}发现的顶点开始分支。因此还没有完成探索的顶点以后进先出（LIFO）的顺序
-处理，恰好是堆栈的特征。另一方面，在BFS中，为了保证接近$v$的顶点在离$v$远的顶点
+处理，恰好是堆栈的特征。另一方面，在BFS中，为了保证接近$\nu$的顶点在离$\nu$远的顶点
 之前被访问，要探索的顶点要组织成一个FIFO的队列。
 
 我们在前面的小节表述了两种方法的高层算法。许多变体和扩展都可以添加到这些算法，
 依赖于算法用于什么目的。例如，通常必须在处理每条边之前必须做某种排序。算法的描述
-没有显式的提到所有的边，但是
+没有显式的提到所有的边，但是发现一个顶点$\nu$的未发现的相邻顶点所需要的线条，将
+牵涉到从$\nu$分支出去的边，而且对于边的处理将在这个步骤中完成。在\ref{Sec:7_4_4}
+小节中，我们将考虑如何把其他类型的处理插入到DFS算法的骨架中。
+
+为了总结这个对比，我们观察到DFS中包含两个处理$\nu$的机会（当他被发现的，和当他们
+标记为“结束”），当BFS仅有一次机会（它出队列的时候）。经仔细检查，我们观察到在
+两个查找过程中，\emph{第一次}处理机会是发生在，从$\nu$出发有未探索的顶点（可能有很
+多），并且还没有发现的时候。因此在这个点能做的计算类型，必须是对于图剩下部分的
+状态一无所知就能完成的计算。但是，在DFS中，有一个\emph{postorder}机会\footnote{译注：
+指顶点遍历过了之后回溯的时候。}，就在搜索最后从$\nu$回溯之前。这时，一般情况
+下，许多顶点已经被发现了而且在搜索的过程中已经积累了大量的信息。The
+postorder处理步骤经常能充分利用这些附加信息，以执行比preorder要精密的计算。DFS中
+的这种postorder处理机会，以一种非常意味深长的方式，说明了为什么我们看到如此多的
+应用使用DFS，相对的，很少有应用使用BFS。
 
 
 \section{有向图的深度优先查找}
 我们开始细致的学习有向图上的DFS。我们将开发一种通用的DFS骨架，这个骨架可以用于
 解决很多问题，我们将用它解许多标准问题。
 
+通用DFS过程对于无向图比对于有向图要更复杂一点，无向图的DFS将在\ref{Sec:DFSonUndirectedGraph}
+继续。这可能会比较奇怪，因为无向图看起来比有向图要简单。但是严格的DFS仅探索每一
+条边一次，在无向图中每一条边在数据结构中都被表示了\emph{两次}。本质上说无向图上
+的DFS将自己匆忙的转换为有向图上，每一条边的方向被变成了探索这条边时的方向。我们
+更倾向于将这个问题与DFS的主要问题分开考虑。我们也注意到无向图上的DFS的许多问题
+可以转化为对称图的问题，然后就可以使用有向图的DFS了。作为一个经验法则，如果无向
+图的DFS忽略了nontree边\footnote{译注：不了解，往高手指点}，则可以用对称图替代。
+
+在许多我们用有向图来建模的问题中，可能自然的将边赋值非每一个方向。例如，考虑
+一个“调用图”中，每一个顶点表示一个过程。我们可能合理的定义边$\nu\omega$为
+“$\nu$调用了$\omega$”，或者定义$\nu\omega$为“$\nu$被$\omega$调用”。另外一
+个例子，考虑一个“族谱”，每一个顶点表示一个人。我们可能自然的吧表定义为“父母
+到孩子”或者“孩子到父母”。那一种选择是最常用的通常依赖于手头特定的问题。因此
+在两个方向之间向前或者向后是非常方便的。这一点促成了下一个定义。
+
+\begin{definition}\label{Def:TransposeGraph}
+转置图(transpose graph)
+
+图G的转置表示为$G^T$，是一个图，其中的每一条边都是图G边的反方向
+\end{definition}
+
+DFS探索通常是正向，但是有时我们希望“反向搜索”。从$G$的邻接表构造出$G^T$的
+邻接表可以在线性时间之内，然后再$G^T$上做一个标准的搜索。可选的，如果在构造
+邻接表时预先就知道需求，可以同时构造$G$和$G^T$。
 
 \subsection{深度优先查找和递归}\label{Sec:Depth-firstSearchandRecursive}
 我们已经看过了DFS可以被简单描述为一个递归算法。事实上，在递归和DFS之间有自然的联系。
-在一个递归过程中，
+在一个递归过程中，调用结构可以图示为一颗有根的树，树中每一个顶点表示一次递归调用，
+如图我们在\ref{Sec:3_2_1}小节和\ref{Sec:RecursionTrees}小节中看到的。每一次函数
+调用的的顺序对应着DFS遍历树的顺序。
 
 \begin{example}
-斐波纳契数
+斐波纳契数列
 
+考虑斐波纳契数列的递归定义$F_n=F_{n-1}+F_{n-2}$，等式\ref{Equa:FibonacciSeries}。
+递归计算$F_6$的调用结构展示在图\ref{Fig:7_13Fib}中。每一个顶点标记了当前n的值，
+也就是顶点表示的调用的活动帧里面实际的参数。本质上讲，子树的表示了计算当前n的
+$F_n$的。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.8,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {6};
+    \node (A1x)  at (0,0.4) {1st call};
+    \node (B1)  at (-4,-1) [place] {5};
+    \node (B1x)  at (-4, -0.6) {2nd call};
+    \node (B2)  at (4, -1) [place] {4};
+    \node (B2x)  at (4,-0.6) {17th call};
+
+    \node (C1)  at (-6,-2) [place] {4};
+    \node (C1x)  at (-6.4,-1.6) {3rd call};
+    \node (C2)  at (-2, -2) [place] {3};
+    \node (C2x)  at (-1.6,-1.6) {12th};
+    \node (C3)  at (2,-2) [place] {3};
+    \node (C3x)  at (1.6, -1.6) {12th};
+    \node (C4)  at (6, -2) [place] {2};
+    \node (C4x)  at (6.4, -1.6) {12th};
+
+    \node (D1)  at (-7,-3) [place] {3};
+    \node (D1x)  at (-7.6, -2.6) {4th};
+    \node (D2)  at (-5,-3) [place] {2};
+    \node (D2x)  at (-4.6, -2.6) {9th};
+    \node (D3)  at (-3, -3) [place] {2};
+    \node (D3x)  at (-3.4, -2.6) {13th};
+    \node (D4)  at (-1, -3) [place] {1};
+    \node (D4x)  at (-1.4, -2.6) {16th};
+    \node (D5)  at (1, -3) [place] {2};
+    \node (D5x)  at (0.6, -2.6) {19th};
+    \node (D6)  at (3, -3) [place] {1};
+    \node (D6x)  at (2.6, -2.6) {22nd};
+    \node (D7)  at (5, -3) [place] {1};
+    \node (D7x)  at (4.6, -2.6) {24th};
+    \node (D8)  at (7, -3) [place] {0};
+    \node (D8x)  at (6.6, -2.6) {25th};
+
+    \node (E1)  at (-7.5,-4) [place] {2};
+    \node (E1x)  at (-7.9, -3.6) {5th};
+    \node (E2)  at (-6.5,-4) [place] {1};
+    \node (E2x)  at (-6.5, -4.4) {8th};
+    \node (E3)  at (-5.5, -4) [place] {1};
+    \node (E3x)  at (-5.5, -4.4) {10th};
+    \node (E4)  at (-4.5, -4) [place] {0};
+    \node (E4x)  at (-4.5, -4.4) {11th};
+    \node (E5)  at (-3.5, -4) [place] {1};
+    \node (E5x)  at (-3.5, -4.4) {14th};
+    \node (E6)  at (-2.5, -4) [place] {0};
+    \node (E6x)  at (-2.5, -4.4) {15th};
+    \node (E7)  at (0.5, -4) [place] {1};
+    \node (E7x)  at (0.5, -4.4) {20th};
+    \node (E8)  at (1.5, -4) [place] {0};
+    \node (E8x)  at (1.5, -4.4) {21th};
+    \node (F1)  at (-8,-5) [place] {1};
+    \node (F1x)  at (-8, -5.4) {6th};
+    \node (F2)  at (-7,-5) [place] {0};
+    \node (F2x)  at (-7, -5.4) {7th};
+
+    \draw (A1) -- (B1);
+    \draw (A1) -- (B2);
+    \draw (B1) -- (C1);
+    \draw (B1) -- (C2);
+    \draw (B2) -- (C3);
+    \draw (B2) -- (C4);
+    \draw (C1) -- (D1);
+    \draw (C1) -- (D2);
+    \draw (C2) -- (D3);
+    \draw (C2) -- (D4);
+    \draw (C3) -- (D5);
+    \draw (C3) -- (D6);
+    \draw (C4) -- (D7);
+    \draw (C4) -- (D8);
+
+    \draw (D1) -- (E1);
+    \draw (D1) -- (E2);
+    \draw (D2) -- (E3);
+    \draw (D2) -- (E4);
+    \draw (D3) -- (E5);
+    \draw (D3) -- (E6);
+    \draw (D5) -- (E7);
+    \draw (D5) -- (E8);
+    \draw (E1) -- (F1);
+    \draw (E1) -- (F2);
+
+    \end{tikzpicture}
+    \caption{斐波纳契数列的递归计算的调用结构}
+    \label{Fig:7_13Fib}
+\end{figure*}
+递归调用的执行顺序已经展示在插图之中；它非常类似于preorder序列。但是，结果累加
+的序列（由+运算符连接）是postorder序列。我们已经看到一个更小的，更详细的例子的
+活动帧在例\ref{Example:3_1ActivationFrames}。
+
+对于图\ref{Fig:7_13Fib}，我们假设25个顶点互不相同，即使很多是重复的标签，因为
+每一个顶点并不仅仅对应它的标签，而且还对应这特定的函数调用。你可能想到这不是高
+效率的计算Fibonacci数列的方法。你是对的。计算Fibonacci数列可以简化为一个对7个
+顶点的图进行DFS，每一个顶点都有一个从0到6的唯一的标签。我们将在第
+ref{Sec:Chapter:DynamicProgramming}章，\ref{Sec:10_2}小节重新回到这个话题。现在，
+这个例子仅用来展示DFS和递归之间的联系。
 
 \end{example}
+
+因此，用递归解决许多有趣问题的逻辑结构就是对树的DFS遍历。树并不总是问题显式的一
+部分，也不是现实的数据的结构的表现形式。下一个例子中，让我们看看著名的8皇后问题。
 
 \begin{example}
 棋盘上的8皇后
 
+考虑放置8个皇后在棋盘上的问题，其中8个皇后不能相互攻击到；换句话说，没有一个皇后
+能通过行，列，对角线碰到其他皇后。这个问题能不能完成也不是显而易见的。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=0.6, place/.style={inner sep=0pt, font=\scriptsize, text width=8mm, text centered, below},
+                                   script/.style={fill=white,inner sep=0pt, font=\scriptsize, text width=20ex, text centered, below}]
+    \node (A1)  at (-1,0) [place] {Start};
+    \node (B1)  at (-9,-2) [place] {(1,1)};
+    \node (B2)  at (7, -2) [place] {(1,8)};
+    \node (B3)  at (-6,-2) [place] {(1,2) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (B4)  at (-4,-2) [place] {(1,3) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (B5)  at (-2, -2) [place] {(1,4) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (B6)  at (0,-2) [place] {(1,5) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (B7)  at (2,-2) [place] {(1,6) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (B8)  at (4,-2) [place] {(1,7) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+
+    \draw (A1) -- (B1);
+    \draw (A1) -- (B2);
+    \draw (A1) -- (B3.north);
+    \draw (A1) -- (B4.north);
+    \draw (A1) -- (B5.north);
+    \draw (A1) -- (B6.north);
+    \draw (A1) -- (B7.north);
+    \draw (A1) -- (B8.north);
+
+    \node (C1)  at (-12.5,-4) [place] {(2,3)};
+    \node (C2)  at (-10.8, -4) [place] {(2,4) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C3)  at (-9.6,-4) [place] {(2,5) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C4)  at (-8.4,-4) [place] {(2,6) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C5)  at (-7.2, -4) [place] {(2,7) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C6)  at (-5.5,-4) [place] {(2,8)};
+    \node (C7)  at (3.4,-4) [place] {(2,1) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C8)  at (4.6,-4) [place] {(2,2) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C9)  at (5.8,-4) [place] {(2,3) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C10)  at (7,-4) [place] {(2,4)};
+    \node (C11)  at (8.2,-4) [place] {(2,5)  \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (C12)  at (9.4,-4) [place] {(2,6) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+
+    \draw (B1) -- (C1.north);
+    \draw (B1) -- (C2.north);
+    \draw (B1) -- (C3.north);
+    \draw (B1) -- (C4.north);
+    \draw (B1) -- (C5.north);
+    \draw (B1) -- (C6.north);
+    \draw (B2) -- (C7.north);
+    \draw (B2) -- (C8.north);
+    \draw (B2) -- (C9.north);
+    \draw (B2) -- (C10.north);
+    \draw (B2) -- (C11.north);
+    \draw (B2) -- (C12.north);
+
+    \node (D1)  at (-14.3,-6) [place] {(3,5)};
+    \node (D2)  at (-13.1,-6) [place] {(3,6) \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D3)  at (-11.9,-6) [place] {(3,7) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D4)  at (-10.7,-6) [place] {(3,8) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D5)  at (-7.3,-6) [place] {(3,1) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D6)  at (-6.1,-6) [place] {(3,4) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D7)  at (-4.9,-6) [place] {(3,5) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D8)  at (-3.7,-6) [place] {(3,6) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D9)  at (5.8,-6) [place] {(3,1) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D10)  at (7,-6) [place] {(3,2) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+    \node (D11)  at (8.2,-6) [place] {(3,7) \\ \vspace{-2ex}. \\ \vspace{-2ex}. \\ \vspace{-2ex}.};
+
+    \draw (C1) -- (D1.north);
+    \draw (C1) -- (D2.north);
+    \draw (C1) -- (D3.north);
+    \draw (C1) -- (D4.north);
+    \draw (C6) -- (D5.north);
+    \draw (C6) -- (D6.north);
+    \draw (C6) -- (D7.north);
+    \draw (C6) -- (D8.north);
+    \draw (C10) -- (D9.north);
+    \draw (C10) -- (D10.north);
+    \draw (C10) -- (D11.north);
+
+    \node (E1)  at (-14.3,-8) [place] {(4,2)};
+    \node (E2)  at (-11.9,-8) [place] {(4,7)};
+    \node (E3)  at (-9.5,-8) [place] {(4,8)};
+    \draw (D1) -- (E1.north);
+    \draw (D1) -- (E2.north);
+    \draw (D1) -- (E3.north);
+
+    \node (F1)  at (-14.9,-10) [place] {$\underline{(5,4)}$};
+    \node (F2)  at (-13.7,-10) [place] {$\underline{(5,8)}$};
+    \node (F3)  at (-12.5,-10) [place] {(5,2)};
+    \node (F4)  at (-11.3,-10) [place] {$\underline{(5,4)}$};
+    \node (F5)  at (-10.1,-10) [place] {(5,3)};
+    \node (F6)  at (-8.9,-10) [place] {$\underline{(5,4)}$};
+    \draw (E1) -- (F1.north);
+    \draw (E1) -- (F2.north);
+    \draw (E2) -- (F3.north);
+    \draw (E2) -- (F4.north);
+    \draw (E3) -- (F5.north);
+    \draw (E3) -- (F6.north);
+
+    \node (G1)  at (-12.5,-12) [place] {(6,4)};
+    \node (G2)  at (-10.1,-12) [place] {(6,4)};
+    \node (H1)  at (-12.5,-14) [place] {$\underline{(7,6)}$};
+    \node (H2)  at (-10.1,-14) [place] {$\underline{(7,6)}$};
+    \draw (F3) -- (G1.north);
+    \draw (F5) -- (G2.north);
+    \draw (G1) -- (H1.north);
+    \draw (G2) -- (H2.north);
+
+    \node (S1)  at (-5,-10.5) [script] {$\underline{\mbox{下划线表示死路}}$ \\ 顶点上的标记表示皇后在棋盘上位置的坐标};
+    \draw[step=1] (-3,-16) grid (5, -8);
+    \node (S2)  at (-2.5,-8.5) [place] {Q};
+    \node (S3)  at (-0.5,-9.5) [place] {Q};
+    \node (S4)  at (1.5,-10.5) [place] {Q};
+    \node (S5)  at (0.5,-12.5) [place] {Q};
+    \node (S6)  at (-1.5,-11.5) [place] {Q};
+
+    \end{tikzpicture}
+    \caption{8皇后问题}
+    \label{Fig:7_14EightQueen}
+\end{figure*}
+
+我们按如下的方式尝试：将一个皇后放在第一行第一列的方格中。然后继续将皇后放置在
+第二行的未被占用的空格中，且该空格不能攻击到。重复之，直到8个皇后都在棋盘上。
+或者下一空行中所有的空格都在攻击之下。如果后一种情况发生（例如图\ref{Fig:7_14EightQueen}
+第第六行），就回到前一行，将皇后朝右移送移动到不被攻击到的位置，然后再放下一个。
+
+这个问题中牵涉到的树是什么，我们在DFS中所做的事情如何对应？图\ref{Fig:7_14EightQueen}
+展示了这颗树。每一个顶点（除了root）通过皇后在棋盘上的位置来标记。对于$1\leq
+i \leq
+8$，在第i层的顶点以第i行的位置来标记。第i层顶点$\nu$的孩子，是在第$i+1$行中不会被
+攻击到的所有位置，是被从root到$\nu$的所有顶点表示的皇后攻击到;换句话说，孩子是
+下一行中所有安全的位置。在树的术语中，8皇后问题的解是要找一条从root出发到叶子的
+长度为8的路径。作为一个练习，你将为皇后问题写一个递归程序，递归调用的执行对应着
+DFS。如果有一个解，图\ref{Fig:7_14EightQueen}展示的树只有一部分会被遍历到。（当DFS
+用于8皇后这种问题时，也称为回溯搜索。）
 \end{example}
 
-
-
-
 \subsection{使用深度优先查找连同分量}\label{Sec:DFSOnUndirectedGraphs}
+这一节发展了识别图的联通分量（或者对称有向图的强联通分量）的详细算法。本章中，
+我们已经得出了大量的适用于所有DFS的实现细节。联通分量是与无向图关联的，但是无向图
+的表示方式与对称有向图的表示方式相同，联通块在两种情况下是一样的。但是，DFS算法
+（无向图上的）比在有向图上的的算法稍微简单一点。
+
+令$G=(V,E)$是一个无向图，其中$n=|V|$，且$m=|E|$。对应的对称有向图有$2m$条有向边。
+既然他们表示方法是一样的，我们将适用$G$表示这个对称有向图。复习一下，$G$的
+\emph{联通分量}是最大的联通子图，也就是说，一个联通子图不在包含更大的联通子图
+（定义\ref{Def:Connected_Component}）。例如，图\ref{Fig:7_7}有三个联通分量。找到
+联通分量的问题可以是用稍作修改的DFS解决。我们可以从任意顶点开始，做DFS以找到一个
+分量中所有 的顶点（和边），然后如果还剩顶点，选择一个，继续重复之。
+
+我们用\ref{Sec:OverViewofDFS}小节中的DFS概括。如果我们选择了一种糟糕的实现，算法
+的各个部分都可能需要大量的工作量。循环需要找到所有与$\nu$相邻的$ws$（在边的正向）。
+当然，我们应该用邻接表去表示图，这样我们就能便利$\nu$的list，；如果我们使用邻接
+矩阵我们将不得不在循环中扫描每一个$w$。仔细考虑到算法，每一个邻接表将仅遍历一次。
+我们将用一个局部变量来记录我们在邻接表中的位置。（这意味着，在遍历的任意时刻
+有一个变量存储在帧堆栈中来跟踪我们在那些部分完成的邻接链表中的位置，如同
+\ref{Sec:3_2_1}解释的。）
+
+作为一个算法，DFS在两个层次上操作。在上层，或者包装层（dfsSweep），发现未探索的
+顶点，并且未找到的为发现顶点初始化一个DFS。底层，调用dfs，递归的执行DFS的动作。
+
+在dfsSweep中发现未探索的顶点来启动一个新的DFS的问题可以用类似dfs算法发现新的未探索
+方法处理。我们可以从我们上次离开时候的顶点开始，而不必每次都从头到尾遍历数组。
+
+当顶点的状态从“未探索到”转变到“探索的”，为了避免重复工作，甚至无法停止的搜索
+记录是至关重要的。在有些应用中，当顶点完成处理时，也就是“完成时”，记录工作也是
+重要的。这写记录对于算法分析来说也是非常有用的。因此我们采用一种三色系统来记录
+顶点的状态。
+
+\begin{definition}
+顶点查找状态的三色代码
+
+\emph{白色}表示顶点是未发现的。\emph{灰色}表示顶点是发现的，但是它的处理还没完成。
+\emph{黑色}表示顶点是已经发现的，且它已经被处理完了。
+\end{definition}
+
+现在让我们将注意力转到联通分量问题的特定需要。如果按联通分量划分的图的分区需要
+记录在后面要用的数据结构中，这个数据结构可以给每一个顶点或者边标记上数字，以表示
+它属于哪一个分量。一个更复杂的选择是为每一个分量做一个独立的顶点或者边的链表。选择
+何种方法取决于后面要用到何种类型的信息。
+
+联通分量算法在后面显示。使用了一个DFS过程，使得实现是显式的。算法中的过程
+connectedComponents对应了前面提到的通用的dfsSweep，参看\ref{Sec:OverViewofDFS}小节。
+我们将图当作一个对称有向图，而不是一个无向图，在这个意义上，我们做一个有向的DFS。
+无向图上的DFS遗留了一些额外的复杂性，这些复杂性对于寻找联通分量来说是没有必要的；
+这些细节在\ref{Sec:DFSonUndirectedGraph}小节描述。
+
+\begin{algorithm}
+联通分量
+
+{\textbf{\emph{输入：}}}邻接表的数组adjVertices表示一个对称有向图$G=(V,E)$，如同
+我们在\ref{Sec:GraphRepresentationsAndDataStructures}描述的，$n$表示顶点的数量。
+数组的索引是从$1, \cdots, n$。$G$也能解释为无向图。
+
+{\textbf{\emph{输出：}}}数组cc，其中每一个元素表示一个顶点，元素的值表示顶点属于
+那一个分量。联通分量的标识符是在分量中顶点的数量（其他的标识系统也是可行的）。
+（调用者负责分配cc，过程负责填充cc。）
+
+{\textbf{\emph{Remarks：}}}颜色的含义是$white=\mbox{未探索的}$，$gray=\mbox{活动的}$
+$black=\mbox{完成的}$。过程ccDFS第三个和第四个参数都是顶层调用的$\nu$，但是他们有不同
+的含义。第三个参数标明了当前要访问的顶点，但是在每一次递归调用中都会变。第四个参数
+标明了联动分量的的标识，在递归调用中保持不改变。
+\end{algorithm}
+
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void connectedComponents(IntList[] adjVertices, int n,
+    int[] cc)
+    int[] color = new int[n+1];
+    int v;
+    `初始化所有顶点为白色`
+    for(v=1; v<=n; v++)
+        if( color[v] == white)
+            ccDFS(adjVertices, color, v, v, cc);
+    return;
+void ccDFS(IntList[] adjVertices, int[] color, int v,
+    int ccNum, int[] cc)
+    int w;
+    IntList remAdj;
+    color[v] = gray;
+    cc[v] = ccNum;
+    remAdj = adjVertices[v];
+    while(remAdj!= null)
+        w = first(remAdj);
+        if( color[w] == white)
+            ccDFS(adjVertices, color, w, ccNum, cc);
+        remAdj = rest(remAdj);
+    color[v] = black;
+    return;
+\end{lstlisting}
+
+\subsubsection{联通分量的分析}
+算法connectedComponents所做的所有操作，包括调用ccDFS，显然是n的线性。在
+$ccDFS(\ldots, \nu, \ldots)$，执行指令的数量与要遍历的邻接表的adjVertices[v]
+的元素成比例，既然指令“remAdj = rest(remAdj)”每次\textbf{while}循环的执行
+一次。既然邻接表仅仅被遍历一次，DFS复杂性，因此联通分量，是在$\Theta(n+m)$。
+（通常$m\geq n$）\
+
+邻接表结构使用的空间在$\Theta(n+m)$，但是算法输入的一部分。额外的空间被
+$color$数组（n+1个条目）使用，另外递归可能引起活动帧堆栈增长到n，所以额外的
+空间使用是$\Theta(n)$。
+
+
+\subsubsection{联通分量的Remarks}
+算法的输出是一个简单的数组cc，数组中包含了每一个元素联通分量的标识符（常使
+用术语\emph{leader}）。遍历一边数组cc的足够可以装配成一组链表，每一个链表仅包含
+在一个联通分量中的顶点。同样的遍历一边adjVertices并参考cc，就足够装配出一套
+链表，在每一个链表中包含一个联通分量中所有的边。这些可以在postprocessing步骤中
+的步骤不会增加总的复杂性，所以只需要为基本的算法增加一点复杂性就可以裁剪出特定
+的输出格式。
+
+过程ccDFS不会对顶点做postorder处理（如果要做这种处理，应该是在语句"color[v]=black"
+之前的代码）。这里有一个提示BFS也能简单的解决这个问题。
 
 \subsection{DFS树}\label{Sec:DFS_Trees}
+DFS树和DFS森林，在后面定义，对DFS算法提供了一种重要的深刻理解，有很多细微的区别。
+算法\ref{Algo:DFS}将展示如何构造一颗DFS树。大多数的问题不需要构造DFS树，但是构造
+一个DFS树将有助于分析。这里给出的DFS树的定义是适用于有向图的。尽管有向图中的中的
+许多都适用于类似形式的无向图，但是依然有许多区别，所以无向图的定义延迟到
+\ref{Sec:DFSonUndirectedGraph}小节.
 
-\subsection{通用DFS骨架}
+\begin{definition}\label{Def:DFSTree_and_DFSForest}
+DFS树，DFS森林
+
+在一个有向图$G$的DFS过程中指向未发现的顶点（即白色顶点）的有唯一root的一组边称为
+\emph{DFS搜索树}（有时候称为\emph{深度优先生成树depth-first spanning tree}，也简称
+为\emph{DFS树}）。如果并不是所有的顶点都在以某个顶点开始的树中，则一个对$G$的完整的
+遍历会生成多个树，合在一起称为\emph{DFS森林depth-first search forest}（有时称为
+\emph{深度优先生成树depth-first spanning tree},也简称为\emph{DFS森林}）。
+\end{definition}
+
+\begin{definition}\mbox{}\par
+
+我们看到，如果$\nu$在从root到$\omega$的路径上，则顶点$\nu$在树中是$\omega$的\emph{祖先}；
+如果$\nu$是$\omega$的祖先，且$\nu\neq\omega$，则$\nu$称为$\omega$的\emph{真祖先}。
+顶点$\nu$的最近的真祖先是$\nu$的\emph{父顶点}。如果$\nu$是$\omega$是（真）祖先，则
+$\omega$是$\nu$的（真）子孙。
+\end{definition}
+
+\begin{definition}\mbox{}\par
+有向图$G$的边分类的依据是，边是如何\emph{探索的}（在他们正向的遍历中）。
+\begin{enumerate}
+\item 如果$\omega$在$\nu\omega$的时刻是未探索的，则$\nu\omega$被称为\emph{树边}，
+而$\nu$变成$\omega$的父节点。
+
+\item 如果$\omega$是$\nu$的祖先，则$\nu\omega$被称为\emph{回边}。（这种包含$\nu\nu$。）
+
+\item 如果$\omega$是$\nu$的后代，则$\omega$被发现的点早于$\nu\omega$被探索的时刻，
+则$\nu\omega$称为\emph{后代边}（另一个名字是\emph{前向边}或者\emph{frond}）。
+
+\item 如果$\omega$和$\nu$没有先祖或者后代关系，则$\nu\omega$被称为\emph{穿越边}。
+\end{enumerate}
+\end{definition}
+
+\begin{example}\label{Example:7_11}
+DFS树
+
+让我们看看在例\ref{Example:DFS}Terry的旅程中边是如何被DFS引导分类的。Terry从$A$
+开始（所以$A$是第一个DFS树的根），探索$B$，然后$C$，然后回溯到$B$，探索$D$。所以
+边$AB$，$BC$和$BD$是树的边。现在Terry在D并遇到了第一个不是树的边。
+\begin{tikzpicture}[scale=1.2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+    \node (A1)  at (0,0) [place] {A};
+    \node (B1)  at (1,-0.5) [place] {B};
+    \node (C1)  at (1, -1.1) [place] {C};
+    \node (D1)  at (2,0) [place] {D};
+    \node (E1)  at (2,-1.1) [place] {E};
+    \node (F1)  at (0, -1.1) [place] {F};
+    \node (G1)  at (2.2, -0.5) [place] {G};
+    \draw [double, ->] (A1) -- (B1);
+    \draw [->] (A1) -- (C1);
+    \draw [->] (A1) to [out=-70,in=70] (F1);
+    \draw [very thick, ->] (B1) -- (C1);
+    \draw [double, ->] (B1) -- (D1);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (A1)  node[midway,sloped,above]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (D1) -- (C1) node[midway,sloped,below]{cross};
+    \draw [->] (E1) -- (C1);
+    \draw [->] (E1) to [out=90,in=240] (G1);
+    \draw [->] (F1) to [out=110,in=-110] (A1);
+    \draw [->] (F1) -- (C1);
+    \draw [->] (G1) -- (D1);
+    \draw [->] (G1) to [out=-100,in=60] (E1);
+    \draw (2.3, 0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A2)  at (4,0) [place] {A};
+    \node (B2)  at (5,-0.5) [place] {B};
+    \node (C2)  at (5, -1.1) [place] {C};
+    \node (D2)  at (6,0) [place] {D};
+    \node (E2)  at (6,-1.1) [place] {E};
+    \node (F2)  at (4, -1.1) [place] {F};
+    \node (G2)  at (6.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A2) -- (B2);
+    \draw [dash pattern=on 3pt off 3pt,->] (A2) -- (C2) node[midway,sloped,below]{descendant};
+    \draw [->] (A2) to [out=-70,in=70] (F2);
+    \draw [very thick, ->] (B2) -- (C2);
+    \draw [very thick,->] (B2) -- (D2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (A2) node[midway,sloped,above]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (D2) -- (C2) node[midway,sloped,below,text width=3mm]{cross};
+    \draw [->] (E2) -- (C2);
+    \draw [->] (E2) to [out=90,in=240] (G2);
+    \draw [->] (F2) to [out=110,in=-110] (A2);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F2) -- (C2);
+    \draw [->] (G2) -- (D2);
+    \draw [->] (G2) to [out=-100,in=60] (E2);
+    \draw (3.7, 0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (E3)  at (10,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (10.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A3) -- (B3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (A3) -- (C3) node[midway,sloped,below]{descendant};
+    \draw [very thick, ->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (A3)  node[midway,sloped,above]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (C3) node[midway,sloped,above]{cross};
+    \draw [->] (E3) -- (C3);
+    \draw [->] (E3) to [out=90,in=240] (G3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) to [out=110,in=-110] (A3)  node[midway,sloped,below]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) -- (C3)  node[midway,sloped,below]{cross};
+    \draw [->] (G3) -- (D3);
+    \draw [->] (G3) to [out=-100,in=60] (E3);
+    \draw (7.7,0) node[shape=diamond,draw, fill=black, minimum width=1mm, minimum height=1mm] {};
+
+    \end{tikzpicture}
+双线标记了还没有被回溯的树的边，粗线标记了已经被回溯的树的边，细线标记了未探索的边，
+虚线标记了不是树的边。在左边的图中，A是D的树的祖先，所以DA是一条\emph{back edge}.
+但是C在树中既不是D的祖先也不是D的后代，所以DC是一条\emph{cross edge}.
+
+中间的图展示了Terry从D回溯到B的以及从B回溯到A的情况。在AC 被探索的时候顶点C已经是
+A在树中的祖先，；C已经被从其他的路由发现了。因此AC是\emph{descendant edge}（或者
+成为\emph{forward edge} 或者frond）一个descendand 边总是是一条长的树的路径的快捷
+路径。
+
+左右边的图展示了DFS树完成时的情况。尽管Terry没有地方可去了，图的DFS还没有完成。
+
+为了完成图的DFS，从E开始一个新的搜索。边EC到了一个完成顶点\footnote{译注：C已经
+被访问过了}。C不能作为另外一个DFS树的顶点被再次访问，这一点是非常重要的。边EC划分为
+cross edge；现在属于不同树的顶点没有祖先/后代关系。边EG是接着被考虑的边，它指向一个
+未探索的顶点，所以它是一条树的边。接着GD指向另一个DFS树中的完成顶点，所以它是一条
+cross边。边GE是黑的边，因为它指向当前DFS树中G的祖先。因此第二颗树有2个顶点和一条边，
+它完成了DFS森林。（只有一个顶点没有边的树也是可能的：假设第一次DFS从顶点C空间开始。）
+最后的DFS森林展示在图\ref{Fig:7_15DFStree}中，并且标注了所有的不是树的边。
+\end{example}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+
+
+    \node (A3)  at (8,0) [place] {A};
+    \node (B3)  at (9,-0.5) [place] {B};
+    \node (C3)  at (9, -1.1) [place] {C};
+    \node (C4)  at (11, -1.1)  {To C};
+    \node (D3)  at (10,0) [place] {D};
+    \node (D4)  at (11.6,0) {TO D};
+    \node (E3)  at (12,-1.1) [place] {E};
+    \node (F3)  at (8, -1.1) [place] {F};
+    \node (G3)  at (12.2, -0.5) [place] {G};
+    \draw [very thick, ->] (A3) -- (B3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (A3) -- (C3) node[midway,sloped,below]{descendant};
+    \draw [very thick, ->] (A3) to [out=-70,in=70] (F3);
+    \draw [very thick, ->] (B3) -- (C3);
+    \draw [very thick, ->] (B3) -- (D3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (A3)  node[midway,sloped,above]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (D3) -- (C3) node[midway,sloped,above]{cross};
+    \draw [dash pattern=on 3pt off 3pt, ->] (E3) -- (C4) node[midway,sloped,above]{cross};
+    \draw [very thick, ->] (E3) to [out=90,in=240] (G3);
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) to [out=110,in=-110] (A3)  node[midway,sloped,below]{back};
+    \draw [dash pattern=on 3pt off 3pt, ->] (F3) -- (C3)  node[midway,sloped,below]{cross};
+    \draw [dash pattern=on 3pt off 3pt, ->] (G3) -- (D4) node[midway,sloped,above]{cross};
+    \draw [dash pattern=on 3pt off 3pt, ->] (G3) to [out=-100,in=60] (E3) node[midway,sloped,below]{back};
+
+    \end{tikzpicture}
+    \caption{粗线边展示了例\ref{Example:DFS}和例\ref{Example:7_11}中图的DFS森林。虚线边不是树的边，做了对应的标记。}
+    \label{Fig:7_15DFStree}
+\end{figure*}
+
+边的分类非常依赖于邻接表中顶点的顺序（参看练习7.4）。注意cross边的头和尾分别属于两个不同
+的树。不同类型边之间的区别在许多DFS的应用中都非常重要——特别是在\ref{Sec:7_5StronglyConnectedComponentsofDirgraph}
+节和\ref{Sec:7_7BiConnectedComponentsofUndirgraph}节。
+
+\subsection{通用DFS骨架}\label{Sec:7_4_4}
+DFS算法提供了许多优美高效的算法。如我们在几个例子中看到的，一个DFS算法遭遇一个顶点数次：
+当顶点第一次被发现并成为DFS树的一部分时，之后可能多次\emph{回溯到}这个顶点的并要在DFS树
+分枝出新的子树时，最后这些遭遇之后，当搜索\emph{从顶点回溯}并不在再次穿过它的时候。依赖于
+要解决的问题，一个算法会在遍历中的不同步骤遭遇顶点时采取不同的处理。许多算法也同时对边做
+处理——可能是每一条边，或者仅仅是DFS树中的边，或者可能对不同的边做不同的计算。下面的骨架
+算法明确的展示了每一种边可以做啥操作，每一种遭遇顶点的时刻做的操作。
+
+\begin{algorithm}\label{Algo:SkeletonDirectGraphDFS}
+有向图的DFS骨架（DFS Skeleton）
+
+{\textbf{\emph{输入：}}}邻接表的数组adjVertices表示一个对称有向图$G=(V,E)$，如同
+我们在\ref{Sec:GraphRepresentationsAndDataStructures}描述的，$n$表示顶点的数量。
+数组的索引是从$1, \cdots, n$。应用需要的其他参数。
+
+{\textbf{\emph{输出：}}}返回值依赖于具体应用。返回值可能是千变万化的；int只是一个
+例子。
+
+{\textbf{\emph{Remarks：}}}这个估计也是足够用于有些忽略了非树边无向图问题，但是参考
+算法\ref{Algo:SkeletonUndirectGraphDFS}。颜色的含义是白色=未发现的，灰色=活动的，
+黑色=完成的。
+
+\end{algorithm}
+
+\begin{figure}
+\begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
+void dfsSweep(IntList[] adjVertices, int n,...)
+{
+    int ans;
+    `分配颜色数组初始化所有顶点为白色`
+    foreach vertex v in G,`以某种顺序:`
+        if( color[v] == white)
+            int vAns = dfs(adjVertices, color, v,...);
+            `处理 vAns`
+        // `继续循环`
+    return ans;
+}
+
+int dfs(IntList[] adjVertices, in[] color, int v,...)
+{
+    int w;
+    IntList remAdj;
+    int ans;
+1.  color[v] = gray;
+2.  Preorder processing of vertex v
+3.  remAdj = adjVertices[v];
+4.  while(remAdj != null)
+    {
+5.      w = first(remAdj);
+6.      if( color[w] == white)
+        {
+7.          `试探性处理树边vw`
+8.          int wAns = dfs(adjVertices, color, w,...);
+9.          `回溯处理树边vw,使用wAns`
+        }
+        else
+11.         `检查非树边`
+12.     remAdj = rest(remAdj)
+    }
+    `Postorder 处理顶点v, 包括最后的ans的计算`
+14. color[v] = black;
+15. return ans;
+}
+\end{lstlisting}
+\end{figure}
+
+对于有些应用程序，程序可能在搜索的途中就被解决了。结束的条件应该在第9行检查，或者
+第11行。推荐使用一个\textbf{break}来体检推出\textbf{while}循环，所以postorder processing
+包含设置颜色到黑色。
+
+
+\begin{example}
+将DFS skeleton用于联通分量问题
+
+为了展示骨架的多才多艺，让我们使用它来重新解决连同分量的问题。
+\begin{enumerate}
+\item 传递数组cc作为dfsSweep得一个额外的参数。这个数组将被算法填上连同分量的数字。
+\item 增加第4个参数ccNum，第5个参数cc，到dfs。当dfsSweep调用dfs时，在dfsSweep中将
+第4个参数设置为v，它同样是第3个参数，设置第5个参数为cc。
+\item 在dfs递归调用，使用同样的ccNum和cc。
+\item 对于preorder processing（骨架的第2行），插入一句“cc[v]=ccNum.”
+\end{enumerate}
+有了这些改变——一行新的代码，一些额外的参数，我们已经通用目的的骨架具体化来解决
+连同分量的问题。我们将在本章剩下的部分以及练习中，看到许多使用骨架的例子。
+\end{example}
+
+\subsection{DFS的结构}
+在有些DFS的应用中，我们可能需要知道当前DFS树中从root到当前顶点$\nu$有那些顶点，就是
+说那些被访问了。他们都是灰色顶点，在栈帧中以$\nu$为参数的调用之下（也就是说接近活动
+帧树的root）。对于有些算法，我们需要知道从第一次到最后一次遭遇顶点的顺序，或者两个
+遭遇顶点之间的关系。一个简单，有效的办法是在两个数组中跟踪这些关系，dicoverTime和
+finishTime。一个全局的整数变量time在开始初始化为0，每当一个顶点的颜色变化就增加time。
+
+\begin{definition}\label{Def:DFSTerminology}
+DFS 术语
+
+当$\nu$的颜色是白色时，我们称它是\emph{未发现的}。当color[v]变成灰色时，当前的time记录在
+discoverTime[v]中（在骨架的第2行）；现在$\nu$是\emph{活动的}。当color[v]编程黑色时，当前
+的time记录在finishTime[v]（估计的第13行），此时$\nu$是\emph{完成的}。顶点$\nu$的
+\emph{active interval}，标记为$active(v)$，定义为如下整数区间：
+\begin{displaymath}
+active(\nu) = discoverTime[v], \ldots, finishTime[v]
+\end{displaymath}
+包括两个端点，所以$\nu$恰好在活动区间之内变灰色。Time的最后的值应该是2n，如果整个图都被
+遍历到的话。
+\end{definition}
+
+我们可以在DFS骨架中插入代码来计算dicovery和finishing times，以及DFS森林的“construct”。
+我们称之为\emph{DFS Trace}算法。即使一个使用DFS骨架的算法没有包含这些代码，为了分析的
+目的我们可以使用这些如果插入了算法就可以得到的值。
+
+\begin{algorithm}\label{Algo:DFS_Trace}
+DFS Trace
+
+{\textbf{\emph{输入：}}} 与算法\ref{Algo:SkeletonDirectGraphDFS}有同样的输入，增加全局数组
+discoverTime，finishingTime，parent；以及算据计数器time。
+
+{\textbf{\emph{输出：}}}前面提到的全局数组被填充。算法的返回类型可以被改成void。parent数
+组以in-tree的方式存储dfs森林。其他的数组的含义参见定义\ref{Def:DFSTerminology}。
+
+{\textbf{\emph{Strategy}}}将算法\ref{Algo:SkeletonDirectGraphDFS}的DFS骨架改成如下：
+\begin{enumerate}
+\item 在dfsSweep初始化 time 为0
+\item 在dfsSweeo中，调用dfs（在“if”之后）之前插入“parent[v]=-1”
+\item 在dfs中，递归调用dfs之前（“if”之后）插入“parent[w]=v”
+\item 在骨架的preorder处理（第2行），插入
+      \begin{displaymath} time++; discoverTime[v] = time; \end{displaymath}
+      （是是$\nu$变成活动的时刻。）
+\item 在骨架的postorder（第13行），插入
+      \begin{displaymath} time++; finishTime[v] = time; \end{displaymath}
+      （这是$\nu$变成不活动的时刻。）
+\end{enumerate}
+
+\end{algorithm}
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+
+XX
+
+
+    \end{tikzpicture}
+    \caption{DFS trace算法在例\ref{}的图上的进展。双线是还没有被回溯到的树的边，
+            所以他们只想灰色的顶点。粗线是已经被回溯的树的边，所以他们指向黑色
+            的顶点。d/f表示了顶点的发现和完成时间。两颗dfs树被构建出来。不同的
+            顶点顺序可以产生不同的trace。}
+    \label{Fig:7_16}
+\end{figure*}
+
+图\ref{Fig:7_16}展示了一个算法\ref{Algo:DFS_Trace}的例子。根据定义\ref{Def:DFSTerminology}
+的定义，每个顶点\emph{活动}的区间，以d/f的形式展示，这里d是顶点发现的时间，f是顶点
+完成的时间。这些区间有有趣的重要的关系，对于每一个顺序，DFS森林（定义\ref{Def:DFSTree_and_DFSForest}）
+中顶点的相关位置都是。
+
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[scale=2,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+
+XX
+
+
+    \end{tikzpicture}
+    \caption{图\ref{Fig:7_16}中DFS森林的\emph{活动}区间}
+    \label{Fig:7_17}
+\end{figure*}
+
+\begin{definition}
+嵌套\emph{活动}区间
+
+对于图\ref{Fig:7_16}的DFS森林的\emph{活动}区间在图\ref{Fig:7_17}。顶点A是一颗DFS树的
+根，E是
+\end{definition}
+
 
 \subsection{有向无环图}
+\emph{有向无环图Directed acyclic graphs}（\emph{DAGs}）是重要的特殊的有向图。如同它的
+名字暗示的，一个DAG可以是任意有向图，只要它没有图。有向无环图之所以重要，有两个主要的
+原因：
+\begin{enumerate}
+\item 许多问题可以自然的以DAG的术语来表示，例如日程安排问题。在日程安排问题中经常需要
+考虑特定的任务必须在有些任务完成之后才能开始。任务依赖上的环将意味着死锁\emph{deadlock}：
+环中没有任务能够开始。
+\item 许多在一般有向图上的问题在DAGs上更容易解决——也就是说更有效率。这个差别可以足够
+大到指数时间vs.线性时间。我们将在提到这些问题的通用版本时详细描述。
+\end{enumerate}
+
+同样的，我们将在\ref{Sec:7_5StronglyConnectedComponentsofDirgraph}节中看到每一个一般
+有向图都与特定的有向无环图相关联，称为\emph{condensation graph}。
+
+有向无环图代表了它的顶点之间的数学上的partial order。无论边$\nu\omega$在那里，我们都可以
+将它解释为顶点之间的关系$\nu<\omega$。如果有从$\nu$到$\omega$有向路径，我们也可以通过
+关系的传递性将它解释为$\nu<\omega$。（图中所有的边也可以解释为$\nu>\omega$。我们只要在图
+中保持一致就行。）一个order（或者partial order）关系是不允许包含环的。我们将看到order的
+解释在日程安排问题中是非常有用的。
+
+在这一小节中我们将学习两个DAGs的应用：拓扑顺序和关键路径。
 
 \subsubsection{拓扑顺序}
+当考虑有向图上的一些问题时，你可能会问自己，“如果我能画出这个图，并且所有的边都从左到右，
+这会帮助我解决问题吗？”当然，如果图有一个环，这显然是不可能的。但是如果有向图没有环——
+一个DAG——则我们将看到这样安排顶点是可能的。找到这样一种安排就是
+\emph{拓扑排序问题topological ordering}。
 
-\section{有向图的强连通分支}
+\begin{definition}
+拓扑顺序 topological order
+
+令$G=(V,E)$是一个有$n$个顶点的有向图。图$G$的拓扑顺序是
+\end{definition}
+
+\begin{figure*}[!t]
+    \centering
+    \subfloat{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+            \node[name=s,shape=circle, minimum size=30mm] {};
+            \draw[shift=(s.160)]node[name=x1,place] {1};
+            \draw[shift=(s.120)]node[name=x2,place] {2};
+            \draw[shift=(s.90)]node[name=x3,place] {3};
+            \draw[shift=(s.50)]node[name=x4,place] {4};
+            \draw[shift=(s.10)]node[name=x5,place] {5};
+            \draw[shift=(s.200)]node[name=x6,place] {6};
+            \draw[shift=(s.240)]node[name=x7,place] {7};
+            \draw[shift=(s.280)]node[name=x8,place] {8};
+            \draw[shift=(s.320)]node[name=x9,place] {9};
+
+            \draw [->] (x1) -- (x2);
+            \draw [->] (x2) -- (x4);
+            \draw [->] (x3) -- (x4);
+            \draw [->] (x5) -- (x3);
+            \draw [->] (x6) -- (x3);
+            \draw [->] (x7) -- (x3);
+            \draw [->] (x8) -- (x2);
+            \draw [->] (x9) -- (x7);
+            \draw [->] (x9) -- (x8);
+            \draw [->] (x9) -- (x1);
+            \draw [->] (x9) -- (x5);
+            \draw [->] (x9) -- (x6);
+        \end{tikzpicture}
+    }
+    \hfil
+    \subfloat{
+        \begin{tikzpicture}[scale=1,place/.style={circle,draw, fill=white,inner sep=0pt,minimum size=4mm}]
+            \node[name=s,shape=circle, minimum size=30mm] {};
+            \draw[shift=(s.160)]node[name=x1,place] {1};
+            \draw[shift=(s.120)]node[name=x2,place] {2};
+            \draw[shift=(s.90)]node[name=x3,place] {3};
+            \draw[shift=(s.50)]node[name=x4,place] {4};
+            \draw[shift=(s.10)]node[name=x5,place] {5};
+            \draw[shift=(s.200)]node[name=x6,place] {6};
+            \draw[shift=(s.240)]node[name=x7,place] {7};
+            \draw[shift=(s.280)]node[name=x8,place] {8};
+            \draw[shift=(s.320)]node[name=x9,place] {9};
+
+            \draw [->] (x1) -- (x2);
+            \draw [->] (x2) -- (x4);
+            \draw [->] (x3) -- (x6);
+            \draw [->] (x4) -- (x3);
+            \draw [->] (x5) -- (x3);
+            \draw [->] (x6) -- (x9);
+            \draw [->] (x7) -- (x3);
+            \draw [->] (x8) -- (x2);
+            \draw [->] (x9) -- (x7);
+            \draw [->] (x9) -- (x8);
+            \draw [->] (x9) -- (x1);
+            \draw [->] (x9) -- (x5);
+        \end{tikzpicture}
+    }
+    \caption{两个有向图，哪一个是无环的呢？}
+    \label{Fig:7_18}
+\end{figure*}
+
+图\ref{Fig:7_18}展示的两个图，只有一个是无环的。邀请读者
+
+\subsubsection{关键路径分析}
+
+\subsubsection{有向无环图总结}
+
+\section{有向图的强连通分支}\label{Sec:7_5StronglyConnectedComponentsofDirgraph}
 \begin{definition}\label{Def:CondensationGraph}
 Condensation graph
 
@@ -1725,7 +2552,11 @@ Condensation graph
 \end{definition}
 
 \section{无向图的深度优先查找}\label{Sec:DFSonUndirectedGraph}
-\section{无向图的二连通分支}
+\begin{algorithm}\label{Algo:SkeletonUndirectGraphDFS}
+无向图的DFS骨架（DFS Skeleton）
+\end{algorithm}
+
+\section{无向图的二连通分支}\label{Sec:7_7BiConnectedComponentsofUndirgraph}
 在\ref{Sec:GraphDefinitionsAndRepresentations}节，我们提出了这些问题：
 \begin{enumerate}
 \item 如果一个城市的机场因为坏天气而关闭了，你仍然能在其他的任意两个城市之间飞行吗？

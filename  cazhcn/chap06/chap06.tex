@@ -1,267 +1,267 @@
-\chapter{��̬���Ͳ���}\label{Sec:Chapter:DynamicSetAndSearch}
-\section{����}
-��̬�������ڼ����������Ĺ�ϵ��ı�ļ��ϡ�����ЩӦ�ó����У�����
-һ��ʼ�ǿյģ��ڼ���Ĺ�����Ԫ��һ�������롣ͨ�����Ͽ��ܵ�����ģ
-Ԥ���ǲ�֪���ġ���һ��Ӧ�ó���һ��ʼ��һ����ļ��ϣ��ڼ����������
-��ɾ��Ԫ�أ�ͨ���ڼ���Ϊ�յ�ʱ�����������ЩӦ�ó����ɾ��Ҳ����Ԫ
-�ء��������������ݽṹ����ʾ��̬���ϡ��������ݽṹ����Ч����������
-Ҫ�Ĳ����ͷ���ģʽ������������������ɱ���������������һ���������ߡ�
-����������Ϊamortizedʱ������Ļ�����������һ��Ϊ��չʾ���ֶ�̬����
-ʵ�ֵ�Ч�ʵĳ��õļ�����������ǿ����������е�������ʾ��̬���ϵ���
-�ݽṹ��������Ϊ�ʵ���ADT��ʵ�ֶ����֡�
+\chapter{动态集和查找}\label{Sec:Chapter:DynamicSetAndSearch}
+\section{概述}
+动态集合是在计算规程中它的关系会改变的集合。在有些应用程序中，集合
+一开始是空的，在计算的过程中元素一个个加入。通常集合可能的最大规模
+预先是不知道的。另一种应用程序一开始有一个大的集合，在计算过程中逐
+步删除元素（通常在集合为空的时候结束）。有些应用程序既删除也添加元
+素。开发了许多数据结构来表示动态集合。那种数据结构更有效率依赖于需
+要的操作和访问模式。首先我们描述数组成倍增长技术，它是一个基本工具。
+接着我们引为amortized时间分析的基础，，这是一项为了展示各种动态集合
+实现的效率的常用的技术。最后我们考察许多流行的用来表示动态集合的数
+据结构。他们作为适当的ADT的实现而出现。
 
-��-�����ṩ��һ��ƽ�����������ʽ����������Ч��ʵ�ֶ���������Ǻ�
-���õġ������������hash�����ֵ�ADT����������ʵ�֡�
+红-黑树提供了一种平衡二叉树的形式，它对于有效的实现二叉查找树是很
+有用的。二叉查找树和hash表是字典ADT的两种流行实现。
 
-��̬�ȼ۹�ϵ������Ӧ���д��ڣ����ǵĲ�����Union-Find
-ADT������ء�ʹ��In-Tree ADT����һЩ������Ƿǳ���Ч��ʵ�֡�
+动态等价关系在许多应用中存在，它们的操作与Union-Find
+ADT紧密相关。使用In-Tree ADT，在一些情况下是非常高效的实现。
 
-���ȼ������������㷨�Ĺ��ߣ�������\emph{̰��}�㷨�������ȼ�����ADT����
-��Ч��ʵ���Ƕ���ѣ�Ҳ���ڶ����򣩺�pairing
-forests��Ҳ��Ϊlazy pairing heaps��
+优先级队列是许多算法的工具，尤其是\emph{贪婪}算法。对优先级队列ADT两种
+高效的实现是二叉堆（也用于堆排序）和pairing
+forests，也称为lazy pairing heaps。
 
-���½�������Щ���⡣Ϊ�˽�һ���Ķ��͸����ε�ѧϰ����ο����º����
-Note��References��
+本章将介绍这些主题。为了进一步阅读和更深层次的学习，请参考本章后面的
+Note和References。
 
 
-\section{���鷭��}\label{Sec:ArrayDoubleSize}
-����̬���ϲ��ĵ�������������ڼ��㿪ʼʱ����֪����Ҫ�������顣����
-һ����������Ҫ�����ġ�������ͨ���Ƿǳ����˲����⣬������������ͨ��
-���������һ���򵥵ĸ�������Եķ����ǣ���ʼ��ʱ��ֻ����һ��С�����飬
-���ռ䲻��ʱ�ͼӱ����顣Ϊ�������������Ǳ����¼��ǰ�������˶��٣�
-�Լ���ǰ�����˶��١�Javaͨ��length���Զ���¼�˵�ǰ�����˶��٣����Ƕ�
-ǰһ�������ǳ���Ա�����Σ��������ھ����Ӧ�á�
+\section{数组翻倍}\label{Sec:ArrayDoubleSize}
+引起动态集合并的典型情况是我们在计算开始时并不知道需要多大的数组。分配
+一个“满足需要的最大的”的数组通常是非常令人不满意，但是这是最普通的
+解决方法。一个简单的更有灵活性的方案是，开始的时候只分配一个小的数组，
+当空间不组时就加倍数组。为了完成这项工作我们必须记录当前数组用了多少，
+以及当前分配了多少。Java通过length域自动记录了当前分配了多少，但是对
+前一个参数是程序员的责任，它依赖于具体的应用。
 
-����������֯��һ����\textbf{setArray}����������\textbf{setSize}��
-\textbf{elements}����һ����element���͵����飬�������Ǽ���������
-Object���ʼ�������¹������Ķ���
+假设我们组织了一个类\textbf{setArray}，有两个域\textbf{setSize}和
+\textbf{elements}，后一个是element类型的数组，这里我们假设类型是
+Object。最开始我们如下够这个类的对象：
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     setArray mySet= new setArray();
     mySet.setSize=0;
     mySet.elements=new Object[100];
 \end{lstlisting}
-��ÿ����mySet������Ԫ�ص�ʱ�򣬵����ڲ�����Ԫ��֮ǰ����Ҫȷ�����п�λ��
-��û���ˣ�������Ĵ�С��������������Ƿ���һ������ԭ����С�������飬
-Ȼ�������Ԫ���ƶ����������С��������£�
+在每次向mySet中添加元素的时候，但是在插入新元素之前，都要确保还有空位，
+若没有了，把数组的大小翻倍。这个过程是分配一块两倍原来大小的新数组，
+然后把所有元素移动到新数组中。代码如下：
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     if(mySet.setSize==mySet.element.length)
         arrayDouble(mySet);
     Continue with insertion of new element;
 \end{lstlisting}
-��arrayDouble����������:
+在arrayDouble子例程如下:
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     arrayDouble(set)
     {
         newLength=2*set.elements.length;
         newElements=new Object[newLength];
-        `��set.elements�����Ԫ���ƶ���newElements������`;
+        `将set.elements数组的元素移动到newElements数组中`;
         set.elements=newElements;
     }
 \end{lstlisting}
 
-��ʱ�Ĵ󲿷����ƶ�Ԫ�ء����ǣ��������ڽ�չʾ�����ִ洢��ʽ����n��Ԫ�ص�
-��ϵͳ������$\Theta(n)$��
+耗时的大部分是移动元素。但是，我们现在将展示以这种存储方式插入n个元素的
+总系统开销是$\Theta(n)$。
 
-��������(n+1)��Ԫ�ؽ��������鷭����������t�ǽ����ݴӾ�����ת�Ƶ�������
-�Ļ��ѣ�����t�ǳ���������������鷭��������Ҫ����n��Ԫ�ص�ת�ơ�������
-ǰһ�β�������n/2��Ԫ��ת�ƣ���֮ǰ��n/4���ȵȡ��Ӽ��ϴ�����������Ԫ��
-ת�Ʋ��ᳬ��2tn��
+假设插入第(n+1)个元素将触发数组翻倍操作，令t是将数据从旧数组转移到新数组
+的花费（假设t是常数）。在这次数组翻倍操作中要进行n个元素的转移。但是在
+前一次操作中是n/2个元素转移，再之前是n/4，等等。从集合创建以来所有元素
+转移不会超过2tn。
 
-���ǿ���\emph{ƽ̯}�����̿�ż�����ְ�������ļ����ӣ�����ÿһ����ƽ��������
-һ������ʱ����ޡ�ƽ̯ʱ���������һ�ڽ��͡�.
+这是可以\emph{平摊}或者铺开偶尔出现昂贵操作的简单例子，所以每一步的平均开销是
+一个常数时间低限。平摊时间分析在下一节解释。.
 
-\section{Amortized ʱ�����}
-����������ǰһ�ڿ����ģ������������ܷ���������ͬһ�����Ͳ������Ĺ�����
-�仯�ܴ󣬵���һ���ܳ��������е���ʱ��ԶС�����еĳ��ȳ���ÿ��������
-�ʱ�䡣��Щ����ڶ�̬����������صĲ�������������������֡���ʱ��һ��
-��Ϊ\emph{ƽ̯ʱ�����amortized time analysis}�ļ�������Ϊ��������ṩ��
-��ȷ��ʱ�����������\emph{amortized}�����ڣ��ܿ��ɵĽ��ͣ���ҵ����ʵ����
-�ֽ�һ�����ʵ���which was actually incurred in a single time period, over multiple time periods that are related to the reason for incurring the cost. ���㷨������ʱ��һ����Ĳ�����չ�������������������������û����ô��ʱ����һС�ڸ���amortizedʱ�������һ����ſ�ܡ������ڸ����ϼ򵥵ģ�����Ϊ�˶Բ�ͬ������õ���Ч�ķ�����Ҫ���㴴�¡�
+\section{Amortized 时间分析}
+就像我们在前一节看到的，下面的情况可能发生：对于同一种类型操作做的工作量
+变化很大，但是一个很长操作序列的总时间远小于序列的长度乘以每个操作的
+最坏时间。这些情况在动态集和他们相关的操作中这种情况经常出现。此时，一种
+称为\emph{平摊时间分析amortized time analysis}的技术可以为这种情况提供更
+精确的时间分析。名字\emph{amortized}来自于（很宽松的解释）商业记账实践中
+分解一个大帐单，which was actually incurred in a single time period, over multiple time periods that are related to the reason for incurring the cost. 在算法分析的时候，一个大的操作被展开成许多操作，这里其他操作没有这么耗时。这一小节给出amortized时间分析的一个大概框架。技术在概念上简单的，尽管为了对不同的问题得到有效的方案需要做点创新。
 
-����������һ��ADT����������amortized���������Ĳ���������ʹ������individual
-operation(�������)����ʾһ��������һ��ִ�в��衣ƽ̯ʱ�������������ĵ�ʽ��
+假设我们有一个ADT，我们想用amortized来分析它的操作。我们使用术语individual
+operation(单体操作)来表示一个操作的一个执行步骤。平摊时间分析基于下面的等式：
 \begin{equation}
 amortized cost= actual cost + accounting cost
 \end{equation}
-����������������Ĺ�����ÿһ��������������µĲ�����ҪΪÿһ������������
-һ��accounting costsϵͳ���Դﵽ��������Ŀ�ꡣ
+它采用了整个计算的过程中每一个单体操作。创新的部分是要为每一个单体操作设计
+一个accounting costs系统，以达到下面两个目标。
 \begin{enumerate}
-\item �Ϸ��Ĳ��������е�ÿһ�����Ӵ���ADT����ʼ�����𣩲�����accounting
-    costsd�ĺ��ǷǸ���
-\item ����actual cost�����ںܴ�Χ�ڲ���������ÿһ��amortized cost��
-    ���еģ����磬���൱���й��ɣ�
+\item 合法的操作序列中的每一个（从创建ADT对象开始分析起）操作的accounting
+    costsd的和是非负。
+\item 尽管actual cost可能在很大范围内波动，分析每一个amortized cost是
+    可行的（例如，它相当的有规律）
 \end{enumerate}
-���������Ŀ�궼�ﵽ�ˣ��������ܵ�amortized cost���Ӵ���ADT��ʼ�������ܵ�
-actual cost�����ܵ�amortized cost�Ǿ���������ġ�
+如果这两个目标都达到了，则序列总的amortized cost（从创建ADT开始）就是总的
+actual cost，且总的amortized cost是经得起分析的。
 
-ֱ�۵���˵���ܵ�accounting cost�����봢���˻�������������ʱ������Ϊ�꼾
-�洢һЩ�����꼾����ʱ�򣬾��ǱȽϰ����ǲ������ֵĵĲ�����we make a withdrawal��
-���ǣ�Ϊ�˱��ֳ������������ܺ��ӱ��������ʻ���ƽ�⡣
+直观的来说，总的accounting cost类似与储蓄账户。当好天气的时候，我们为雨季
+存储一些。当雨季来的时候，就是比较昂贵但是不常出现的的操作，we make a withdrawal。
+但是，为了保持偿付能力，不能忽视保持我们帐户的平衡。
 
-���һ��accounting costsϵͳ����Ҫ˼����"����"����������һ������accounting cost��
+设计一个accounting costs系统的主要思想是"正常"操作必须有一个正的accounting cost，
 
 \begin{example}
-�óɱ�����������ʵ��ջaccounting ����
+用成倍增长的数组实现栈accounting 方案
 
-����ջADT����������������push��pop����������ʵ�֡�����������У����ǽ�����
-���ʵĴ��ۣ���Ϊ���ǲ��ı�ջ�����Դ�����$O(1)$���ڱ�Ҫ��ʱ��ʹ����\ref{Sec:ArrayDoubleSize}��
-�����������鷭�����������顣��û�з��������С�仯ʱpush����pop��ʵ������
-����1��������������鷭������n����2n��������n��Ԫ�ص��µ����飬���ʱpush��
-ʵ��������1+nt����t��һ������������ϰ6.2 ������һ�ַ�����push��pop������
-��������ı��С����
+考虑栈ADT，它有两个操作，push和pop，它以数组实现。（这个例子中，我们将忽略
+访问的代价，因为他们不改变栈，所以代价是$O(1)$。在必要的时候使用在\ref{Sec:ArrayDoubleSize}节
+中描述的数组翻倍来扩大数组。当没有发生数组大小变化时push或者pop的实际消耗
+都是1。如果进行了数组翻倍（从n到了2n）拷贝了n个元素到新的数组，则此时push的
+实际消耗是1+nt其中t是一个常数。（练习6.2 考虑了一种方案，push和pop都可能
+导致数组改变大小。）
 
-������push��ʵ��ʱ����$\Theta(n)$�������������ʵ��ʱ�䣬�ƺ����
-ʵ���Ǽ����Ч�ģ���Ϊ��Щ������������$\Theta(1)$ʱ������ɡ�����amortized
-ʱ����������һ������ȷ�Ľ�������ǿ���������ļ��˷�����
+最坏情况下push的实际时间是$\Theta(n)$。看到这个最坏情况实际时间，似乎这个
+实现是及其低效的，因为这些操作都可能在$\Theta(1)$时间内完成。但是amortized
+时间分析会给出一个更精确的结果。我们可以用下面的记账方案：
 \begin{enumerate}
-\item ����Ҫ���鷭����push��accounting cost��2t��
-\item ��Ҫ��n��չ��2n��push��accounting cost��-nt+2t.
-\item pop��accounting cost��0
+\item 不需要数组翻倍的push的accounting cost是2t。
+\item 需要将n扩展到2n的push的accounting cost是-nt+2t.
+\item pop的accounting cost是0
 \end{enumerate}
-accounting costs�е�ϵ��2������ջ������ʱ��ѡ���㹻��accounting costs�ĺͿ�������Ϊ��������ʽ���ü�������⣬������ջ�Ĵ�СΪN��2N��4N��8N����ʱ��������鷭������������������ֻ��push������"account balance"--accounting costs�ľ���--��������2Nt��֮���һ�����ı仯�Ὣ�����ٵ�Nt+2t��֮���ڵڶ������鷭��֮ǰ���ֻ�������3Nt�������鷭����ʱ���ֽ���Nt+2t������������5Ntʱ������ٵ�Nt+2t��������9Ntʱ����ٵ�Nt+2t���ȵȡ������ʱһ����Ч��ջADT��accounting����������
+accounting costs中的系数2可以在栈创建的时候选到足够大，accounting costs的和可以永不为负。非正式的用假设简化问题，假设在栈的大小为N、2N、4N、8N…的时候会有数组翻倍发生。考虑最坏情况，只有push发生。"account balance"--accounting costs的净和--会增长到2Nt，之后第一个负的变化会将他减少到Nt+2t，之后在第二次数组翻倍之前它又会增长到3Nt，到数组翻倍的时候又降到Nt+2t。当它增长到5Nt时，会减少到Nt+2t，增长到9Nt时会减少到Nt+2t，等等。因此这时一个有效的栈ADT的accounting方案（）。
 
 \end{example}
 
-Խ���ӵ����ݽṹͨ����ҪԽ���ӵļ�������������Ҫ�����µķ���ȥ��������ڱ��µĺ����С���У�6.6.6��6.7.2С�ڣ����ǽ�������Ҫƽ̯ʱ�������չʾ��Ч�ʵ�ADTs�Լ�ʵ��
+越复杂的数据结构通常需要越复杂的计数方案，就需要更创新的方法去想出来。在本章的后面的小节中（6.6.6和6.7.2小节）我们将遇到需要平摊时间分析来展示其效率的ADTs以及实现
 
-\section{�����}
-������������ض��ṹҪ��Ķ���������Щ�ṹҪ��ʾ��n���ڵ�ĺ�����ĸ߲�
-����$2\lg(n+1)$������˵�����ĸ߱���n���ڵ����ƽ��Ķ�������һ��2���������ӡ�
-����������е��ô���������������������ⲻ����Ψһ��Ӧ�á�����չʾ�����
-���������Ч�ı���ƽ������������ƽ��ȸձ��ἰ������������ƽ����������
-�ķ����ڱ��º����Note��References���ᵽ������ѡ����������Ϊ��ɾ��������
-����ѡ�񷽰�������򵥵ġ�
+\section{红黑树}
+红黑树是满足特定结构要求的二叉树。这些结构要求暗示有n个节点的红黑树的高不
+超过$2\lg(n+1)$。就是说，它的高比有n个节点的最平衡的二叉树多一个2倍常数因子。
+红黑树最流行的用处是做二叉查找树，但是这不是它唯一的应用。本节展示如何用
+红黑树来高效的保持平衡二叉查找树（平衡度刚被提及）。其他保持平衡二叉查找树
+的方案在本章后面的Note和References中提到。我们选择红黑树是因为其删除过程在
+所有选择方案中是最简单的。
 
-�ڽ�����һЩ����֮�����ǽ���ϰ�����������֮�����ǽ��ܺ����Ҫ��Ľṹ���ԣ�
-����������ڲ����ɾ����ʱ����Ч��ά��֮��
+在介绍了一些符号之后我们将复习二叉查找树。之后我们介绍红黑树要求的结构特性，
+并介绍如何在插入和删除的时候有效的维护之。
 
-�������һ��RBtree��Ķ�������ʵ�ֿ�����\ref{Sec:BinaryTreeADT}С�ڵ�
-BinTree ADT�ǳ������ƣ����ǹ淶�ͽӿڷǳ���ͬ��������Ϊ���������BinTree ADT
-ʵ�ֵ�һ��������и����Ŀ�ģ������иı����ṹ�Ĳ�������BinTree ADTû��
-���������Ĳ�����ͬBinTree ADTһ������null��ʾһ�ſ�����������Ĳ�����
-rbtInsert��rbtDelete��rbtSearch�����Ƿֱ������в��룬ɾ������Ҹ�����
-�ؼ��֡���BinTree ADT��ͬ�������û���ṩֱ�ӷ��������Ĳ���������������
-�������Ƕ�����������ǲ�һ���Ǻ����֮�󣬾Ϳ���������Ӧ�Ĳ�����
+红黑树是一个RBtree类的对象，它的实现可能与\ref{Sec:BinaryTreeADT}小节的
+BinTree ADT非常的类似；但是规范和接口非常不同。这是因为红黑树比以BinTree ADT
+实现的一般二叉树有更多的目的，并且有改变它结构的操作，而BinTree ADT没有
+定义这样的操作。同BinTree ADT一样，以null表示一颗空树。红黑树的操作有
+rbtInsert、rbtDelete和rbtSearch。他们分别在树中插入，删除或查找给定的
+关键字。与BinTree ADT不同，红黑树没有提供直接访问子树的操作。但是在理解
+其子树是二叉查找树但是不一定是红黑树之后，就可以添加相应的操作。
 
-RBtree��ǳ��ʺ�ʵ���ֵ�ADT����������Ҫƽ���������ADT��ע�⣬�������
+RBtree类非常适合实现字典ADT，或其他需要平衡二叉树的ADT。注意，红黑树是
 
-\subsubsection{Properly Drawn��}
-Properly Drawn����˼����԰��������������������ͺ����������������
-��properly drawn�������еĲ�ͼ��
+\subsubsection{Properly Drawn树}
+Properly Drawn树的思想可以帮助我们理解二叉查找树和红黑树的许多概念。本书
+用properly drawn树画所有的插图。
 
 \begin{definition}\vspace{1ex}
-һ�����ڶ�άƽ������\emph{properly drawn}�ģ������
+一棵树在二维平面内是\emph{properly drawn}的，如果：
 \begin{enumerate}
-\item ÿһ���ڵ���һ���㣬ÿһ������һ���߶λ���һ�����Ӹ�ĸ�����ӵĻ��ߡ�
-     ���ڻ�ͼ��һ���ڵ���һ��Ȧ�������ƵĲ�ͼ�����ǵġ��㡱������Ϊ�����ģ�
-      ����Ϊ�ӵ��������
-\item һ���ڵ����Ӻ��Һ��ӷֱ��ڽڵ����ߺ��ұߣ�ˮƽλ�á�
-\item ���������uv��u��ʼ�ڸ��ڵ㣬û��
+\item 每一个节点是一个点，每一条边是一条线段或是一段连接父母到孩子的弧线。
+     （在画图中一个节点是一个圈或是类似的插图，他们的“点”可以认为是中心，
+      边认为从点出发。）
+\item 一个节点左孩子和右孩子分别画在节点的左边和右边，水平位置。
+\item 对于任意边uv，u开始于父节点，没有
 \end{enumerate}
 \end{definition}
 
-\subsubsection{������Ϊexternal�ڵ�}
-���ڶ�����������ر��ǶԺ������˵������������һ���������͵Ľڵ��Ƿ���ģ�����
-�Ľڵ��Ϊ\emph{external node}��
+\subsubsection{空树作为external节点}
+对于二叉查找树，特别是对红黑树来说，将空树当作一种特殊类型的节点是方便的，空树
+的节点称为\emph{external node}。
 \begin{definition}
-�ڵ�Ⱥ�����ǵ���Ҫ����
+节点群和他们的主要子树
 
-һ���ڵ�Ⱥ��
+一个节点群是
 \end{definition}
 
-\subsection{���������}
-�ڶ���������У��ڵ�Ĺؼ������������Լ����
+\subsection{二叉查找树}
+在二叉查找树中，节点的关键字满足下面的约束。
 \begin{definition}
-���������property
+二叉查找树property
 
-������
+二叉树
 \end{definition}
 
-\subsection{����������ת}
-\subsection{������Ķ���}
-�������RBtree��Ķ���
+\subsection{二叉树的旋转}
+\subsection{红黑树的定义}
+红黑树是RBtree类的对象。
 \begin{definition}
-�����
+红黑树
 
-��T�Ƕ�����
+令T是二叉树
 \end{definition}
 
-\subsection{������Ĵ�С�����}
+\subsection{红黑树的大小和深度}
 \begin{lemma}
-��T��һ��$RB_k$��������˵����$T$��һ����black height h�ĺ��������
+令T是一个$RB_k$树。就是说，令$T$是一个有black height h的红黑树。则：
 \begin{enumerate}
-\item $T$������$2^k-1$��internal�ڽڵ㡣
-\item $T$������$4^k-1$��internal�ڵ㡣
-\item ��һ�ڽ������Լ����������black depth��
+\item $T$至少有$2^k-1$个internal黑节点。
+\item $T$至少有$4^k-1$个internal节点。
+\item 任一黑结点的深度约两倍于它的black depth。
 \end{enumerate}
 
-��A��$ARB_k$��������˵����$A$��һ����black height h�Ľ��ƺ��������
+令A是$ARB_k$树。就是说，令$A$是一个有black height h的近似红黑树。则：
 \begin{enumerate}
-\item $A$������$2^k-2$��internal�ڽڵ㡣
-\item $A$������$\frac{1}{2}4^k-1$��internal�ڵ㡣
-\item ��һ�ڽ������Լ����������black depth��
+\item $A$至少有$2^k-2$个internal黑节点。
+\item $A$至少有$\frac{1}{2}4^k-1$个internal节点。
+\item 任一黑结点的深度约两倍于它的black depth。
 \end{enumerate}
 
 \end{lemma}
 
-\subsection{������в���}
-����������˻�����ɫ��black height��Լ��������Ĳ������ں�����в���һ��
-��ڵ㣬�����ͱ�֤��black height��Լ����Ȼ������ġ������µĺ�ڵ���ܻ�
-��ɺ�ڵ���˺�ڵ�ĺ��ӡ����ǿ���ͨ���ϲ���ɫ�ͽṹ���޸����������
-����black-height��Լ����
+\subsection{红黑树中插入}
+红黑树定义了基于颜色和black height的约束。理想的插入是在红黑树中插入一个
+红节点，这样就保证了black height的约束仍然是满足的。但是新的红节点可能会
+造成红节点成了红节点的孩子。我们可以通过合并颜色和结构来修复这个犯规且
+保持black-height的约束。
 
-����ؼ���K�ĵ�һ������BST�в���KӦ���ڵ�λ�ã���Ȼ��ΪK����BST�����Ի�
-�ҵ�һ��external�ڵ㣨�������μ��㷨6.1������һ���ǽ������滻�ɽ�����һ��
-�ڵ�K���������һ�����ݹ���õĳ��ڣ����޸���ɫ�ķ��档�κ�ʱ�򶼲���Υ��
-black-height�Ĺ淶��
+插入关键字K的第一步是在BST中查找K应该在的位置，当然因为K不在BST中所以会
+找到一个external节点（空树，参见算法6.1）。下一步是将空树替换成仅包含一个
+节点K的树。最后一步，递归调用的出口，是修复颜色的犯规。任何时候都不会违反
+black-height的规范。
 
 \begin{example}
-���������ĵ�һ��
+红黑树插入的第一步
 
-��д���������㷨֮ǰ�������ǿ��ǿ�����ͼ6.5�ĺ�����в���ؼ���70�����
-ʲô��������������У�70����Ƚϣ��������½�����������Ȼ��70��60�Ƚϣ�
-�����½���������������70��80�Ƚϡ�����ת��������������������external�ڵ㡣
+在写出完整的算法之前，让我们考虑看看在图6.5的红黑树中插入关键字70会产生
+什么情况。在整个树中，70与根比较，大，所以下降到右子树。然后70与60比较，
+接着下降到右子树，这里70与80比较。现在转到了左子树，且遇到了external节点。
 \end{example}
 
-\section{��ϣ}
-��ϣ��һ�ֳ�����ʵ���ֵ�ADT�ļ����������ֵ�Ҳ��������������ʵ�֡�����һ��
-��һ��Ӧ���У������ܸ�ÿһ�����ܹؼ��ֶ�����һ��Ψһ��������������������λ��
-���롢ɾ��Ԫ�ض��Ƿǳ��򵥺Ϳ��ٵġ�
+\section{哈希}
+哈希是一种常用来实现字典ADT的技术，尽管字典也可以用其他技术实现。想象一下
+在一个应用中，我们能给每一个可能关键字都赋予一个唯一的数组索引。这样，定位、
+插入、删除元素都是非常简单和快速的。
 
-��Ȼһ������£��ؼ��ֿռ䣨���п��ܹؼ��ֵļ��ϣ��������Ӵ�һ�����͵�
-�����ַ����Ĺؼ��ֿռ䣬�����������������������20����ĸ��ո񡣹ؼ��ֿռ�
-����2100��Ԫ�ء�����˵�������ʹ�����飬����Ҫ2100����Ԫ��Ϊÿһ���ַ���
-����һ������������ȫ�ǲ���ʵ�ֵġ���ʹ�ؼ��ֿռ��Ǿ޴�ģ���һ���ض���
-Ӧ�ó����н�������һС���֡�ʵ��Ԫ�صļ��Ͽ����ڼ���֮�ڣ�����С�ڰ���
-һ����4�����Ԫ�ص��㹻��ÿһ��Ԫ��һ����ͬ��������������ģ�������С��
-���еġ�
+当然一般情况下，关键字空间（所有可能关键字的集合）都过于庞大。一个典型的
+例子字符串的关键字空间，比如人名。假设名字最多有20个字母或空格。关键字空间
+超过2100个元素。就是说如果我们使用数组，将需要2100个单元来为每一个字符串
+赋予一个索引，这完全是不可实现的。即使关键字空间是巨大的，在一个特定的
+应用程序中仅会碰到一小部分。实际元素的集合可能在几百之内，或者小于百万。
+一个有4百万个元素的足够给每一个元素一个不同的索引，这样规模的数组大小是
+可行的。
 
-��ϣ��Ŀ�ľ���Ϊ�˽��޴�Ĺؼ��ֿռ�ӳ�䵽һ��������С��������Χ�ڡ��ؼ���
-ת��֮���ֵ��֮Ϊ�ؼ��ֵĹ�ϣ�룬����ת�����̵ĳ�Ϊ��ϣ���������ǿ��Ը���
-Ԫ�صĹ�ϣ��������洢ÿһ��Ԫ�ء�
+哈希的目的就是为了将巨大的关键字空间映射到一个合理的小的整数范围内。关键字
+转换之后的值称之为关键字的哈希码，计算转换过程的称为哈希函数。我们可以根据
+元素的哈希码用数组存储每一个元素。
 
-����ϣ���������ԭ���Ǹ������ڵĴ����ؼ��ֵ��������ģ�����chopping up��
-�ؼ��֣�ѡȡ�ؼ��ֵ��ض���λ������ϣ�롣
+“哈希”这个名字原来是根据早期的处理关键字的做法来的，即“chopping up”
+关键字，选取关键字的特定几位来做哈希码。
 
-��ϣ�����Ĺ�������ĳ�ַ�ʽ���ؼ��ָ���һ�����������ַ�ʽ���ܻ�ʧ�ܵĽ�һ��
-�����͡���n��Ԫ�صļ���������Ԫ��ӳ�䵽ͬһ���������������������ʱ�����
-�¼���Ϊһ����ײ��Ϊ�˼�����ײ���ֵĻ��ᣬ���������n��Ԫ�أ����͵��������
-ʹ��2n��Ϊ��ϣ��ķ�Χ��
+哈希函数的工作是以某种方式将关键字赋予一个整数，这种方式可能会失败的将一个
+“典型”的n个元素的集合中两个元素映射到同一个整数。当这种情况发生时，这个
+事件称为一个碰撞。为了减少碰撞出现的机会，如果我们有n个元素，典型的情况我们
+使用2n作为哈希码的范围。
 
-����ͨ�ģ����ǲ���Ψһ�ķ�ʽ��ʹ�ù�ϣ��ά��һ�Ź�ϣ������ϣ����һ������
-$0, \cdots, h-1$������H������˵����h����Ŀ��H����Ŀ��Ϊ��ϣ��Ԫ����ϣ����
-��ÿһ���ؼ���ӳ�䵽$0,\cdots,h-1$֮���������
+最普通的，但是不是唯一的方式，使用哈希来维护一张哈希表。哈希表是一个索引
+$0, \cdots, h-1$的数组H；就是说表有h个条目。H的条目称为哈希单元。哈希函数
+将每一个关键字映射到$0,\cdots,h-1$之间的整数。
 
 \begin{example}
-��ϣ
+哈希
 
-����һ���򵥵����ӣ�����ؼ��ֿռ���4λ������������Ҫ������ת����$0, \cdots, 7$
-֮�������������ѡ���ϣ������
+对于一个简单的例子，假设关键字空间是4位整数，现在需要把他们转换到$0, \cdots, 7$
+之间的整数。我们选择哈希函数：
 \begin{displaymath}
 hashCode(x)=(5x mod 8)
 \end{displaymath}
-��������ʵ�ʵļ�����6����Ҫ����ʷ������ɣ�1055��1492��1776��1812��1918��1945��
-����ӳ�䵽$0,\cdots,7$���£�
+假设我们实际的集合由6个重要的历史日期组成：1055、1492、1776、1812、1918和1945。
+他们映射到$0,\cdots,7$如下：
 
 \begin{tabular}{ccccccccc}
 \hline
@@ -271,47 +271,47 @@ key       &1775   &   &   &1055  &$\frac{1492}{1812}$   &1945  &1918  & \\
 \end{tabular}
 
 
-���������һ����8����Ŀ��ɵĹ�ϣ����Ԫ�ؿ��Ը������ǵĹ�ϣ��洢�����ǽ�
-��ɢ���������С����ǣ���ЩԪ����ͬ���Ĺ�ϣ�룬���Ա���Ϊ�����¼���Ԥ����ʩ��
-����������У��ؼ���1492��1812\emph{��ײ}�ˡ���ζ������ӳ��õ���ͬ���Ĺ�ϣ�롣
+如果我们有一个由8个条目组成的哈希表，元素可以根据他们的哈希码存储，他们将
+分散在整个表中。但是，有些元素有同样的哈希码，所以必须为这种事件做预防措施。
+在这个例子中，关键字1492和1812\emph{碰撞}了。意味着他们映射得到了同样的哈希码。
 \end{example}
 
-��������Ϊ��ϣ����Ƶ�ַ����ϣ������ô��ƣ���ײ��δ��������������൱�Ķ�����
-��һ�����ʵĹ�ϣ���������ھ����Ӧ�á����ǽ�������ײ���⡣
-\subsection{��յ�ַ��ϣ}
-\subsection{���ŵ�ַ��ϣ}
-\subsection{��ϣ����}
+两个议题为哈希表设计地址：哈希函数怎么设计，碰撞如何处理？两个议题相当的独立。
+找一个合适的哈希函数依赖于具体的应用。我们将讨论碰撞问题。
+\subsection{封闭地址哈希}
+\subsection{开放地址哈希}
+\subsection{哈希函数}
 
-\section{��̬�ȼ۹�ϵ�����ϲ��ҳ���}\label{Sec:DynamicEquivalenceRelationAndUnionSearch}
-��̬�ȼ۹�ϵ�����ڼ��Ϻ�ͼ�ĸ����������档���ϲ��ҳ�����������Ϊ����
-��̬�ȼ۹�ϵ�ṩ��һ�ַ������������зǳ���Ч��Ҳ�ܼ򵥣�����ʵ�֣�
-�������Ǻ��鷳�ġ�
+\section{动态等价关系和联合查找程序}\label{Sec:DynamicEquivalenceRelationAndUnionSearch}
+动态等价关系出现在集合和图的各种问题里面。联合查找抽象数据类型为处理
+动态等价关系提供了一种方法。尽管它有非常高效（也很简单！）的实现，
+但分析是很麻烦的。
 
-��Ӧ�ð�����С����������\ref{Sec:KruskalMST}�����ۣ��Լ���������ᵽ��һЩ���⡣
+其应用包括最小生成树，在\ref{Sec:KruskalMST}节讨论，以及本章最后提到的一些问题。
 
-\subsection{��̬�ȼ۹�ϵ}
-����S�ϵ�һ���ȼ۹�ϵR��һ��S�ϵĶ�Ԫ��ϵ�������Է����Գƺʹ��ݵģ�1.3.1С�ڣ���
-����˵���������е�S�е�s��t��u����������������ԣ����$sRt$��$tRs$����$sRs$��
-���$sRt$��$tRu$��sRu��S��һ��Ԫ��s�ĵȼ�����S��һ���Ӽ������а������еȼ�
-��s��Ԫ�ء��ȼ�����S��һ�����֣�����˵�����ǲ��ཻ�ģ����ǵ�������S������$\equiv$
-��������ʾ�ȼ۹�ϵ��
+\subsection{动态等价关系}
+集合S上的一个等价关系R是一个S上的二元关系，且是自反，对称和传递的（1.3.1小节）。
+就是说，对于所有的S中的s，t和u，都符合下面的属性：如果$sRt$且$tRs$，则$sRs$；
+如果$sRt$且$tRu$则sRu。S中一个元素s的等价类是S的一个子集，其中包含所有等价
+与s的元素。等价类是S的一个划分，就是说他们是不相交的，他们的联合是S。符号$\equiv$
+将用来表示等价关系。
 
-��С�ڵ������Ǳ�ʾ���޸��ڼ�������иı�ĵȼ۹�ϵ�Լ��ش���ص����⡣�ȼ�
-��ϵ��ʼ����ȹ�ϵ������˵�������е�ÿһ��Ԫ�ض����Լ���ȡ������Ǵ���һ��
-ָ������У�ָ�����������ͣ�����$s_i$��$s_j$����S��Ԫ�أ�
+本小节的问题是表示、修改在计算过程中改变的等价关系以及回答相关的问题。等价
+关系开始是相等关系，就是说，集合中的每一个元素都与自己相等。问题是处理一个
+指令的序列，指令有两种类型，这里$s_i$和$s_j$都是S的元素：
 \begin{enumerate}
 \item $s_i \equiv s_j$?
-\item MAKE $s_i\equiv s_j$������$s_i \equiv s_j$��false�ģ���
+\item MAKE $s_i\equiv s_j$（这里$s_i \equiv s_j$是false的）。
 \end{enumerate}
-����1�Ļش���"��"��"����"����ȷ�Ļش��������Ѿ��յ�������2��ָ��ش��ǡ��ǡ�
-���ҽ���ָ�MAKE���Ѿ��յ����� can be derived by applying the reflexive,
+问题1的回答是"是"或"不是"。正确的回答依赖于已经收到的类型2的指令；回答是“是”
+当且仅当指令“MAKE”已经收到或是 can be derived by applying the reflexive,
 symmetric,and transitive properties to pairs that were explicitly made equivalent
-by the second type of instruction. The response to the latter, that is, the MAKEָ��,
+by the second type of instruction. The response to the latter, that is, the MAKE指令,
 is to modify the data structure that represents the equivalence relation
 so that later instructions of the first type will be answered correctly.
 
-�����������������S={1, 2, 3, 4, 5}��ָ������������С�������ʾ�˻ش�--yes��no�����������ﶨ��Ĺ�ϵ�ĵȼ��ࡣ
-��ʼʱ�ĵȼ��ࣺ{1}, {2}, {3}, {4}, {5}
+考虑下面的例子这里S={1, 2, 3, 4, 5}。指令的序列在左列。右列显示了回答--yes或no，或者是这里定义的关系的等价类。
+开始时的等价类：{1}, {2}, {3}, {4}, {5}
 1.  IS  ?                   No
 2.  IS  ?                   No
 3.  MAKE            {1}, {2}, {3,5}, {4}
@@ -321,28 +321,28 @@ so that later instructions of the first type will be answered correctly.
 7.  IS  ?               No
 
 
-\subsection{һЩǳ�Ե�ʵ��}
-Ϊ�˱Ƚϲ�ͬʵ�ֲ��ԣ����ǽ�����ÿһ�����Զ��ڲ�ͬ���͵Ĳ����Ĵ�������������
-Ҫ����һ������n��Ԫ�صļ���S������MAKE��ISָ���������m�������ǴӼ�����ּ�
-�����ݽṹ��ʼ����������顣
+\subsection{一些浅显的实现}
+为了比较不同实现策略，我们将计算每一个策略对于不同类型的操作的次数，假设我们
+要处理一个包含n个元素的集合S，其中MAKE或IS指令的总数有m个。我们从检查两种简单
+的数据结构开始：矩阵和数组。
 
-һ�������ʾһ���ȼ۹�ϵ��Ҫ$n^2$����Ԫ�������Ѿ��ǶԳƵ�����£���Ҫ$n^2/2$����
-����һ��ISָ��ֻ��Ҫ���һ����Ŀ������һ��MAKEָ�������Ҫ���������С�һ��m��
-MAKEָ������У�����������m��MAKEָ��1��ISָ�������Ҫ����mn��������
+一个矩阵表示一个等价关系需要$n^2$个单元（或者已经是对称的情况下，需要$n^2/2$）。
+对于一个IS指令只需要检查一个条目；但是一个MAKE指令可能需要拷贝整个行。一个m条
+MAKE指令的序列（考虑最坏情况有m条MAKE指令1条IS指令）可能需要至少mn步操作。
 
-ͨ��ʹ������ռ��ʹ���������Լ��ٵ�n��eqClass������eqClass[i]��һ�������ȼ���$s_i$
-�ı�ǩ�������֡�ָ��$s_i \equiv s_j$?��Ҫ���ҺͱȽ�eqClass[i]��eqClass[j]������
-MAKE $s_i \equiv s_j$  ��ÿһ����Ŀ��������eqClass[i]�Ƚϣ������ȸ�ֵΪeqClass[j]��
-��ʱ��һ������m��MAKEָ���m����Ȼ������������Ҫmn��������
+通过使用数组空间的使用数量可以减少到n。eqClass，这里eqClass[i]是一个包含等价类$s_i$
+的标签或是名字。指令$s_i \equiv s_j$?需要查找和比较eqClass[i]和eqClass[j]。对于
+MAKE $s_i \equiv s_j$  ，每一个条目都必须与eqClass[i]比较，如果相等赋值为eqClass[j]。
+此时，一个包含m条MAKE指令的m（当然最坏情况）至少需要mn步操作。
 
-���ַ������е�Ч�ʵ�һ����--��һ���Ŀ������̵ڶ����Ĳ��ҹ��̣�����eqClass[i]��
-�����Ԫ�ء����õĽ��������ʹ���������������Ĳ�����
+两种方法都有低效率的一方面--第一个的拷贝过程第二个的查找过程（对于eqClass[i]）
+里面的元素。更好的解决方案是使用连接来避免额外的操作。
 
-\subsection{���ϣ����ҳ���}\label{Sec:Union-Find}
-MAKEָ���Ч���ǽ�S�������Ӽ��ϲ���һ������������а취�ҵ�һ��Ԫ���Ƿ���
-һ�������У����Ǿ��ܼ򵥵Ļش�ISָ����ϲ���ADT��\ref{Sec:2_3_2Union_Find}С�ڣ�
-�ṩ����Щ������һ��ʼ����ÿһ��S��Ԫ������makeSet���õ�n�������ļ��ϡ�
-���Һ����ϲ���������ʵ������ĵȼ�ָ�
+\subsection{联合－查找程序}\label{Sec:Union-Find}
+MAKE指令的效果是将S的两个子集合并成一个。如果我们有办法找到一个元素是否在
+一个集合中，我们就能简单的回答IS指令。联合查找ADT（\ref{Sec:2_3_2Union_Find}小节）
+提供了这些操作。一开始，对每一个S的元素运行makeSet，得到n个单独的集合。
+查找和联合操作将用于实现下面的等价指令：
 
 \begin{tabular}{cc}
 IS $s_i\equiv s_j$  &MAKE $s_i \equiv s_j$  \\
@@ -352,144 +352,144 @@ $u = find(s_j)$; & $u=find(s_j)$\\
 $(t==u)?$ & $union(t,u)$
 \end{tabular}
 
-������Ϊ$create(n)$��
+我们认为$create(n)$是
 \begin{displaymath}
 create(0), makeSet(1), makeSet(2), \cdots, makeSet(n)
 \end{displaymath}
-�ļ�д����ٶ�$S={1, \cdots, n}$����������һ�����ϵľۼ���ÿһ������һ��
-������Ԫ��$i$, $i\leq i\leq n$ ������ڳ��������ڼ���Ҫһ��һ��������Ԫ�أ�����
-һ��ʼ�Ͱ������еģ����Ǽٶ�makeSet������һ�������������ϣ���û�м���ģ�
-$makeSet(1), makeSet(2), ..., makeSet(k)$�����Ԫ�ص���Ŀ������Ȼ�����ֵ�
-ADT��\ref{Sec:2_5_3DictionaryADT}С�ڣ������������з��롣
+的简写。这假定$S={1, \cdots, n}$。这个结果是一个集合的聚集，每一个包含一个
+单独的元素$i$, $i\leq i\leq n$ 。如果在程序运行期间需要一个一个的增加元素，不是
+一开始就包含所有的，我们假定makeSet运行在一个可数的序列上，是没有间隔的：
+$makeSet(1), makeSet(2), ..., makeSet(k)$。如果元素的数目不是自然数，字典
+ADT（\ref{Sec:2_5_3DictionaryADT}小节）可以用来进行翻译。
 
-������ǽ�ע����ת��makeSet��union��find�������Լ����Լ�ʵ�������ض���
-���ݽṹ�����ǽ�ͨ��in-tree����ʾÿһ���ȼ�����Ӽ����ع�
-In-Tree ADT��\ref{Sec:In-treeADT}С�ڣ��ṩ������Ĳ�����
+因此我们将注意力转到makeSet，union和find操作，以及可以简单实现他们特定的
+数据结构。我们将通过in-tree来表示每一个等价类或子集。回顾
+In-Tree ADT（\ref{Sec:In-treeADT}小节）提供了下面的操作：
 
 \begin{tabular}{ll}
-makeNode    &����һ��ֻ��һ���ڵ����\\
-setParent      & �ı�ڵ�ĸ��ڵ�\\
-setNodeData &Ϊ�ڵ���������ֵ\\
-isRoot      &����ڵ�û�и��ڵ㷵��true\\
-parent      &���ؽڵ�ĸ��ڵ�\\
-nodeData        &���ؽڵ������
+makeNode    &构造一个只有一个节点的树\\
+setParent      & 改变节点的父节点\\
+setNodeData &为节点设置整数值\\
+isRoot      &如果节点没有父节点返回true\\
+parent      &返回节点的父节点\\
+nodeData        &返回节点的数据
 \end{tabular}
 
-ÿһ����������Ϊһ�����ı�ǩ���ʶ����ָ��r=find(v)�ҵ�����v�ĸ���Ȼ��
-����ֵ��$r$��union�Ĳ��������Ǹ���union(t,u)����$t$��$u(t \neq u)$����
-�ϲ���һ��
+每一个根将被作为一个树的标签或标识符。指令r=find(v)找到包含v的根，然后将
+它赋值给$r$。union的参数必须是根；union(t,u)将根$t$和$u(t \neq u)$的树
+合并到一起。
 
-In-Tree ADTʹ����ʵ��union��find�ܼ򵥡�Ϊ�˺ϲ���t��u�õ���u��Ϊ����in-tree��
-����unionҪ��ļ򵥵�ִ��in-tree����setParent(t,u)��Ϊ���ҵ��ڵ�ĸ���
-ʹ���ظ���ʹ��parent������ֱ���ҵ�һ����������isRoot��������{\textbf{true}}��
-ʵ��create��makeSetҲ�Ǽ򵥵ģ�ʹ��in-tree����makeNode�Ϳ��ԡ�
+In-Tree ADT使得它实现union和find很简单。为了合并根t和u得到将u作为根的in-tree，
+就像union要求的简单的执行in-tree操作setParent(t,u)。为了找到节点的根，
+使用重复的使用parent操作，直到找到一个祖先它的isRoot操作返回{\textbf{true}}。
+实现create和makeSet也是简单的，使用in-tree操作makeNode就可以。
 
-���in-tree�Ľڵ���$1, \cdots, n$������$n=|S|$�����ǿ�����һ��$n+1$��Ԫ�ص�
-������ʵ��in-tree����Ȼ����ʵ���е�ͨ�����������Ϊ�˸��õĹ�ע�ı������⣬
-��С��ʣ�µĲ������ǽ�����������衣���ǿ��ԡ����廯����un-abstract��in-tree��
-�ü򵥵ķ�������Ԫ��parent[i]���������parent(i)��setParent(i)�����ǽ�
-һ���ڵ��parentֵ����Ϊ-1��ʾ����in-tree�ĸ�������isRoot���ö�������顣
-��һ�����鱣��nodeData������������ֶ������Ӧ�ù��ڿ����ˣ��������ǽ�����
-һ�������������Ȩ��weight����Ԥ��weighted union�������ں��������������֪��
-���ж���Ԫ��ʱ������ʹ�����鷭����\ref{Sec:ArrayDoubleSize}�ڣ�������
+如果in-tree的节点是$1, \cdots, n$，这里$n=|S|$，我们可以在一个$n+1$个元素的
+数组中实现in-tree。既然这是实践中的通常情况，而且为了更好的关注的本质问题，
+本小节剩下的部分我们将采用这个假设。我们可以“具体化”（un-abstract）in-tree，
+用简单的访问数组元素parent[i]来代替调用parent(i)和setParent(i)。我们将
+一个节点的parent值设置为-1表示其是in-tree的根，所以isRoot不用额外的数组。
+另一个数组保存nodeData，但是这个名字对于这个应用过于宽泛了，所以我们将给出
+一个更具体的名字权（weight），预计weighted union方法将在后面描述。如果不知道
+会有多少元素时，可以使用数组翻倍（\ref{Sec:ArrayDoubleSize}节）技术。
 
-ʹ�����鷽����룻���ǣ�Ϊ�������㷨���߼�����û��Ǽ����ײ��in-tree�ṹ��
-������Ԫ�صķ��������in-tree�Ĳ�����ʹ������ʵ��in-tree���ںö��㷨��ʹ�ã�
-��������ֵ�ü�ס�ġ�
+使用数组方便编码；但是，为了理解算法的逻辑，最好还是技术底层的in-tree结构，
+将数组元素的访问理解成in-tree的操作。使用数组实现in-tree将在好多算法中使用，
+所以它是值得记住的。
 
-һ��create(n)��������Ϊ����n��makeSet��������m������˳���union��find����
-�����룬����һ������m�����ϲ��ҳ���Union-Find Program��������˵һ��ʼ
-��makeSet������������ĳ������档Ϊ�˼����ۣ����Ǽ�����create֮��û��
-makeSet�����makeSet�ں�����֣�Ҳ���ó���ͬ�ķ������ۣ���ϰ6.31����
+一个create(n)操作（认为它是n个makeSet）紧跟着m个任意顺序的union或find操作
+是输入，或者一个长度m的联合查找程序（Union-Find Program）。就是说一开始
+的makeSet不计算在输入的长度里面。为了简化讨论，我们假设在create之后没有
+makeSet。如果makeSet在后面出现，也将得出相同的分析结论（练习6.31）。
 
-�����÷��� parent�Ĵ��������������Ķ��٣�ÿһ�η��ʲ����ǲ��һ��Ǹ�ֵ��
-���Ǽ������ǵ�ʱ�䶼��$O(1)$������ʹ���ܵĲ���������parent�ķ��ʴ���
-�ǳɱ�������һ�����������ÿһ��makeSet��union��һ��parent��ֵ��ÿ
-һ��find(i)��d+1��parent���ң�����d�ǽڵ�i�����ܵ���ȡ�parent��ֵ��
-��������������link������
+我们用访问 parent的次数来衡量工作的多少；每一次访问不管是查找还是赋值，
+我们假设他们的时间都是$O(1)$。（这使得总的操作次数和parent的访问次数
+是成比例的这一点变的清楚。）每一个makeSet和union做一次parent赋值，每
+一个find(i)做d+1次parent查找，这里d是节点i在树总的深度。parent赋值和
+查找连起来叫做link操作。
 
-ͼ6.19�ĳ��򴴽���ͼ6.20(a)��ʾ����������n+n-1+(m-n+1)n��link������ʹ��
-��������ķ�������������Union-Find�����Ǧ�(mn)��������֪��m>0������
-����Ҫд$\Omega(mn+n)$��������֤��û�г����ܳ���mn+n��link��������
-������$\Theta(mn)$������ǰ�������ķ�����û�����ơ����ǽ��Ľ�
-union��find������ʵ�֡�
+图6.19的程序创建了图6.20(a)显示的树，做了n+n-1+(m-n+1)n次link操作。使用
+这个方法的范例，在最坏情况下Union-Find程序是Ω(mn)。（我们知道m>0；否则
+我们要写$\Omega(mn+n)$。）不难证明没有程序能超过mn+n次link操作所以
+最坏情况是$\Theta(mn)$。这与前面描述的方法比没有优势。我们将改进
+union和find操作的实现。
 
 \subsection{Weighted Union}
-ͼ6.19�г��������֮���Ը�����Ϊ��unionָ��������ͼ6.20(a)չʾ�ģ�
-��̫�ߵĸ߶ȡ�ͨ���������union��ʵ�ֿ��Ա������ܰ����Ӷ��������ġ�
-��wUnion��"weighted union"���ǲ��ԣ����ڵ������ٵ�����Ϊ�ڵ����������
-��������ͬʱ������������Ľڵ���ͬ�����һ�����ǵڶ���������������
-����ϰ6.22�����ʹ�ø߶�������ڵ�������weight�Ŀ����ԡ���Ϊ������union
-����������ʵ�֣����ǽе�һ��unwUnion������wUnion��ÿһ�����Ľڵ������洢
-��weight�������棨��ӦADT�е�nodeData����ʵ���ϣ�������Ҫֵ��wUnion
-����ȽϽڵ�����������������Ĵ�С��Ϊparent��weight��ֵ��wUnion������
-��Ȼ��һ��С�ĳ���������һ��link����������������Ƿ��ص�ͼ6.19������P��
-����ʹ��wUnion��Ҫ���ٹ����������ǻᷢ��P������һ����ȷ�ĳ�����Ϊunion
-�Ĳ�����3��n-1�����Ǹ��ˡ����ǿ�����չP��P`������Ҫ������union(i,j)��
-�����滻������3��ָ�
+图6.19中程序的消耗之所以高是因为由union指令构造的树，图6.20(a)展示的，
+有太高的高度。通过更巧妙的union的实现可以保持树很矮，从而减少消耗。
+令wUnion（"weighted union"）是策略：将节点数量少的树作为节点数量多的树
+的子树（同时，如果两个树的节点相同，令第一颗树是第二课树的子树）。
+（练习6.22检查了使用高度来代替节点数量做weight的可能性。）为了区别union
+操作的两个实现，我们叫第一个unwUnion。对于wUnion，每一个树的节点数量存储
+在weight数组里面（对应ADT中的nodeData）。实际上，仅根需要值。wUnion
+必须比较节点的数量，计算新树的大小，为parent和weight赋值。wUnion的消耗
+仍然是一个小的常数，包括一个link操作。现在如果我们返回到图6.19（叫做P）
+来看使用wUnion需要多少工作量，我们会发现P不在是一个正确的程序，因为union
+的参数从3到n-1都不是根了。我们可以扩展P到P`来，需要将行如union(i,j)的
+程序替换成下面3个指令：
 t=find(i);
 u=find(j);
-union(t,u);��
-��ʹ��wUnion��P`����Ҫ2m+2n-1��link������ͼ6.20չʾ��ʹ��unwUnion��
-wUnion��P��P`������������ǲ��ܵó�����wUnion���κ�����¶�������ʱ�䣻
-P`����wUnion������������������������ǵõ��������Ͻ硣
+union(t,u);。
+则使用wUnion，P`仅需要2m+2n-1次link操作！图6.20展示了使用unwUnion和
+wUnion的P和P`构造的树。我们不能得出结论wUnion在任何情况下都是线型时间；
+P`不是wUnion的最坏情况。下面的引理帮助我们得到最坏情况的上界。
 
 \begin{lemma}
-���union(t,u)ͨ��wUnionʵ��--����˵����Ϊu������Ϊ�������ӵ���Ϊt��
-���ϣ����ҽ�����Ϊu�����ڵ��������٣�������Ǹ�Ϊt������Ϊ�������ӵ�
-��Ϊu������--�����������е�unionָ��֮���κ���k�Ľڵ�ĸ������
+如果union(t,u)通过wUnion实现--就是说，根为u的树作为子树附加到根为t的
+树上，当且仅当根为u的树节点数量较少，否则就是根为t的树作为子树附加到
+根为u的树上--则，在任意序列的union指令之后，任何有k的节点的高最多是
 $\lfloor \lg k\rfloor$
 
-{\textbf{\emph{֤��}}} ��k�Ĺ�����֤��֮��$k=1$�������һ���ڵ����
-�Ǹ߶�0������$\lfloor \lg 1\rfloor$�����ڼ���$k>1$�������κ���union
-ָ������$m$���ڵ����������$m<k$�����$\lfloor \lg m\rfloor$�ĸߡ�
-����ͼ6.21�е���$T$����$k$���ڵ�߶���$h$��������$T_1$��$T_2$ͨ��
-unionָ��ɡ���ͼ�еļ��裬$T_2$�ĸ�$u$���ӵ�$T_1$�ĸ�t����$k_1$��
-$h_1$�ֱ���$T_1$�Ľڵ������͸߶ȣ�ͬ����$k_2$��$h_2$�ֱ���$T_2$��
-�ڵ������͸߶ȡ�ͨ�����ɼ��裬$h_1\leq \lfloor \lg k_1\rfloor$��
-��$h_2\leq \lfloor \lg k_2\rfloor$�������ĸ߶�$h=\max(h_1, h_2+1)$��
-��Ȼ��$h_1\leq \lfloor \lg k_1\rfloor$����Ϊ$k_2\leq k/2$, $h_2\leq \lfloor \lg k\rfloor-1$,
-��$h_2+1 \leq \lfloor \lg k\rfloor$��������������¶���$h\leq \lfloor \lg k\rfloor$��
+{\textbf{\emph{证明}}} 用k的归纳来证明之。$k=1$的情况；一个节点的树
+是高度0，就是$\lfloor \lg 1\rfloor$。现在假设$k>1$，并且任何由union
+指令构造包含$m$个节点的树，对于$m<k$有最多$\lfloor \lg m\rfloor$的高。
+考虑图6.21中的树$T$，有$k$个节点高度是$h$，它由树$T_1$和$T_2$通过
+union指令构成。如图中的假设，$T_2$的根$u$附加到$T_1$的根t。令$k_1$和
+$h_1$分别是$T_1$的节点数量和高度，同样的$k_2$和$h_2$分别是$T_2$的
+节点数量和高度。通过归纳假设，$h_1\leq \lfloor \lg k_1\rfloor$，
+且$h_2\leq \lfloor \lg k_2\rfloor$。新树的高度$h=\max(h_1, h_2+1)$。
+显然，$h_1\leq \lfloor \lg k_1\rfloor$。因为$k_2\leq k/2$, $h_2\leq \lfloor \lg k\rfloor-1$,
+且$h_2+1 \leq \lfloor \lg k\rfloor$。所以两种情况下都有$h\leq \lfloor \lg k\rfloor$。
 
 \end{lemma}
 
 \begin{theorem}
-һ��������n��Ԫ���ϵģ���ģm��Union-Find�������ʹ��wUnion��
-ֱ�Ӳ��ң�������Ҫִ��$\Theta(n+m\log n)$��link������
+一个作用在n个元素上的，规模m的Union-Find程序，如果使用wUnion和
+直接查找，最坏情况下要执行$\Theta(n+m\log n)$次link操作。
 
-{\textbf{\emph{֤��}}}  ����n��Ԫ�أ�����һ�������n���ڵ���������
-��n-1��wUnionָ������á�����������ÿһ���������и߶�$\lfloor \lg n \rfloor$��
-����ÿһ�����������$\lfloor \lg n \rfloor+1$��ÿһ��wUnion��һ��
-link����������m��wUnion��find�������ѵ��Ͻ����m��find�����Ļ��ѡ�
-���link�������ܵ�����С��$m(\lfloor \lg n \rfloor+1)$����$O(n+m\log n)$��
+{\textbf{\emph{证明}}}  对于n个元素，创建一个最多有n个节点的树，最多
+有n-1次wUnion指令可以用。由于引理，每一颗树至少有高度$\lfloor \lg n \rfloor$，
+所以每一个查找最多是$\lfloor \lg n \rfloor+1$。每一个wUnion做一次
+link操作，所以m个wUnion或find操作花费的上界就是m个find操作的花费。
+因此link操作的总的数量小于$m(\lfloor \lg n \rfloor+1)$，在$O(n+m\log n)$。
 \end{theorem}
 
-��ϰ6.23�ĳ�����Ҫ��(n+mlogn)�������졣
-    wUnion����create��makeSetһ�������㷨�ǳ�����д������������ϰ�С�
+练习6.23的程序需要Ω(n+mlogn)步来构造。
+    wUnion（与create和makeSet一样）的算法非常容易写；我们留在练习中。
 
 
-\subsection{·��ѹ��}
-ͨ����Ϊ·��ѹ���Ĺ��̻����ԸĽ�find������ʵ�֣��Ӷ�����һ�������Union-Find����
-��ִ���ٶȡ���������v��cFind��"ѹ����compressing������"��parent
+\subsection{路径压缩}
+通过称为路径压缩的过程还可以改进find操作的实现，从而更进一步的提高Union-Find程序
+的执行速度。给出参数v，cFind（"压缩（compressing）查找"）parent
 
-\subsubsection{wUnion��cFind�ļ�����}
-\subsection{*wUnion��cFind�ķ���}
-\subsection{Ӧ��}
+\subsubsection{wUnion和cFind的兼容性}
+\subsection{*wUnion和cFind的分析}
+\subsection{应用}
 
-\section{���ȼ�����with a Decrease Key Operation}
-�ع�����Ȩ����ADT��2.5.1С�ڣ�����Ҫaccess������getBest��
-����best��������������С��һ����������С������Ȩ����ADT�Ĳ����У�
-��������            create
-Access������        isEmpty, getMin, getPriority
-Manipulation ���̣� insert, deleteMin, decreaseKey
+\section{优先级队列with a Decrease Key Operation}
+回顾优先权队列ADT（2.5.1小节）的主要access函数是getBest，
+这里best可能是最大或者最小。一个完整的最小化优先权队列ADT的操作有：
+构造器：            create
+Access函数：        isEmpty, getMin, getPriority
+Manipulation 过程： insert, deleteMin, decreaseKey
 
 
-��Щ�����ʺ��������Ȩ���С�����������һ��delete�������������ɾ������ؼ��֡�
+这些名字适合最大化优先权队列。还可以增加一个delete操作，这个操作删除任意关键字。
 
-Partial order tree������4.2���Ǿ�������ʵ������Ȩ���е�һ�����ݽṹ������á�Ԫ����partial
-order���ĸ��������������ڳ���ʱ���ڵõ���Partial
-order���ļ���ʵ���Ѿ���չ�˺ܶ����ˡ�"��"����ʾ�����������Щʵ�ֵ������У���Ϊ�����partial
-order���Ľṹ�����ķ���������Ϊ"��"�� ���ֶ�
+Partial order tree（定义4.2）是经常用于实现优先权队列的一类数据结构。“最好”元素在partial
+order树的根，所以它可以在常数时间内得到。Partial
+order数的几种实现已经发展了很多年了。"堆"这个词经常出现在这些实现的名字中，因为最早的partial
+order树的结构被它的发明者命名为"堆"。 二分堆
 
 
 \subsection{The Decrease Key Operation}\label{Sec:TheDecreaseKeyOperation}

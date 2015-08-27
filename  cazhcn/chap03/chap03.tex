@@ -1,44 +1,44 @@
-\chapter{�ݹ������}\label{Sec:Chapter:RecursionAndInduction}
-\section{����}
-����MIT��Massachusetts Institute of Technology����John McCarthy
-���ڣ����ְ��Stanford University����������ʶ��������������еݹ���Ҫ�Ե��ˡ�
-�������\emph{Algol60}��Pascal��PL/I��C������ʱ���᳹�����Ľ��ۣ�����������
-\emph{Lisp}��\emph{Lisp}�����˵ݹ����ݽṹ���ݹ���̺͵ݹ麯���������еĸ���
-������Lisp�ж��͵ġ��ݹ�ļ�ֵ��20����70���intense�㷨�����ڼ�õ�����ͬ��
-���켸���������е����Զ�֧�ֵݹ顣
+\chapter{递归与归纳}\label{Sec:Chapter:RecursionAndInduction}
+\section{概述}
+公认MIT（Massachusetts Institute of Technology）的John McCarthy
+教授（后就职与Stanford University）是最早意识到程序设计语言中递归重要性的人。
+他在设计\emph{Algol60}（Pascal，PL/I和C的先驱时）贯彻了他的结论，他还开发了
+\emph{Lisp}。\emph{Lisp}引入了递归数据结构，递归过程和递归函数。本节中的概念
+都是在Lisp中定型的。递归的价值在20世纪70年代intense算法开发期间得到了认同，
+今天几乎所有流行的语言都支持递归。
 
-�ݹ�͹�����������صġ�Ϊ��ʹ��ϵ������������й��ɵı�������ʽ���ġ�������
-�Ͻ���һ������֤������һ���ݹ�֤�������ڽṹ�ϵ������ԣ�ͨ������֤���ݹ������
-�ܼ򵥵ġ�����ǰһ��һ�����ڱ����У�����ʹ�á���������һ������֡����̡���Java
-�� �����ǡ�����������
+递归和归纳是密切相关的。为了使关系更清楚，本章中归纳的表述是形式化的。在字面
+上讲，一个归纳证明就是一个递归证明。由于结构上的相似性，通过归纳证明递归过程是
+很简单的。（和前一章一样，在本章中，我们使用“函数”更一般的名字“过程”，Java
+的 术语是“方法”。）
 
-�ݹ�����\ref{Sec:RecursionTrees}�����룬�ṩ��һ��ͨ�õķ����ݹ���̵�ʱ������
-��framework�����ǽ��������ͨ�õĵݹ�ģʽ�������Զ�������ʽ�ܽᡣ
+递归树在\ref{Sec:RecursionTrees}节引入，提供了一个通用的分析递归过程的时间消耗
+的framework。我们将解决许多通用的递归模式，结论以定理的形式总结。
 
-\section{�ݹ����}
-�Եݹ��ڼ�����е�������ι��������������⣬���ڵݹ��˼�����ֶ�ִ�еݹ����
-�Լ������ݹ���̵�ʱ�����Ķ��Ǻ��а����ġ����ǽ����Ȼع������\emph{�֡}
-��\emph{activation frames}����ʵ�ֹ��̵��ã��Լ������������ô֧�ֵݹ�ġ�
-���ǣ����ڴ�����漰�ݹ���̵���ƺͷ����Ļ�����Ƕ����ڱȻ֡���Ҫ�ߵ�
-����������ǡ�Ϊ�˰������ߴﵽ���Ŀ�ģ���������Method99����ʵ������һ������
-������Ƶݹ鷽����˼���ϵļ��ɡ�
+\section{递归过程}
+对递归在计算机中到底是如何工作的清晰的理解，对于递归的思考，手动执行递归代码
+以及分析递归过程的时间消耗都是很有帮助的。我们将首先回顾如何在\emph{活动帧}
+（\emph{activation frames}）中实现过程调用，以及这个过程是怎么支持递归的。
+但是，对于大多数涉及递归过程的设计和分析的活动，我们都想在比活动帧框架要高的
+层次上来考虑。为了帮助读者达到这个目的，我们引入Method99，这实际上是一个帮助
+我们设计递归方案的思考上的技巧。
 
-\subsection{�֡��ܺ͵ݹ���̵���}\label{Sec:3_2_1}
-���ڶԹ��̵��õ�ʵ�ַ�ʽ����һ����Ҫ�ͳ�������������ʵ�����ǵݹ�Ĺ���������
-����ϸ����������ο����º����ע�ͺ�������Ŀ��
+\subsection{活动帧框架和递归过程调用}\label{Sec:3_2_1}
+本节对过程调用的实现方式给出一个概要和抽象的描述，这个实现正是递归的工作基础。
+更详细的描述，请参考本章后面的注释和引用书目。
 
-������ʱ��runtime���������̵���������Ĵ洢��Ԫ����\emph{�֡}�����֡Ϊ����
-�ľֲ�������ʵ�ʲ����ͱ������ġ���ʱ�������ṩ�˴洢�ռ䣬��������з���ֵ�Ļ�
-����������ֵ�Ŀռ䡣��������������������Ҫ�Ŀռ䣬���緵�ص�ַ�������ַָʾ��
-�������˳�֮������ִ�е�ָ�������������ṩ�˶�\emph{���ε���Ψһ��}���̵�֡��
+在运行时（runtime）单个过程调用最基本的存储单元叫作\emph{活动帧}。这个帧为过程
+的局部变量、实际参数和编译器的“临时变量”提供了存储空间，如果过程有返回值的话
+还包括返回值的空间。它还包括了其他薄记需要的空间，比如返回地址，这个地址指示在
+本过程退出之后程序该执行的指令在那里。因此它提供了对\emph{本次调用唯一的}过程的帧。
 
-��\emph{֡��ջ}���������Ϊ����ջ��������洢�ռ�Ĵ����ɱ������������ⲿ�ִ���
-��Ϊ���̵��õ�һ���֡�����ռ���һ���ض��ļĴ������ã�һ�����\emph{ָ֡��}�����
-ֻҪ���̵��ÿ�ʼ������֪�����ľֲ���������������ͷ���ֵ���洢��ʲô�ط���ÿһ��
-��Ĺ��̵��ö���һ�������Ļ֡��һ�����̵��ôӹ��̽��뵽�����˳�������Ч�ġ�
-��������ݹ飬����ͬʱ���ڵĵݹ���̶��в�ͬ��֡�������̵��ã����۵ݹ�����˳���
-���Ļ֡�����Զ����ͷţ��������ռ�Ϳ��Ա������Ĺ��̵���ʹ�á���ʾ�֡״̬
-���ֹ�ִ�д������\emph{�׷�٣�activation trace��}��
+从\emph{帧堆栈}（经常简称为“堆栈”）分配存储空间的代码由编译器产生，这部分代码
+作为过程调用的一部分。这个空间由一个特定的寄存器引用，一般叫作\emph{帧指针}，因此
+只要过程调用开始，它就知道它的局部变量、输入参数和返回值都存储在什么地方。每一个
+活动的过程调用都有一个独立的活动帧。一个过程调用从过程进入到过程退出都是有效的。
+如果发生递归，所有同时存在的递归过程都有不同的帧。当过程调用（无论递归与否）退出，
+它的活动帧将被自动的释放，于是这块空间就可以被将来的过程调用使用。显示活动帧状态
+的手工执行代码叫做\emph{活动追踪（activation trace）}。
 
 \begin{figure*}[!t]
     \centering
@@ -130,15 +130,15 @@
 
         \node   at ( 6.5,-21) [place] {main\\  \vspace{-1ex}X:};
     \end{tikzpicture}
-    \caption{fib�����Ļ��ջ׷�٣���ջ�����ұߡ���ջ���յ��������������У��ٵ����С�}
+    \caption{fib函数的活动堆栈追踪：堆栈顶在右边。堆栈快照的序列排列在左列，再到右列。}
     \label{Fig:ActivationTraceOfFib}
 \end{figure*}
 
 \begin{example}\label{Example:3_1ActivationFrames}
-Fibonacci���еĻ֡
+Fibonacci数列的活动帧
 
-ͼ\ref{Fig:ActivationTraceOfFib}չʾ�˵�main����ִ��x=fib(3)ʱ��Fibonacci������
-�׷�ٵ�ָ��λ�á�fib��α��������
+图\ref{Fig:ActivationTraceOfFib}展示了当main函数执行x=fib(3)时，Fibonacci函数中
+活动追踪的指针位置。fib的伪代码如下
 
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
         int fib(int n)
@@ -156,54 +156,54 @@ Fibonacci���еĻ֡
         }
 \end{lstlisting}
 
-��δ���������һЩ�ֲ�������������ͨ��Ϊ�ֲ�����������ʱ�Ŀռ䣬�������Ǿ�
-���Ը�ϸ�µ��о��֡����ʵ����ͬ����ݹ鶨��ĺ���һ����fib��������д��
-һ���������䣺
+这段代码申明了一些局部变量，编译器通常为局部变量产生临时的空间，于是我们就
+可以更细致的研究活动帧。事实上如同许多递归定义的函数一样，fib函数可以写成
+一条“怪物”语句：
 \begin{displaymath}
 \mbox{\textbf{return}}\qquad n<2?n:fib(n-1)+fib(n-2);
 \end{displaymath}
-����������ʽ������׷�ٻ��¼���Ǻܷ��㡣
+但是这种形式让我们追踪活动记录不是很方便。
 
-ͼ\ref{Fig:ActivationTraceOfFib}�����ж�������fib(3)����֮ǰ֡��ջ����һ��
-��fib����֮��֡��ջ��֡������ʾ���к��ǽ�Ҫ��ִ�еģ����֡����֡��ջ����
-�����к���ִ���е�һ�С������ִ����������ջ���Ļ֡"��"����������֡����
-���к�չʾ���ڹ��̵��ý���ʱִ������������µ�λ�õĶ�ջ֡��ÿһ���ֲ�����
-��ֵչʾ��ð�ź��档û��ֵ�ı������ǻ�û�г�ʼ����
+图\ref{Fig:ActivationTraceOfFib}中左列顶行是在fib(3)调用之前帧堆栈，下一行
+是fib进入之后帧堆栈。帧下面显示的行号是将要被执行的，如果帧不是帧堆栈顶部
+的则行号是执行中的一行。程序的执行流总是在栈顶的活动帧"中"，所以其他帧下面
+的行号展示了在过程调用结束时执行流将到达的新的位置的堆栈帧。每一个局部变量
+的值展示在冒号后面。没有值的变量则是还没有初始化。
 
-����һ��չʾ��ִ�е���4�У���ʱ��һ���������÷�����������˵�ݹ黹û��
-��ʼ����Ϊ�˽�Լ�ռ䣬��һ�к����˴�1�е�4�еĹ��̣�����ʾ����һ����������
-֮��ĵ�4�С���ε��ô�2��7�У���һ��ͬ���ĵ��ù��̣�f���ܵ�ֵ����ε��ý�
-���ء��е����һ��չʾ��ǰһ�ε��÷��ص���1��������ֵ���洢��f1����5�н���
-ִ�С�
+随后的一行展示了执行到第4行，此时另一个函数调用发生。（就是说递归还没有
+开始。）为了节约空间，下一行忽略了从1行到4行的过程，仅显示在下一个函数调用
+之后的第4行。这次调用从2到7行，又一个同样的调用过程；f接受到值，这次调用将
+返回。列的最后一行展示了前一次调用返回的是1；，返回值被存储到f1，第5行将被
+执行。
 
-���еĶ���չʾ�˵���������fib(0)�����7�е����Σ����������ˡ�fib(1)��������
-�����Ļ֡�ռ������Ѿ��������ˡ���������3��չʾ�˵���fib(2)����ɡ�����
-����ֵ���洢�ٵ���fib(3)�Ļ֡��f1�ڡ�����֡һֱ����5�С���һ������
-�����ٴ���չ��ջ��֮���ջ����ǰ��һ���ظ������ˡ�
+右列的顶部展示了当函数调用fib(0)到达第7行的情形；它将返回了。fib(1)函数调用
+产生的活动帧空间现在已经被复用了。接下来的3列展示了调用fib(2)的完成。它的
+返回值被存储再调用fib(3)的活动帧中f1内。这个活动帧一直到第5行。下一个函数
+调用再次扩展堆栈。之后堆栈就像前面一样重复工作了。
 
 \end{example}
 
-������һ��\emph{�����}��һ�������в��ٵ��ù��̵���䡣���������ᵽ��fib
-�Ĵ��룬���԰ѹ���д��ÿ��һ�����̵��û��Ǽ������������С�����ÿһ��
-��������г���ʱ�䣬���ұ���һ���������õĻ�����������һ���֡�ȣ�Ҳ��
-����ʱ�䡣����У�
+我们令一个\emph{简单语句}是一个过程中不再调用过程的语句。就像上面提到的fib
+的代码，可以把过程写成每行一个过程调用或是简单语句的线性序列。假设每一个
+简单语句运行常数时间，而且薄记一个函数调用的环境（设置下一个活动帧等）也是
+常数时间。因此有：
 
 \begin{lemma}\label{Lemma:3_1}
-�ڲ���\textbf{while}��\textbf{for}ѭ�������ǿ����еݹ���̵��õļ�������У�
-�ܵļ���ʱ����$\Theta(C)$)������C���ڼ����й��̵��õ�������������Ϊ
-���̵��õĺ�������
+在不带\textbf{while}或\textbf{for}循环，但是可能有递归过程调用的计算过程中，
+总的计算时间是$\Theta(C)$)，这里C是在计算中过程调用的总数（包括作为
+过程调用的函数）。
 \end{lemma}
 
-����������̵Ĺ�ģ$L$�������Բ���ģ�����˵����������Ĳ�ͬ����ͬ��������
-�̶��㷨�У������㷨�����еĹ��̶���һ������$L$��ÿһ�������㷨����ʱ�䣬
-ȷ����ջ����ͬʱ��֡�����Ĺ��̵��õ�ʱ����ܺ͡������Ժ����ļٶ�������
-���ǹ����Ĵ��ڣ�ÿһ���֡��������ʱ�䣬��ʹ�������������ء��ġ���Щ��
-���Ƿ����ݹ���������ʱ���ǿ�������ߡ�
+但是任意过程的规模$L$必须是自不变的；就是说不会因输入的不同而不同。在任意
+固定算法中，对于算法中所有的过程都有一个最大的$L$。每一次运行算法的总时间，
+确定是栈顶不同时间活动帧代表的过程调用的时间的总和。还可以合理的假定，由于
+薄记工作的存在，每一个活动帧都会消耗时间，即使它是立即“返回”的。这些给
+我们分析递归计算的运行时间的强有力工具。
 
 \begin{theorem}
-�ڲ���\textbf{while}��\textbf{for}ѭ�����ǿ��ܰ����ݹ���õļ����У�
-�ܵļ���ʱ����$\Theta(C)$������C���ڼ�������е��õ�������������Ϊ
-���̵��õĺ�������
+在不带\textbf{while}或\textbf{for}循环但是可能包含递归调用的计算中，
+总的计算时间是$\Theta(C)$，这里C是在计算过程中调用的总数（包括作为
+过程调用的函数）。
 \end{theorem}
 
 \begin{figure*}[!t]
@@ -220,74 +220,74 @@ Fibonacci���еĻ֡
         \draw (n2.west) -- (n4.north);
         \draw (n2.east) -- (n5.north);
     \end{tikzpicture}
-    \caption{fib(3)�Ļ��}
+    \caption{fib(3)的活动树}
     \label{Fig:ActivationTreeOfFib}
 \end{figure*}
 
-��һ���ģ����ǿ��Զ���\emph{�����activation tree��}�������㷨һ������
-�����й��̵��õĳ־ü�¼��ÿһ���ڵ����һ����ͬ�Ĺ��̵��ã���¼��λ��
-���ڹ��̽�Ҫ���ص���һ�㡣�����㷨����ڵ㡣ÿһ���ڵ�ĸ��ڵ�������ڵ�
-����ʱ��֡��ջ�������Ǹ��ڵ㡣ÿһ���ڵ���ӽڵ�����������ǵĻ֡
-������˳��ͼ\ref{Fig:ActivationTreeOfFib}�Ǹ����ӡ�
+进一步的，我们可以定义\emph{活动树（activation tree）}来作在算法一次运行
+中所有过程调用的持久记录。每一个节点代表一个不同的过程调用，记录的位置
+是在过程将要返回的那一点。根是算法的入口点。每一个节点的父节点是这个节点
+创建时在帧堆栈顶部的那个节点。每一个节点的子节点从左到右是他们的活动帧
+创建的顺序。图\ref{Fig:ActivationTreeOfFib}是个例子。
 
-�������������ǻ֡������˳�����нڵ��������ִ��ʱ���ǳɱ����ġ�
-ִ���ڼ��κ�֡��ջ�Ŀ��ն��Ƕ�Ӧ���е�ĳ���Ӹ���ʼ����·������
-\ref{Sec:Depth-firstSearchandRecursive}�ڵ�������Ȳ���ʱ���ǻص�����
-��Ӧ�ԣ���\ref{Sec:WhyCanRecursiveTreeWork}С�������ǻ�������
-�ݹ��ʽ֮��Ĺ�ϵ����Է����ݹ��㷨�Ǻ��а����ġ�
+先序遍历活动树将是活动帧创建的顺序，树中节点的数量与执行时间是成比例的。
+执行期间任何帧堆栈的快照都是对应树中的某条从根开始的线路。（在
+\ref{Sec:Depth-firstSearchandRecursive}节的深度优先查找时我们回到这种
+对应性）在\ref{Sec:WhyCanRecursiveTreeWork}小节中我们会检查活动树和
+递归等式之间的关系。这对分析递归算法是很有帮助的。
 
-\subsection{�ݹ����ʾ��Method 99}\label{Sec:HintsForRecursionMethod99}
-���ڸ߼����㷨�������ݹ���һ�ֱز����ٵ���Ƽ��������ڵݹ�����ε�
-���۳����˱���ķ�Χ�����������и�С��ʾ�����Բο����º����Notes��References
-����һ���Ķ���
+\subsection{递归的提示－Method 99}\label{Sec:HintsForRecursionMethod99}
+对于高级的算法开发，递归是一种必不可少的设计技术。对于递归的深层次的
+讨论超出了本书的范围，但是这里有个小提示。可以参考本章后面的Notes和References
+作进一步阅读。
 
-ȷ��һ����Ҫ��д�ĺ��������Ҫ���������ġ�������Ԫ����Ȼ��ٶ����task
-ֻ��һ�����̽���p��p���Դ���\emph{0��100�Ĺ�ģ}�������ζ�ţ���ƽ��������
-ʱ������뿼������100�Ĺ�ģ--�������ġ�fantasy precondition����
+确定一下你要编写的函数或过程要解决的问题的“度量单元”。然后假定你的task
+只有一个过程叫做p，p可以处理\emph{0－100的规模}。这就意味着，设计解决方案的
+时候你必须考虑至少100的规模--这就是你的“fantasy precondition”。
 
-ͬ���ģ��ٶ�����Ե���һ��������\emph{������}����p99����ֻ����Ĺ���Ҫ��
-�����飬��ͬ���ĺ���ԭ�ͣ�ֻ�����ġ�fantasy precondition���ǹ�ģ0��99������
-��ʹ����������̣�ֻҪ������������precondition�����㲻��д���Ĵ��롣
+同样的，假定你可以调用一个给定的\emph{子例程}，叫p99，它只做你的过程要做
+的事情，有同样的函数原型，只是它的“fantasy precondition”是规模0到99。允许
+你使用这个子例程（只要参数符合它的precondition），你不必写它的代码。
 
-�ڶ���������Ū�����ĳ���ǵݹ����������ǵݹ�����Ū�������ܵ�С�����
-���̽����ǴӲ������ַǵݹ������ʼ��Ҳ����\emph{���������base case��}��
+第二个线索是弄清楚你的程序非递归的情况。将非递归的情况弄到尽可能的小。你的
+过程将总是从测试这种非递归情况开始，也叫做\emph{基本情况（base case）}。
 
-����Լ���Ǿ���p��������Ĺ�ģ�պ���100��too expensive���������ǿ���ʹ
-�����ģ��1,000,000,000������method 999,999,999̫���ˡ������ǽ����Ĺ�ģ����
-��0���Ǹ�С�ĳ�������ȫ���еġ�
+最后的约定是决定p输入问题的规模刚好是100“too expensive”。（我们可以使
+假想规模是1,000,000,000，但是method 999,999,999太长了。）但是将它的规模决定
+成0或是更小的常量是完全可行的。
 
-����\emph{Method 99}ָ����ͨ������p99��дp��һ�ַ��������㲻��Ҫдp99��
-���Բ�Ҫ����������Ȼ�����p��һ���ܼ򵥵����������Ҫ����p99���ؼ���һ���ǣ�
-��p��⵽���ⲻ�����������ʱ��������Ҫ����һ��������p99�Խ��֮��
-����������3�������
+现在\emph{Method 99}指出了通过调用p99来写p的一种方法。（你不需要写p99，
+所以不要想它。）当然，如果p是一个很简单的情况，则不需要调用p99。关键的一点是，
+当p检测到问题不能立即解决的时候，它就需要创建一个子问题p99以解决之，
+这满足下列3种情况：
 \begin{enumerate}
-\item ������Ĺ�ģ��p����Ĺ�ģС��
-\item ������Ĺ�ģ����С�Ĺ�ģҪ��������С�Ĺ�ģ��0����
-\item ����������p99������preconditions����p��precondition��һ���ġ�����
+\item 子问题的规模比p问题的规模小。
+\item 子问题的规模比最小的规模要大（这里最小的规模是0）。
+\item 子问题满足p99的其他preconditions（和p的precondition是一样的。）。
 \end{enumerate}
-�����ǵļ����У������Ᵽ֤����p99�Ĺ�ģԼ����Ϊʲô������
+在我们的假想中，子问题保证满足p99的规模约束（为什么？）。
 
-�������԰����ַ�ʽ�ֽ����⣬��ͻ����Ͻ���������ˡ�ֻ�����p�Ĵ��룬
-����Ҫ��ʱ�����p99��
+如果你可以按这种方式分解问题，你就基本上解决了问题了。只是完成p的代码，
+在需要的时候调用p99。
 
-������ʵ��һ��дһ��delete(L,x)�����Ǵ�IntList��ɾ��Ԫ��x������һ���µ�
-��������L��Ԫ�ص��ǲ�����x��IntList��XҲ���ܲ�������L�С�
-��\ref{Sec:ListADT}С��������IntList ADT,����cons�ǹ��캯����first��
-rest�Ǵ�ȡ����������nil��ʾ�ǿձ�����
+让我们实践一下写一个delete(L,x)，就是从IntList中删除元素x，返回一个新的
+包含所有L的元素但是不包含x的IntList。X也可能不包含在L中。
+（\ref{Sec:ListADT}小节讨论了IntList ADT,他的cons是构造函数，first和
+rest是存取函数，常量nil表示是空表。）
 
-Ϊ������Method99�� ���Ǽ�������ֻ��Ҫ����list��ຬ��100��Ԫ�ص������
-����������delete99����ʹ�á���Ȼ��������ǿ��Դ�L������һ��Ԫ��
-�������һ�����������ǿ�����delete99ȥ����rest��L�������ǲ�֪��rest��L����
-���ж���Ԫ�أ��������ǲ�ȡ�˾�����ʵ�ʵ�̬�ȣ����L��100��Ԫ�أ�
-�����delete99����ok�ġ��������100���ǲ��ᷢ���ģ������ǵļ����У�
-���ǽ�����deleteֻ�ܴ���100��Ԫ�ػ��Ǹ��ٵġ�
+为了适用Method99， 我们假设我们只需要考虑list最多含有100个元素的情况，
+而且我们有delete99可以使用。显然，如果我们可以从L中消除一个元素
+（比如第一个），则我们可以让delete99去处理rest（L）。我们不知道rest（L）中
+还有多少元素，但是我们采取了精明的实际的态度：如果L有100个元素，
+则调用delete99就是ok的。如果超过100个是不会发生的（在我们的假想中）
+我们仅假设delete只能处理100个元素或是更少的。
 
-���ڵڶ���������������Ҫ������������ʲô���������أ���Ȼ����x��
-��L�У���ô�ձ�Ҳ�ǿ��ܵġ����˿ձ�������һ�������Ҫ���Ͻ��������Ҫ
-����delete99����x��L�ĵ�һ��Ԫ�ء�����������£�����ֻ��Ҫ�򵥵ķ���
-rest(L)�������Ŀ�ꡣ
+由于第二个线索，我们需要测试最坏的情况。什么是最坏的情况呢？既然允许x不
+在L中，那么空表也是可能的。除了空表，还有一种情况需要马上解决而不需要
+调用delete99：即x是L的第一个元素。在这种情况下，我们只需要简单的返回
+rest(L)就完成了目标。
 
-�������Ǿ���Method99��ʵ��delete���̡�
+现在我们就用Method99来实现delete过程。
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
 IntList delete(IntList L, int x)
 {
@@ -303,18 +303,18 @@ IntList delete(IntList L, int x)
     return newL;
 }
 \end{lstlisting}
-Ok��Ϊ����ɹ�����ֻ��Ҫ�������̵�99ȥ�����ĳɵݹ���á�
+Ok，为了完成工作，只需要将子例程的99去掉，改成递归调用。
 
-delete�Ĺ���Ҳ�ʺ�\emph{��ͨ��������}���μ�����\ref{Def:GeneralSearch}����
-�����û�����ݾ�ʧ�ܣ������������������˾ͳɹ������������������ɾ���ˣ���
-�����������ʣ�µ����ݡ�
+delete的过程也适合\emph{普通搜索例程}（参见定义\ref{Def:GeneralSearch}）：
+如果在没有数据就失败；如果这个数据搜索到了就成功（在上面的例子里是删除了）；
+否则继续搜索剩下的数据。
 
 
-\subsection{�ݹ���̵İ�װ��}
-������һ��������һ���ֽ��ڿ�ʼ�������ʱ����һ�Ρ�����������£�����Ҫ���ǵݹ�
-���̶����������ٵ��õݹ���̡����ǳ�����ǵݹ�����ǵݹ���̵İ�װ������ʱ��
-��װ��ֻ�Ǽ򵥵ĳ�ʼ���ݹ���̵Ĳ�����������ֲ��ң��㷨\ref{Algo:BinrarySearch}��
-��Ҫһ����װ��ʹ��һ�εݹ��з�Χ����װ�����ܼ����£�
+\subsection{递归过程的包装器}
+经常的一个任务有一部分仅在开始或结束的时候做一次。在这种情况下，你需要将非递归
+过程独立出来，再调用递归过程。我们称这个非递归过程是递归过程的包装器。有时候
+包装器只是简单的初始化递归过程的参数。例如二分查找（算法\ref{Algo:BinrarySearch}）
+需要一个包装器使第一次递归有范围。包装器可能简单如下：
 \begin{lstlisting}[language={Java},keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     int orderSearch(int[] E, int n, int k)
     {
@@ -323,140 +323,140 @@ delete�Ĺ���Ҳ�ʺ�\emph{��ͨ��������}���μ�����\ref{Def:GeneralSearch}����
 \end{lstlisting}
 
 
-\section{ʲô��֤��}\label{Sec:WhatIsTheProof}
-�ٿ�ʼ����֤��֮ǰ�������Ƕ�ʲô��֤����һ���عˡ���\ref{Sec:LogicElement}С��
-�ᵽ�ˣ��߼���һ���淶����Ȼ���Ե�ϵͳ��ͨ���߼����������ĸ���ȷ��֤�������߼�
-���������\emph{���}������������ϸ��֤����ʵ�������ǳ����Ժܶ�ϸ�ڣ���ϸ����
-������ȥ��䣻��������д����ȷ�Ľ�����\emph{֤�����}   ��
+\section{什么是证明}\label{Sec:WhatIsTheProof}
+再开始介绍证明之前，让我们对什么是证明做一个回顾。在\ref{Sec:LogicElement}小节
+提到了，逻辑是一个规范化自然语言的系统，通过逻辑我们推理的更精确。证明是用逻辑
+语句推理的\emph{结果}。本节描述详细的证明。实践中人们常忽略很多细节，将细节留
+给读者去填充；这样的书写更精确的讲叫做\emph{证明框架}   。
 
-���������������۶��ǿ��Ա�֤������䣬����֮������𲢲���ʮ�����ԡ�һ����˵��
-���Ƕ���������Ȥ��������������������Ҫ�������ܰ���֤�����Ǹ���Ȥ�����⣬һ��
-��Ϊ����������һ���Ƕ����ļ򵥽�������ǲ����ǲ���Ҫ�����ܱ�֤��������
-�����⡱���������������������������ۡ���������ʲô���֤��������һ���ġ�����
-��ʹ��������Ϊ��һ���ԡ������
+定理、引理和推论都是可以被证明的语句，他们之间的区别并不是十分明显。一般来说，
+人们对引理的兴趣不是它本身，引理的重要在于它能帮助证明人们感兴趣的命题，一般
+称为定理。推论一般是定理的简单结果，但是并不是不重要。不管被证明的语句叫
+“命题”、“定理”、“引理”、“推论”或是其他什么术语，证明过程是一样的。我们
+将使用命题作为“一般性”的术语。
 
-֤���Ƿ����߼������������С�ÿһ���������ʽ�﷨�����Ͻ�����һ��complete sentence��
-����һ�������һ��ν�ʣ��ȵȡ�������ѧ�����ṩ��һ����д��������仹��
-����һ��complete sentence�����磬��x=y+1��������x����y+1��������һ�������ľ��ӣ�
-����y+1���Լ��Ͳ���һ�����ӡ�
+证明是符合逻辑规则的语句序列。每一个语句在形式语法层面上讲都是一个complete sentence：
+它有一个主语和一个谓词，等等。尽管数学符号提供了一种缩写，但是语句还是
+代表一个complete sentence。例如，“x=y+1”代表“x等于y+1”，这是一个完整的句子，
+而“y+1”自己就不是一个句子。
 
-���ﾫȷ�Ľ��߼������ϳ�֤����inference rules��������©���г��������ǽ�����
-�Ƚ϶�ķ���ʽ�Ĺ�������Ҫ�Ĺ�����\ref{Sec:LogicElement}С�ڸ�������ʽ
-\ref{Equa:ModusPonens}��\ref{Equa:RuleofCases}��ÿһ����䶼���Դ��������ʵ�ó���
-�Ľ���
+这里精确的将逻辑语句组合成证明的inference rules可以无遗漏的列出来，我们将给出
+比较多的非正式的规则。最重要的规则在\ref{Sec:LogicElement}小节给出，等式
+\ref{Equa:ModusPonens}到\ref{Equa:RuleofCases}。每一个语句都可以从下面的事实得出新
+的结论
 \begin{itemize}
-\item ������֪�ģ��Ҳ����㽫Ҫ֤���ģ����磬��ѧ���ʽ������
-\item ��Ҫ֤���Ķ����ļٶ���ǰ�ᣩ����
-\item ��ǰ���֤�����Ѿ���������䣨�м���ۣ�������
-        item inductive hypothesis��ʵ������\ref{Sec:PatternOfInductionProof}С������
+\item 众所周知的，且不是你将要证明的（例如，数学恒等式），或
+\item 你要证明的定理的假定（前提），或
+\item 在前面的证明中已经建立的语句（中间结论），或是
+        item inductive hypothesis的实例，在\ref{Sec:PatternOfInductionProof}小节讨论
 \end{itemize}
-\noindent ֤�������һ����������Ҫ֤������Ľ��ۡ���һ��֤���ֺü������ʱ��
-ÿһ������ȱ�����ѭ����ġ�
+\noindent 证明的最后一个语句必须是要证明命题的结论。当一个证明分好几种情况时，
+每一种情况度必须遵循上面的。
 
-ÿһ����䲻��Ҫ�����µĽ��ۣ����ұ������֧�ֽ��۵���ʵ��ֱ��֧���½��۵�
-����Ϊ�½���justification��������justification�Ǵ�����߼������ԭ��
+每一个语句不仅要给出新的结论，而且必须给出支持结论的事实。直接支持新结论的
+语句称为新结论justification。含糊的justification是大多数逻辑错误的原因。
 
-\subsubsection{����������ĸ�ʽ}
-����Ҫ֤�����������������֣�\emph{����}��Ҳ����\emph{ǰ��premises}��\emph{hypotheses}��
-�ͽ��ۡ����ǽ����۳�ΪĿ����䡣ͨ����������һ�����硰���ڼ���W�����е�Ԫ��x���Ĳ��֣�Ŀ��
-����ǹ���x�ġ���������������м�������x�ı�������ʵ���У�����W���������д����
-һ�弯�ϱ�����Ȼ����ʵ������һ�����ݽṹ����list������ͼ����Ҫ֤����������������ʽ
+\subsubsection{定理或命题的格式}
+你需要证明的命题有两个部分，\emph{假设}（也叫做\emph{前提premises}或\emph{hypotheses}）
+和结论。我们将结论称为目标语句。通常，命题有一个型如“对于集合W中所有的元素x”的部分，目标
+语句是关于x的。（可能在语句中有几个类似x的变量。）实践中，集合W（世界的缩写）是
+一族集合比如自然数、实数或是一族数据结构比如list、树、图。令要证明的命题有如下形式
 \begin{equation}\label{Equ:3_1}
 \forall x \in W[A(x)\Rightarrow C(x)]
 \end{equation}
-����$A[x]$��ʾ���裬��$C[x]$��ʾ���ۻ����Ŀ����䡣����$\Rightarrow$�������̺�����
-�����Ž���Ϊ�˸��ɶ������Ǻ�԰����һ��������Ȼ������������侭����������
-��ʽ���������е�$W$�е�$x$�����$A(x)$����$C(x)$�����ô��и��ֱ仯��ͨ��������
-��Ҫ���������Ȼ��䡰�ࡱ��һ�������������ı�׼��ʽ��������Ҫ֤��֮ǰ��������Ҫ
-֪��$x$��$W$��$A(x)$��$C(x)$�ֱ����ʲô��
+这里$A[x]$表示假设，而$C[x]$表示结论或叫做目标语句。符号$\Rightarrow$读作“蕴涵”。
+方括号仅是为了更可读；他们和园括号一样。在自然语言中命题语句经常是这样的
+形式“对于所有的$W$中的$x$，如果$A(x)$，则$C(x)$。”用词有各种变化。通常，我们
+需要将大多数自然语句“揉”成一种向上面这样的标准形式，在我们要证明之前，我们需要
+知道$x$，$W$，$A(x)$，$C(x)$分别代表什么。
 
 \begin{example}\label{Example:3_2}
-һ��������ܱ�ʾΪ��
+一个命题可能表示为：
 \end{example}
 
 \begin{proposition}
-���ڳ���$\alpha<\beta$��$2^{\alpha n} \in o(2^{\beta n})$��
+对于常数$\alpha<\beta$，$2^{\alpha n} \in o(2^{\beta n})$。
 \end{proposition}
-����淶�ɵ�ʽ\ref{Equ:3_1}����ʽ��
+将其规范成等式\ref{Equ:3_1}的形式，
 \begin{proposition}
-��������$\alpha\in R$����������$\beta\in R$�����$\alpha$��$\beta$�ǳ���
-��$\alpha<\beta$����$2^{\alpha n} \in o(2^{\beta n})$��
+对于所有$\alpha\in R$，对于所有$\beta\in R$，如果$\alpha$和$\beta$是常数
+且$\alpha<\beta$，则$2^{\alpha n} \in o(2^{\beta n})$。
 \end{proposition}
 
-\noindent ��������������ߵĶ�Ӧ��ϵ����Ȼ��Ԫ��$(\alpha, \beta)$��Ӧ$x$��$R\times R$
-��Ӧ$W$��������ǰ��A(x)��3����䣺��$\alpha$�ǳ���������$\beta$�ǳ������ҡ�$\alpha<\beta$����
-����C(x)�ǡ�$2^{\alpha n} \in o(2^{\beta n}$����
+\noindent 让我们来检查两者的对应关系。显然二元组$(\alpha, \beta)$对应$x$，$R\times R$
+对应$W$。引理的前提A(x)有3条语句：“$\alpha$是常数”，“$\beta$是常数”且“$\alpha<\beta$”。
+结论C(x)是“$2^{\alpha n} \in o(2^{\beta n}$”。
 
-\subsubsection{˫��֤����ʽ}
-������������һ��˫�и�ʽ����֤���ı�ʾ�����ָ�ʽ��Ŀ����Ϊ����֤���е�
-justifications�����������а������е�justifications��ÿһ��֤�����ռ�ô��кŵ�һ�С�
-ÿһ������ߵ�\emph{�½���}����justifications�����ұߡ�����ǰ���Ѿ�֤���������ͨ����
-���кš�
+\subsubsection{双列证明格式}
+我们现在描述一种双列格式用于证明的表示。这种格式的目的是为了让证明中的
+justifications更清晰；右列包含所有的justifications。每一个证明语句占用代行号的一行。
+每一个在左边的\emph{新结论}它的justifications都在右边。引用前面已经证明的语句是通过它
+的行号。
 
 \begin{example}
 
 
-��\ref{Example:3_2}����佫��˫�и�ʽ��֤����������֤����д�ķǳ���ϸ����Ϊһ��֤����
-���дjustifications�ķ��������ǰ������е����е�֤����ͨ�����ڴ������Լ����ϵĲ��֡�
+例\ref{Example:3_2}的语句将用双列格式来证明。定理和证明都写的非常详细，作为一个证明中
+如何写justifications的范例。我们包括所有的所有的证明者通常会期待读者自己填上的部分。
 
 \end{example}
 
 \begin{theorem}
-��������$\alpha\in R$����������$\beta\in R$�����$\alpha$��$\beta$�ǳ���
-��$\alpha<\beta$����$2^{\alpha n} \in o(2^{\beta n})$
+对于所有$\alpha\in R$，对于所有$\beta\in R$，如果$\alpha$和$\beta$是常数
+且$\alpha<\beta$，则$2^{\alpha n} \in o(2^{\beta n})$
 
-\noindent ֤����
+\noindent 证明：
 
 \begin{tabular}{ll}
 \hline
-���  &Justification \\
+语句  &Justification \\
 \hline
-1.����������չʾ$\lim_{n\rightarrow \infty}\frac{2^{\beta n}}{2^{\alpha n}}=\infty$ & \\
-2.$\frac{2^{\beta n}}{2^{\alpha n}}= 2^{(\beta-\alpha)n}$    &��ѧ���ʽ \\
-3.$\beta > \alpha$�Ҷ��ǳ���  &������ǰ�ᣫ��ѧ���ʽ\\
-4.$\lim_{n\rightarrow \infty}2^{(\beta-\alpha)n} = \infty$ &��3������֪����ѧ����\\
-5.$\lim_{n\rightarrow \infty}\frac{2^{\beta n}}{2^{\alpha n}} = \infty$ &��2������4���ʹ���\\
-6.$2^{\alpha n} \in o(2^{\beta n}$  &��5��+$o$ ���ϵĶ��壨����\ref{Def:LittleoAndomega}��\\
+1.首先我们想展示$\lim_{n\rightarrow \infty}\frac{2^{\beta n}}{2^{\alpha n}}=\infty$ & \\
+2.$\frac{2^{\beta n}}{2^{\alpha n}}= 2^{(\beta-\alpha)n}$    &数学恒等式 \\
+3.$\beta > \alpha$且都是常数  &定理的前提＋数学恒等式\\
+4.$\lim_{n\rightarrow \infty}2^{(\beta-\alpha)n} = \infty$ &（3）＋已知的数学定理\\
+5.$\lim_{n\rightarrow \infty}\frac{2^{\beta n}}{2^{\alpha n}} = \infty$ &（2）＋（4）和带入\\
+6.$2^{\alpha n} \in o(2^{\beta n}$  &（5）+$o$ 集合的定义（定义\ref{Def:LittleoAndomega}）\\
 \hline
 \end{tabular}
 
 \vspace{1ex}
-����ע�����
+几点注意事项：
 \begin{enumerate}
-\item �������֤���������䣬һ�㻹����һЩ��·�ߡ����ǡ��ƻ��������˵�������
-֤��С�ε�Ŀ�ģ�����Ҫʹ�õķ����ۣ�����Ϊ�����֤������Ҫ�Ķ���ȵȡ�
+\item 除了组成证明主题的语句，一般还包括一些“路线”或是“计划”语句来说明下面的
+证明小段的目的，或是要使用的方法论，或是为了完成证明还需要的段落等等。
 
-��һ�о���һ��\emph{�ƻ�}��䣬�������κν��ۡ���������ܱ������������ã���Ҳ����Ҫ
-justification�������߶���Ҫ�ɹ�֤����һ���м�Ŀ�ꡣ���Ŀ���ڵ�5����ɡ�
+第一行就是一个\emph{计划}语句，不包含任何结论。因此它不能被后面的语句引用，它也不需要
+justification。它告诉读者要成功证明的一个中间目标。这个目标在第5行完成。
 
-\item ���һ�е��½��۾��Ƕ�����Ŀ����䡣
-\item �����������ж�������justification��������û���κ��˷ѡ�
+\item 最后一行的新结论就是定理的目标语句。
+\item 其他的所有行都被当作justification被引用了没有任何浪费。
 \end{enumerate}
 
 \end{theorem}
 
-Ϊ����֤����������������˫�и�ʽд��һЩ���۵�ϸ����һ���ܺõķ��ͨ�����
-֤����ܵ�ϸ��������ģ���������֪��ÿһ�����������ô�ó��ġ�
+为了让证明完整、流畅，以双列格式写出一些结论的细节是一个很好的风格。通常完成
+证明框架的细节是有益的，可以让你知道每一个新语句是怎么得出的。
 
-\section{����֤��}
-����֤����֤��һ���������޸�����ļ��ϵ����ʱ��һ�ֻ��ƣ�ͨ��Ҳ��Ψһ�Ļ��ơ�
-�������������Ĺ��ɷ���ͨ������ǿ���ɡ�ǿ���������ڴ���������㷨�����ݽṹ��
-֤������򵥵���ʽ����ʹ��ʱ����Ҫǿ���ɣ�����ʹ��ʹ��ǿ����Ҳ������ʹ����
-�������汾Ҫ�ѡ�������ǲ���"one-size-fits-all"��ԭ������ʹ��ǿ���ɡ�
+\section{归纳证明}
+归纳证明是证明一个关于无限个对象的集合的语句时的一种机制，通常也是唯一的机制。
+我们这里描述的归纳方法通常叫做强归纳。强归纳是用于大多数关于算法和数据结构的
+证明中最简单的形式。即使有时候不需要强归纳，但是使用使用强归纳也并不比使用它
+的弱化版本要难。因此我们采用"one-size-fits-all"的原则，总是使用强归纳。
 
-���ǽ��ῴ���ݹ�͹��ɣ�ǿ���ɣ���ϵķǳ��������Ӵ��潲��֤�������ѵģ�����
-��Ҫ�����ܵ�ʹ��֤�������⣬�ɿ���ȷ������֤���͵ݹ����ֱ�ӽṹ������������
-֤�������㷨ʱ����Ҫ���ߡ�
+我们将会看到递归和归纳（强归纳）配合的非常完美。从大方面讲，证明是困难的，我们
+需要尽可能的使得证明可理解，可靠精确。归纳证明和递归过程直接结构的类似性是在
+证明复杂算法时的重要工具。
 
-�ڴ��������¹��ɷ�������Ȼ�����ϣ��Ǹ�������
-\ref{Sec:AsymptoticOrderDefinitionAndSymbols}С�ڣ����������������ϡ���Ȼ�����ɷ�
-�ڸ�һ��ļ���Ҳ����Ч�ģ�ֻҪ�����ṩ�������ԣ�
+在大多数情况下归纳法是在自然数集合（非负整数，
+\ref{Sec:AsymptoticOrderDefinitionAndSymbols}小节）或是正整数集合上。当然，归纳法
+在更一般的集合也是有效的，只要他们提供两个属性：
 \begin{enumerate}
-\item �����ǲ�������ģ�����˵����ĳЩԪ�ض��϶�����˳���ϵ�����ǿ��ܲ�
-        ���Ƕ��������е�Ԫ�ض��ϡ�
-\item ������û�����޵Ľ���Ԫ������
+\item 集合是部分有序的；就是说，在某些元素队上定义有顺序关系，但是可能并
+        不是定义在所有的元素对上。
+\item 集合中没有无限的降序元素链。
 \end{enumerate}
-���磬��\emph{��������}�ļ����ϾͲ���ʹ�ù��ɷ���
+例如，在\emph{所有整数}的集合上就不能使用归纳法。
 
 \begin{figure*}[!t]
     \centering
@@ -516,194 +516,194 @@ justification�������߶���Ҫ�ɹ�֤����һ���м�Ŀ�ꡣ���Ŀ���ڵ�5����ɡ�
         \draw[->] (X2) --(E1);
         \draw[->] (X2) --(X13);
     \end{tikzpicture}
-    \caption{չʾ�����ļ���֮���\emph{subtree partial order}}
+    \caption{展示的树的集合之间的\emph{subtree partial order}}
     \label{Fig:ExampleOfSubtreePartialOrder}
 \end{figure*}
 
-������һ����������ļ��ϣ���������ʹ�ù��ɷ������õĲ���˳���ǣ�$t_1<t_2$��
-��$t_1$��$t_2$��\emph{proper����}ʱ���μ�ͼ\ref{Fig:ExampleOfSubtreePartialOrder}����
-�������ǽ�����ͼ��һ�����ƵĲ���˳���������ļ����Ͻ��еĹ��ɽ�\emph{�ṹ�����ɷ�}��
+树就是一个部分有序的集合，经常对树使用归纳法。常用的部分顺序是：$t_1<t_2$，
+当$t_1$是$t_2$的\emph{proper子树}时（参见图\ref{Fig:ExampleOfSubtreePartialOrder}）。
+后面我们将看到图有一个类似的部分顺序。在这样的集合上进行的归纳叫\emph{结构化归纳法}。
 
-���͵���Ҫ���ɷ���֤���Ķ�����������ѧ��ʽ�Ķ��������ݽṹ���Ե�
-�������ݹ��ʽ�Ķ�������Щ�����ڷ����ݹ���̵�����ʱ��ʱ�õ���
-\ref{Sec:ProvingCorrectnessOfProcedures}�ڸ�������Щ��Ҫ֤���������������Ŀ�겢����ȷ
-����ֹ�Ķ�����\ref{Sec:RecursiveEquation}�ڸ����˵��͵ĵݹ��ʽ��
+典型的需要归纳法来证明的定理包括：数学公式的定理、数据结构属性的
+定理、递归等式的定理、这些经常在分析递归过程的运行时间时用到。
+\ref{Sec:ProvingCorrectnessOfProcedures}节覆盖了那些需要证明过程完成了它的目标并会正确
+的终止的定理。\ref{Sec:RecursiveEquation}节覆盖了典型的递归等式。
 
-\subsection{����֤����ģʽ}\label{Sec:PatternOfInductionProof}
-����֤���ĵ�һ���¾��ǣ�\\
+\subsection{归纳证明的模式}\label{Sec:PatternOfInductionProof}
+归纳证明的第一件事就是：\\
 \indent\emph{There is no such thing as "n+1" in an induction proof.}\\
-���ҵ��ǣ��ܶ����ѧ���������ġ�Ϊʲô���ǰ�����������������أ�
+不幸的是，很多读者学到了其他的。为什么我们把这个教条放在这里呢？
 
-�����������ȸ����Ķ�����--Ϊ�˽��ݹ�͹�����ϵ����������֪��һ���ݹ����
-��\emph{�����ͽ��С��������}���ٺϲ��������������Ҫ���⡣����ϣ�����ǵ�
-�ݹ�֤��Ҳ�������ģʽ������֤����˵������Ҫ���⡱��Ҫ��Ķ��������������⡱��
-Ҫ��Ķ�����С��ʵ������ЩС��ʵ�����Ժϲ�����֤����Ҫ��ʵ����ʵ���У���Щ
-С��ʵ�����ֱ�Ӷ�Ӧ�ݹ���̴����ľ�ȷ�������⡣
+答案在我们早先给出的动机中--为了将递归和归纳联系起来。我们知道一个递归过程
+是\emph{创建和解决小的子问题}，再合并子问题来解决主要问题。我们希望我们的
+递归证明也采用这个模式。对于证明来说，“主要问题”是要求的定理，而“子问题”是
+要求的定理的小的实例，这些小的实例可以合并起来证明主要的实例。实践中，这些
+小的实例差不多直接对应递归过程创建的精确的子问题。
 
-���еĵݹ�֤����ѭһ��ͨ�õ�ģʽ�����ǳ�֮Ϊ\emph{induction schema}��Schema
-��ؼ��Ĳ�����\emph{inductive hypothesis}����ȷ���롣���ȣ����Ǹ���һ��֤��
-�����ӣ�֮����������һ���schema�������Ǽ������ӡ�
+所有的递归证明遵循一个通用的模式，我们称之为\emph{induction schema}。Schema
+最关键的部分是\emph{inductive hypothesis}的正确引入。首先，我们给出一个证明
+的例子，之后我们描述一般的schema，下面是几个例子。
 
 \begin{example}
-���涨����֤��չʾ��induction schema��������֮�����ǽ�������һ����ʽ��
-��\emph{����}��ʾ�Ĳ��輸������������й���֤����ϸ���С����������֤��
-��ϸ�ڣ�����ʹ��ǰ���ᵽ��˫��֤����ʽ��
+下面定理的证明展示了induction schema，在例子之后我们将描述其一般形式。
+以\emph{宋体}表示的步骤几乎会出现在所有归纳证明的细节中。下面给出了证明
+的细节，我们使用前面提到的双列证明格式。
 \end{example}
 
 \begin{proposition}
-��������
-$n \geq 0$��$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ ��
+对于所有
+$n \geq 0$，$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ 。
 
-\noindent ֤��:
+\noindent 证明:
 
 \begin{tabular}{ll}
 \hline
-���  &Justification \\
+语句  &Justification \\
 \hline
-1.\emph{֤������}n���������͵����� & \\
-2.\emph{���������}n=0    & \\
-3.��ʱ��ʽ�����߶�����0  &��ѧ\\
-4. \emph{����$n>0$������} & \\
-    $\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ \emph{��������$k\geq 0$��$k<n$����} & \\
-5.$\sum\limits_{i=1}^{n-1} = \frac{i(i+1)}{2} = \frac{(n-1)n(n+1}{6}$  &����$k=n-1$\\
-6.$\sum\limits_{i=1}^{n} = \sum\limits_{i=1}^{n-1}\frac{i(i+1)}{2}+\frac{n(n+1)}{2}$  &��ѧ\\
-7.$\sum\limits_{i=1}^{n} = \frac{(n-1)n(n+1)}{6} + \frac{n(n+1)}{2}$  &��5������6��\\
-8.$\frac{(n-1)n(n+1)}{6} + \frac{n(n+1)}{2}= \frac{n(n+1)(n+2)}{6} $  &��ѧ\\
-9.$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2}{6}$ &��7������8��\\
+1.\emph{证明归纳}n，来给出和的上限 & \\
+2.\emph{基本情况是}n=0    & \\
+3.此时等式的两边都等于0  &数学\\
+4. \emph{对于$n>0$，假设} & \\
+    $\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2)}{6}$ \emph{对于所有$k\geq 0$且$k<n$成立} & \\
+5.$\sum\limits_{i=1}^{n-1} = \frac{i(i+1)}{2} = \frac{(n-1)n(n+1}{6}$  &带入$k=n-1$\\
+6.$\sum\limits_{i=1}^{n} = \sum\limits_{i=1}^{n-1}\frac{i(i+1)}{2}+\frac{n(n+1)}{2}$  &数学\\
+7.$\sum\limits_{i=1}^{n} = \frac{(n-1)n(n+1)}{6} + \frac{n(n+1)}{2}$  &（5）＋（6）\\
+8.$\frac{(n-1)n(n+1)}{6} + \frac{n(n+1)}{2}= \frac{n(n+1)(n+2)}{6} $  &数学\\
+9.$\sum\limits_{i=1}^n = \frac{i(i+1)}{2} = \frac{n(n+1)(n+2}{6}$ &（7）＋（8）\\
 \hline
 \end{tabular}
 
 \vspace{2ex}
-һ��һ�еĽ���:
+一行一行的解释:
 \begin{enumerate}
-\item n����Ҫ�Ĺ��ɱ�����ע���������ʽ��$\forall n \in N[A(n)\Rightarrow C(n)]$��
-        ����$A(n)$�Ǽ�true����$C(n)$�ǵ�ʽ��
-\item һ������֤��ʼ����������Ҫ�������Ϊ\emph{�������}��\emph{�������}��
-        ��ʱ�ǻ������s����������
-\item \emph{֤��}�������s
-\item ���븨������$k$�����еݹ���衣ע��ݹ������$A(n)\Rightarrow C(n)$
-        ����ʽ���ص�������⣬$A(n)$������true��
+\item n是主要的归纳变量。注意命题的形式是$\forall n \in N[A(n)\Rightarrow C(n)]$。
+        这里$A(n)$是简单true，而$C(n)$是等式。
+\item 一个归纳证明始终有两种主要情况，称为\emph{基本情况}和\emph{归纳情况}。
+        有时是基本情况s（复数）。
+\item \emph{证明}基本情况s
+\item 引入辅助变量$k$，进行递归假设。注意递归假设是$A(n)\Rightarrow C(n)$
+        的形式，回到这个命题，$A(n)$仅仅是true；
 
-        ע��k�ķ�Χ�������������
+        注意k的范围包括基本情况。
 
-        ע��k�����ϸ�С��n���������ǵļ�����Ѿ�����������Ҫ֤���ġ�
+        注意k必须严格小于n；否则我们的假设就已经包括了我们要证明的。
 
-        �ݹ�������ı�־�ŵݹ����֤���Ŀ�ʼ��
+        递归假设语句的标志着递归情况证明的开始。
 
-\item ʹ�õݹ���衣��ע�����ǽ�������n��������������k��������赽��n-1��
-        ��Ȼ����֤��$n>0$�������k�����ֵ����$0 \leq k<0$�������ڵ�4��Ҫ��ġ�
+\item 使用递归假设。（注意我们将“拉到n”。）辅助变量k在这里假设到了n-1。
+        既然我们证明$n>0$的情况，k的这个值满足$0 \leq k<0$，就像在第4行要求的。
 
-        ��������k�����������м��赽��Χ�ڵ�����ֵ������ǿ���ɵ�һ���ô��������
-        �򵥵������У�ǡ�ò���Ҫ��k���赽���ֵ
+        辅助变量k可以在其他行假设到范围内的其他值。这是强归纳的一个好处。在这个
+        简单的例子中，恰好不需要将k假设到别的值
 
-\item Justification��һ����׼��ѧ��ʽ��������߶�֪����
-\item Justificationָ��ǰ�������֧������½��ۣ����ǲ�����
-        �õ���\emph{���۹���}�����������ָ������
-\item ��������һ����ѧ��ʽ��ʵ���У���6�е���9�п��Ժϲ���һ�У�����
-        ���߿���ָ����Щ���衣���ǣ�������Ũ�����ܵ����������ġ�֤������
-        ֤���߱���С����Щ��ȷ�Ĳ�����Ҫд������
+\item Justification是一个标准数学等式，假设读者都知道。
+\item Justification指出前面的两行支持这个新结论，但是不符合
+        用到的\emph{推论规则}，假设读者能指出来。
+\item 采用了另一个数学等式。实际中，第6行到第9行可以合并成一行，假设
+        读者可以指出这些步骤。但是，这样的浓缩可能导致许多错误的“证明”。
+        证明者必须小心哪些精确的步骤需要写出来。
 
-\item ����ǡ����Ŀ�����$C(n)$��
+\item 结论恰好是目标语句$C(n)$。
 
 \end{enumerate}
 
 \end{proposition}
 
-ǰ���֤����ѭ��һ��ģʽ������ģʽ���Է����������schema��ע��һ������\emph{����}
-������\emph{����}��\emph{����}��\emph{����}��������term��������ı�֤�����̡�
+前面的证明遵循了一种模式，这种模式可以泛化成下面的schema。注意一般的术语，\emph{命题}
+可以是\emph{定理}、\emph{引理}、\emph{推论}或是其他term，都不会改变证明过程。
 
 \begin{definition}\label{Def:InductionProofSchema}
-����֤��ģʽ
+归纳证明模式
 
-�������ǽ�������ģʽ�õ��ķ��š�\emph{����}��������Ҫ��ʾ��Ҫ�����ݡ��ڽ�����
-��<����>��֮�����Ŀ����Ҫ����֤�����������滻�ġ����Ƶģ�����x��yҲ�Ǹ�������
-�仯�ġ������ڼ���W��world��֮�С��߼����$C(x)$����\emph{Ŀ�����}���߼����$A(x)$
-����\emph{�������}�����Ǽ���s���������һ����ȡʽ��������x������Ҫ
-���ɱ��������ƹ��ɱ�����������y��������������
+首先我们解释下面模式用到的符号。\emph{宋体}的内容重要表示重要的内容。在角括号
+“<”“>”之间的条目是需要根据证明的命题来替换的。类似的，变量x和y也是根据命题
+变化的。他们在集合W（world）之中。逻辑语句$C(x)$叫做\emph{目标语句}。逻辑语句$A(x)$
+叫做\emph{命题假设}（或是假设s，如果它是一个合取式）。变量x叫做主要
+归纳变量（或简称归纳变量）。变量y叫做辅助变量。
 
-һ������
+一个形如
 \begin{displaymath}
 \forall x \in W[A(x) \Rightarrow C(x)]
 \end{displaymath}
-������Ĺ���֤��������ļ�������ɡ�
+的命题的归纳证明由下面的几部分组成。
 \begin{enumerate}
-\item \emph{֤���ǹ���x}��<����x>��
-\item \emph{��������ǣ����s�ǣ�}<�������>��
-\item <\emph{֤��}���������Ŀ����䣬������������������$C(base-case)$>��
-\item \emph{����}<X>\emph{����}<�������>������������е�$y\in W$��$y<x$����$[A(x)\Rightarrow C(x)]$��
-\item <\emph{֤��}Ŀ����䣬$C(x)$������������ֵġ�>
+\item \emph{证明是归纳x}，<描述x>。
+\item \emph{基本情况是（情况s是）}<基本情况>。
+\item <\emph{证明}基本情况的目标语句，即带入基本情况，就是$C(base-case)$>。
+\item \emph{对于}<X>\emph{大于}<基本情况>，假设对于所有的$y\in W$且$y<x$都有$[A(x)\Rightarrow C(x)]$。
+\item <\emph{证明}目标语句，$C(x)$，就是命题出现的。>
 \end{enumerate}
 \end{definition}
 
-һ������֤����������Ҫ�������������͵ݹ������ģʽ�ĵ�2�������˻��������
-��3��֤����������¶�����������4�������˵ݹ����������ʹ���˵ݹ���衣
-��5��֤���ݹ�����¶�����������ͨ����֤������Ҫ���֡�$C(x)$��֤�����������沿��֧�֣�
+一个归纳证明有两个主要情况：基本情况和递归情况。模式的第2步定义了基本情况；
+第3步证明基本情况下定理成立。第4步定义了递归情况，而且使用了递归假设。
+第5步证明递归情况下定理成立，这通常是证明的主要部分。$C(x)$的证明可以由下面部分支持：
 \begin{enumerate}
-\item x����<�������>��
-\item ����ļ��裬$A(x)$ ������$A(y)$����
-\item ���������Ĺ��ɼ����ʵ����$[A(x)\Rightarrow C(x)]$��Ϊ��������y�����ϸ�С��x��W��Ԫ�ء�
+\item x大于<基本情况>；
+\item 命题的假设，$A(x)$ （不是$A(y)$）；
+\item 任意数量的归纳假设的实例，$[A(x)\Rightarrow C(x)]$，为辅助变量y带入严格小于x的W的元素。
 \end{enumerate}
-����ͨ��֤��һ����֤�����Ѿ�֤���Ľ��ۣ��ⲿ��ʶ������������ʹ�á�
+和普通的证明一样，证明中已经证明的结论，外部标识、定理都可以使用。
 
-�������������������justification����Ϊ����û�и����κν��ۣ�����ֻ�Ǽ򵥵�
-������֤����ģʽ�Լ�������һЩ���š�������
+三个样板语句允许不带justification，因为他们没有给出任何结论；他们只是简单的
+解释了证明的模式以及定义了一些符号。他们是
 \begin{itemize}
-\item ��֤���ǹ���x����
-\item ����������ǡ���
-\item ������$x>$ <�������>������������е�$y<x$����$[A(y)\Rightarrow C(y)]$����
+\item “证明是归纳x…”
+\item “基本情况是…”
+\item “对于$x>$ <基本情况>，假设对于所有的$y<x$都有$[A(y)\Rightarrow C(y)]$。”
 \end{itemize}
-��������佫֤���ֳ������������x�ǻ��������x���ڻ�������������������
-��������W������������x���еķ�Χ��
+后两个语句将证明分成了两种情况：x是基本情况，x大于基本情况。两种情况必须
+覆盖整个W，即覆盖所有x所有的范围。
 
-\subsubsection{����ģʽ�ı���}
+\subsubsection{归纳模式的变体}
 \begin{enumerate}
-\item  �������$A(x)$����ʵ��������x����ݹ������Լ򻯳ɣ�
-        ����$C(x)$��������$y\in W$��yС��x��������������ܽ���
+\item  如果假设$A(x)$并不实际依赖于x，则递归假设可以简化成：
+        假设$C(x)$对于所有$y\in W$且y小于x都成立。你必须能解释
         why simplification is justified referring back to the
         justifications for proof statements.
-\item ���������Ҫ����һ�����дμ����������Fibonacci���е�ʽ\ref{Equa:FibonacciSeries}��
-        ��������������������������ǣ���ý���������������Ҫ��Ԫ�أ���Ϊÿһ���������
-        ����Ҫ���Լ���֤����
-\item ������һ�����ݽṹ��ʱ�����list��tree��ͼ���������в���˳��ļ��ϣ�����
-        �ж���������Ԫ�ء���ͼ\ref{Fig:ExampleOfSubtreePartialOrder}��6���������ǻ��������
+\item 如果归纳需要多于一个的有次级情况，比如Fibonacci数列等式\ref{Equa:FibonacciSeries}，
+        可以有两个或多个基本情况。但是，最好仅引入归纳情况必须要的元素，因为每一个基本情况
+        都需要它自己的证明。
+\item 当归纳一个数据结构的时候比如list、tree、图或其他仅有部分顺序的集合，可以
+        有多个基本情况元素。在图\ref{Fig:ExampleOfSubtreePartialOrder}中6个单个数是基本情况。
 \end{enumerate}
 
-\subsection{����֤��һ���ݹ����}
-��һ������չʾ�˹��ɺ͵ݹ�������һ�����ġ����ǽ�Ҫ֤���������ǹ���һ��
-����2-tree��external·�����ȵĹ��̵ģ����ڵ��޷����к�����
-���μ�\ref{Sec:LowerBoundOfAverageBehavior}С�ڣ���
-External·��������һЩ��������������Ȼ�ı����������������ҪһЩ���塣
+\subsection{归纳证明一个递归过程}
+下一个例子展示了归纳和递归是怎样一起工作的。我们将要证明的引理是关于一个
+计算2-tree的external路径长度的过程的，这在底限分析中很有用
+（参见\ref{Sec:LowerBoundOfAverageBehavior}小节）。
+External路径长度在一些其他的问题中自然的被提出。首先我们需要一些定义。
 
 \begin{definition}\label{Def:ExternalNodeAnd2_tree}
-External�ڵ��2-tree
+External节点和2-tree
 
-���������������г��˿�����Ļ����������ֻ��һ���ڵ������ ����ڵ������
-����ʣ�½ڵ�����Ͳ�ͬ�����ֽڵ��external �ڵ㡣һ����\emph{external�ڵ�}
-��ɵ�����\emph{Ҷ��}����û���κ������ˡ������ڵ��������\emph{internal�ڵ�}��
-���������������ӡ������Ķ�������\emph{2-trees}����Ϊÿ���ڵ�Ҫô���������ӣ�
-Ҫôû�С�
+二叉树基本类型中除了空树外的基本情况，是只有一个节点的树， 这个节点的类型
+与树剩下节点的类型不同。这种节点叫external 节点。一个由\emph{external节点}
+组成的树叫\emph{叶子}，它没有任何子树了。其他节点的类型是\emph{internal节点}，
+它必须有两个孩子。这样的二叉树叫\emph{2-trees}，因为每个节点要么有两个孩子，
+要么没有。
 \end{definition}
 
-ע�⣬������ǽ�2-tree�����е�external�ڵ��滻�ɿ��������ʣ��һ�������ģ�
-���ϸ�Ķ���������2-tree�м��һ���ڵ��Ƿ���Ҷ�ӽڵ�ͨ������Ҫ�ж�����ڵ�
-�Ƿ��к��ӣ���ΪҶ�ӽڵ��������internal�ڵ㲻һ������ϰ3.1չʾ��һ��
-2-tree��external�ڵ�����internal�ڵ�Ҫ���ٶ�һ����
+注意，如果我们将2-tree中所有的external节点替换成空树，则会剩下一个正常的，
+不严格的二叉树。在2-tree中检查一个节点是否是叶子节点通常不需要判断这个节点
+是否有孩子，因为叶子节点的类型与internal节点不一样。练习3.1展示了一个
+2-tree的external节点必须比internal节点要至少多一个。
 
 \begin{definition}
-External·������
+External路径长度
 
-��2-tree��t�У�t��\emph{external·������}�Ǹ�������external�ڵ�·�����ȵĺ͡�
-·���ĳ�����·���ı�������ѡ�ģ�2-tree��external·�����ȿ��Եݹ鶨�����£�
+在2-tree树t中，t的\emph{external路径长度}是根到所有external节点路径长度的和。
+路径的长度是路径的边数。可选的，2-tree的external路径长度可以递归定义如下：
 \begin{enumerate}
-\item Ҷ�ӵ�external·��������0��
-\item ��t��һ����Ҷ�ӽڵ㣬����������L��������R�����߶�������Ҷ�ӣ���
-        t�� external ·�����ȵ���L��external·�����ȣ�L��external�ڵ�����R��
-        external·�����ȣ�R��external�ڵ�������t��external�ڵ��������L��R
-        ��external�ڵ������ĺ͡���
+\item 叶子的external路径长度是0。
+\item 令t是一个非叶子节点，它有左子树L和右子树R（两者都可能是叶子）。
+        t的 external 路径长度等于L的external路径长度＋L的external节点数＋R的
+        external路径长度＋R的external节点数。（t的external节点的数量是L和R
+        的external节点数量的和。）
 \end{enumerate}
 
-��������ĵȼ����Ǻ���Ȼ�ģ���Ϊÿһ����t�ĸ���L�е�external�ڵ��·������
-��L�ĸ�������ڵ��·��Ҫ��1��R�����Ƶġ�
+两个定义的等价性是很显然的，因为每一条从t的根到L中的external节点的路径都比
+从L的根到这个节点的路径要多1，R是类似的。
 \end{definition}
 
 \begin{figure*}[!t]
@@ -711,9 +711,9 @@ External·������
     \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
         EplReturn calcEpl( TwoTree t)
         {
-            EplReturn ansL, ansR;  // `�������ص�`
-            EplReturn ans =new EplReturn(); // `Ҫ���ص�`
-        1.  if( t `��Ҷ��`)
+            EplReturn ansL, ansR;  // `子树返回的`
+            EplReturn ans =new EplReturn(); // `要返回的`
+        1.  if( t `是叶子`)
         2.      ans.epl=0; ans.extNum=1;
         3.  else
            {
@@ -726,38 +726,38 @@ External·������
         8.  return ans;
         }
     \end{lstlisting}
-    \caption{����2-tree external·�����ȵĺ�������������EplReturn��һ����֯���࣬���ں�������2��ֵepl��extNum��}
+    \caption{计算2-tree external路径长度的函数。返回类型EplReturn是一个组织者类，用于函数返回2个值epl和extNum。}
     \label{Fig:LegthOf2-tree external}
 \end{figure*}
 
-\ref{Sec:BinaryTreeADT}С�ڵĶ�����������ܿ��Լ򵥵���չ�ɼ���external·�����ȡ�
-������������TwoTree���䶨��������BinTree��������С������Ҷ�����⣬BinTree��
-��С���ǿ������������ҲҪ����Ӧ���޸ġ�������Ҫ��������ֵ������������Ҫ
-����һ����֯���ࣨ�μ�\ref{Sec:OrganizerClass}С�ڣ���������EplReturn��������
-������Աepl��extNum���ֱ��ʾexternal·���ĳ��Ⱥ�external�ڵ����Ŀ�����ǿ�������
-ֻ�Ǽ򵥵�ʵ���˵ݹ鶨�塣����������֤������calEpl��������
+\ref{Sec:BinaryTreeADT}小节的二叉树遍历框架可以简单的扩展成计算external路径长度。
+参数的类型是TwoTree，其定义类似与BinTree，除了最小的树是叶子以外，BinTree的
+最小树是空树。基本情况也要做相应的修改。函数需要返回两个值，所以我们需要
+定义一个组织者类（参见\ref{Sec:OrganizerClass}小节），类名叫EplReturn，有两个
+整数成员epl和extNum，分别表示external路径的长度和external节点的数目。我们看到函数
+只是简单的实现了递归定义。我们现在能证明关于calEpl的引理。
 
 \begin{lemma}\label{Lemma:ExternalNodeCount}
-��t������2-tree����epl��m�ֱ���calcEpl(t)���ص�epl��extReturn��ֵ����
+令t是任意2-tree。令epl和m分别是calcEpl(t)返回的epl和extReturn的值。则：
 \begin{enumerate}
-\item \emph{epl}��t��external·���ĳ��ȡ�
-\item m��t����external�ڵ����Ŀ
+\item \emph{epl}是t的external路径的长度。
+\item m是t的下external节点的数目
 \item $epl \geq m\lg(m)$
 \end{enumerate}
 
-\emph{֤����} ��֤������֮ǰ���������Ȱ���������������ǰ���֤��ģʽ����������
-��ʽ\ref{Equ:3_1}��ע��Ϊ���Ķ��������ֳ��˼������ӡ����t����Ҫ�ĵݹ����
-��W������2-tree�ļ��ϡ��ڶ������Ӵ������裬���Ա�ʾ$A(t)$�����������������$C(t)$��
-��ǰ�������һ���������ʾ�����κεݹ�֤���еĹؼ����֡�
+\emph{证明：} 在证明引理之前，让我们先把引理的语句和我们前面的证明模式关联起来，
+等式\ref{Equ:3_1}。注意为了阅读把引理分成了几个句子。因此t是主要的递归变量
+而W是所有2-tree的集合。第二个句子代表假设，所以表示$A(t)$。最后的三个结论组成$C(t)$。
+和前面的例子一样，粗体表示了在任何递归证明中的关键部分。
 
-\emph{֤���ǹ���}calcEpl�Ĳ���t��t with the "subtree" partial order��\emph{���������}t
-��Ҷ�ӡ�����calcEpl�ĵ�2��ʱ��epl=0��m=1������ϣ�1����2������ Ҳ���ϣ�3����
+\emph{证明是归纳}calcEpl的参数t，t with the "subtree" partial order。\emph{基本情况是}t
+是叶子。到达calcEpl的第2行时，epl=0和m=1，这符合（1）（2），且 也符合（3）。
 
-\emph{��}t����Ҷ�ӣ�\emph{����������������s������}��\emph{����}s��t���ϸ�������Ҳ����
-˵�����$epl_s$��$m_s$��calcEpl(s)���ص�ֵ����$m_s$��s��external�ڵ��������$epl_s$��
-s���ⲿ·���ĳ��ȣ�$epl_s\geq m_s\lg(m_s)$ ����L��R�ֱ��ʾt�������������������Ҫ��
-���ϸ���������˿��Բ��õݹ���衣��Ϊt�ǲ���Ҷ�ӣ���ִ�дӵ�4�е���7�еĴ��룬����
-����ĵ�ʽ
+\emph{当}t不是叶子，\emph{假设引理对于所有s都成立}，\emph{其中}s是t的严格子树。也就是
+说，如果$epl_s$和$m_s$是calcEpl(s)返回的值，则$m_s$是s的external节点的数量，$epl_s$是
+s的外部路径的长度，$epl_s\geq m_s\lg(m_s)$ 。令L和R分别表示t的左右子树。这里必须要求
+是严格子树，因此可以采用递归假设。因为t是不是叶子，将执行从第4行到第7行的代码，则有
+下面的等式
 \begin{displaymath}
 \begin{aligned}
     &epl= epl_L +epl_R + m_L +m_R\\
@@ -765,77 +765,77 @@ s���ⲿ·���ĳ��ȣ�$epl_s\geq m_s\lg(m_s)$ ����L��R�ֱ��ʾt�������������������
 \end{aligned}
 \end{displaymath}
 
-ͨ���ݹ�����exteranl·�����ȵĵݹ鶨�壬epl��t��exteranl·�����ȡ�t��
-ÿһ��external�ڵ㶼��ͬ����L��R��external�ڵ㣬����m��t��external�ڵ����Ŀ��
+通过递归假设和exteranl路径长度的递归定义，epl是t是exteranl路径长度。t的
+每一个external节点都是同样是L或R的external节点，所以m是t的external节点的数目。
 
-ʣ�µ���֤�� ������ע�⵽���μ���ϰ3.2������$x\lg x$��$x>0$ʱ��͹�ģ���������
-����ʹ������\ref{Lemma:ConvexLemma1}��ͨ�����ɼ���������
+剩下的是证明 。我们注意到（参见练习3.2）函数$x\lg x$在$x>0$时是凸的，所以我们
+可以使用引理\ref{Lemma:ConvexLemma1}。通过归纳假设我们有
 \begin{displaymath}
 \begin{aligned}
 epl &\geq m_L\lg(m_L) +m_R\lg(m_R) +m\\
 m_L\lg(m_L) + m_R\lg(m_R) &\geq 2(\frac{m_L+m_R}{2})\lg(\frac{m_L+m_R}{2})
 \end{aligned}
 \end{displaymath}
-���ڡ�$\geq$���Ĵ����ԣ�
+由于“$\geq$”的传递性，
 \begin{displaymath}
 epl \geq  m(\lg(m) -1) +m =m\lg(m)
 \end{displaymath}
 \end{lemma}
 
 \begin{corollary}
-һ��2-tree��external·������epl�е��ޣ�$epl \geq (n+1)\lg(n+1)$��
+一颗2-tree的external路径长度epl有底限：$epl \geq (n+1)\lg(n+1)$。
 
-֤���� ÿһ����n��internal�ڵ��2-tree����(n+1)��external�ڵ㣨�μ���ϰ3.1������
-����\ref{Lemma:ExternalNodeCount}��
+证明： 每一个有n个internal节点的2-tree都有(n+1)个external节点（参见练习3.1）采用
+引理\ref{Lemma:ExternalNodeCount}。
 \end{corollary}
 
-���������ݹ������Ҫ����֯���෵�ض���������������ʹֻ��Ҫһ���������Ƿ���
-������������ڼ򻯳���������������棬extNum����Ҫ�ڲ�ѯ��Ȼ���ڵݹ������
-�������Ἣ��ļ�ʣ�µļ��㡣�������������ӣ��μ���ϰ3.13�������ϰҪ�������
-һ������������������Ķ������ϵ����Ȩ��
+经常发生递归过程需要用组织者类返回多个参数的情况，即使只需要一个量，但是返回
+多个参数有利于简化程序。在这个例子里面，extNum不需要在查询，然是在递归过程中
+返回它会极大的简化剩下的计算。对于其他的例子，参见练习3.13，这个练习要求你设计
+一个函数来计算树顶点的独立集合的最大权。
 
-\section{֤�������̡�����ȷ��}\label{Sec:ProvingCorrectnessOfProcedures}
+\section{证明“过程”的正确性}\label{Sec:ProvingCorrectnessOfProcedures}
 \emph{Things should be made as simple as possible-but not simpler.}\\
 \indent\indent -Albert Einstein
 
-һ����Ϊ֤��һ���������ȷ����һ����������������\emph{һ��ĳ���}��Ȼ����֤��
-��ȷ�Զ��ڽ������Ͳ�����ȷ�����ĳ�����˵���м�ֵ�Ļ�����������Ѿ�֤��Ϊ��ȷ
-�ĳ���ķ��ȥд�������ǳ�֮Ϊ֤���Ѻ÷��������֤��Ӧ�����ܰ������ǣ�������
-��Ϊ����ĸ�������֤���������ǵķ�������֤���Ѻ÷��д���򣬻�����������֤���Ѻ�
-������Ч�ʵķ��֮��ı䡣
+一般认为证明一个程序的正确性试一个绝望的困难任务，\emph{一般的程序}。然而，证明
+正确性对于解决问题和产生正确工作的程序来说是有价值的活动。诀窍是以已经证明为正确
+的程序的风格去写程序。我们称之为证明友好风格。我们想证明应该是能帮助我们，而不是
+成为额外的负担。让证明帮助我们的方法是以证明友好风格写程序，或者至少能在证明友好
+风格和有效率的风格之间改变。
 
-����һ���������ǽ���һ��֤���������Ӽ򵥵Ŀ�ʼ�𽥸��ӣ�����һֱ����Ƹ��ӵĳ̶ȡ�
-���Ƿ�չ�ķ�񽫻������Ȿ�����档�����ǵ���ֵparadigm�͵ݹ顣
-����ֵparadigm��\ref{Sec:ParadigmOfSingleAssignment}С�����롣
+在这一节里面我们建立一套证明方法，从简单的开始逐渐复杂，但是一直会控制复杂的程度。
+我们发展的风格将会用在这本书里面。基础是单赋值paradigm和递归。
+单赋值paradigm在\ref{Sec:ParadigmOfSingleAssignment}小节引入。
 
-\subsection{���������}
-\emph{Block}��һ�δ��룬block��Ψһ����ں�Ψһ�ĳ��ڡ�Blocks�ǳ������͹��̴���
-����Ҫ���֡�һ��\emph{����}��һ�������ֵ�block�����̳�ʹ��һЩ
-\emph{������parameters��}�������ǵ�������˵������������\emph{����}Ҳ����\emph{���}�ġ�
-Ϊ�˼����⣬���Ǽ���û�в����Ǽ���������Ҳ�������������������������ֱ����
-�������������У����Ǽ�����������ڹ���ִ�й�����\emph{���ᱻ�޸�}�������Ҫ�޸ģ�
-���Ѳ������Ƶ�һ���ֲ������С����Լ���������ǽ������������postconditions without
+\subsection{定义和术语}
+\emph{Block}是一段代码，block有唯一的入口和唯一的出口。Blocks是程序代码和过程代码
+的主要部分。一个\emph{过程}是一个带名字的block。过程常使用一些
+\emph{参数（parameters）}，以我们的理解来说，参数可以是\emph{输入}也可以\emph{输出}的。
+为了简化问题，我们假设没有参数是既用于输入也用于输出；可以设计两个参数分别完成
+输入和输出。还有，我们假设输入参数在过程执行过程中\emph{不会被修改}。如果需要修改，
+将把参数复制到一个局部变量中。这个约定允许我们将输入参数当作postconditions without
  having to specify that we are referring to the values at the time of entry.
 
-һ��\emph{����}��һ������������Ĺ��̣�����ж������������ǿ��Լ������Ǳ���װ��
-һ��\emph{��֯����}���󣨲μ�\ref{Sec:OrganizerClass}�ڣ���������ǿ��Ա�һ��
-\textbf{return}��䷵�ء���Ϊ����һ�����ڵ㣬����\textbf{return}�����������
-���ڵ㡣�����ʽ�������ǽ���������һ������Ĺ��̴�����
+一个\emph{函数}是一个带输出参数的过程；如果有多个输出参数我们可以假设他们被封装在
+一个\emph{组织者类}对象（参见\ref{Sec:OrganizerClass}节），因此他们可以被一个
+\textbf{return}语句返回。因为仅有一个出口点，所以\textbf{return}语句必须是这个
+出口点。这个形式允许我们将函数当作一个特殊的过程处理。
 
-һ������ͨ��������\emph{�Ǿֲ�����}�������ڹ��̵�ͷ��Ҳ���ڹ��̵����ж�����κ����ݡ�
-ʵ���ϣ����һ������û������������������ܲ���Ч����Ψһ���������÷Ǿֲ����ݡ�ͬ���ģ�
-���̿��Զ���ֲ����ݡ��ڹ���ִ�еĹ����У����̵Ĳ���Ҳ������Ϊ��һ�־ֲ����ݡ�
+一个过程通常不引用\emph{非局部数据}，即不在过程的头，也不在过程的体中定义的任何数据。
+实际上，如果一个过程没有输出参数，调用它能产生效果的唯一方法是引用非局部数据。同样的，
+过程可以定义局部数据。在过程执行的过程中，过程的参数也可以认为是一种局部数据。
 
-һ���ڹ����е�blockҲ��������\emph{�Ǿֲ�����}������block֮�ⶨ������ݡ���Ҳ����
-ȫ�����ݡ�����������block��װ�����ݣ������ǹ���֮������ݣ���֮�Ƿ���ʹ�õ����Ե�
-�ɼ������ܷ��ʵ������ݡ�
+一个在过程中的block也可以引用\emph{非局部数据}，即在block之外定义的数据。这也叫做
+全局数据。这可以是外层block封装的数据，或者是过程之外的数据，总之是符合使用的语言的
+可见规则，能访问到的数据。
 
-������������ر�˵��һ�¡������������Ϊһ���������ݣ������\emph{����}����Ϊ�Ǿֲ�
-���ݣ����������\emph{����}����Ϊ�ǷǾֲ����ݡ���ĵģ���Java�У�һ�������\emph{����}
-�Ǿֲ��ģ����Ƕ����\emph{ʵ����}�ǷǾֲ��ġ����·Ǿֲ����ݶ���ĳЩ�㷨��Ч�ʷǳ���
-Ҫ������Ϊ֤����ȷ�Դ����˺ܴ���鷳��
+对于数组必须特别说明一下。如果将数组作为一个参数传递，数组的\emph{引用}被认为是局部
+数据，但是数组的\emph{内容}被认为是非局部数据。类的的，在Java中，一个对象的\emph{引用}
+是局部的，但是对象的\emph{实例域}是非局部的。更新非局部数据对于某些算法的效率非常重
+要，但是为证明正确性带来了很大的麻烦。
 
-\subsection{�������ƽṹ}\label{Sec:ElementaryControlStructures}
+\subsection{基本控制结构}\label{Sec:ElementaryControlStructures}
 \begin{figure*}[!t]
     \centering
     \begin{tikzpicture}[scale=0.8]
@@ -865,65 +865,65 @@ epl \geq  m(\lg(m) -1) +m =m\lg(m)
         \node (P0)  at (7,-0.5) {\emph{alternation}};
         \node (P0)  at (13,-0.5) {\emph{procedure call}};
     \end{tikzpicture}
-    \caption{�������ƽṹ}
+    \caption{基本控制结构}
     \label{Fig:ElementaryProceduralControlStructures}
 \end{figure*}
 
 
-���ƽṹ�ǵ��²�ͬ��block��ִ�еĻ��ơ�һ��ʼ���ǽ�����3�ֿ��ƽṹ���μ�
-ͼ\ref{Fig:ElementaryProceduralControlStructures}����\emph{˳��}��block1��
-֮��block2����\emph{ѡ��}��if\emph{����} then block1��else block2������
-\emph{���̵���}�������ǵĻ���֤������ѧ��ʡ��\textbf{for}��\textbf{while}
-ѭ��������ġ��ڷ�չ����������ѧ֮����������3�ֹ������Ӧ��
-����\ref{Sec:ProceduresWithLoop}С�ڣ���
+控制结构是导致不同的block被执行的机制。一开始我们仅考虑3种控制结构（参见
+图\ref{Fig:ElementaryProceduralControlStructures}）：\emph{顺序}（block1，
+之后block2），\emph{选择}（if\emph{条件} then block1，else block2），和
+\emph{过程调用}。在我们的基本证明方法学中省略\textbf{for}和\textbf{while}
+循环是特意的。在发展出基本方法学之后，我们讨论3种构造的适应性
+（在\ref{Sec:ProceduresWithLoop}小节）。
 
-�����ܲ���ѭ��д��������õĳ����𣿳Ծ��Ĵ���"yes"������ʹ�õݹ飬������
-�õݹ�һ�����ѭ�����򵥡�
+我们能不用循环写出任意可用的程序吗？吃惊的答案是"yes"。可以使用递归，，而且
+用递归一般比用循环更简单。
 
-��֤����ȷ�ԡ���ζ��֤��һ�����̵��ض��߼���䡣���硰limited warranty����statements
+“证明正确性”意味着证明一个过程的特定逻辑语句。例如“limited warranty”，statements
  are phrased carefully, so that sweeping that a proof would be hopelessly
-difficult. ��������������Щ������ʽ��
+difficult. 现在我们描述这些语句的形式。
 
 \begin{definition}
-Precondition, postcondition���͹淶
+Precondition, postcondition，和规范
 
-\emph{Precondition}��һ���������������һ��block���������̺ͺ������ľֲ����ݵ�
-�߼���䣬��block�����ʱ��preconditionӦ�����档\emph{Postcondition}��һ��
-����������������������block�ķǾֲ����ݵ��߼���䣬��block�˳���ʱ��
-postconditionӦ�����档Block�Ĺ淶��preconditions��postconditions��
-����������block��ȷ����Ϊ��
+\emph{Precondition}是一个关于输入参数和一个block（包括过程和函数）的局部数据的
+逻辑语句，在block进入的时候，precondition应该是真。\emph{Postcondition}是一个
+关于输入参数、输出参数、block的非局部数据的逻辑语句，在block退出的时候，
+postcondition应该是真。Block的规范是preconditions和postconditions，
+他们描述了block正确的行为。
 \end{definition}
 
-ÿһ��block���������̺ͺ����������й淶�����������֤��������ȷ�ԵĻ���
-Ϊ��֤����ȷ����Ϊ��֤��������ʽ���������㹻�ˡ�
+每一个block（包括过程和函数）必须有规范，如果我们想证明它的正确性的话。
+为了证明正确的行为，证明下面形式的引理就足够了。
 
 \begin{proposition}\label{Proposition:GeneralCorrectnessLemmaForm}
-��ͨ����ȷ��������ʽ�������block�����ʱ�����е�\emph{preconditions}�����㣬
-��block�˳���ʱ�����е�\emph{postconditions}��Ӧ�����档
+（通用正确性引理形式）如果当block进入的时候所有的\emph{preconditions}都满足，
+则block退出的时候所有的\emph{postconditions}都应该是真。
 \end{proposition}
 
-����һ��block���Է�Ϊ\emph{˳��ṹ}��block1 then block2��Ϊ��֤��block��
-��ȷ�ԣ�֤��������ʽ���������㹻�ˣ�
+假设一个block可以分为\emph{顺序结构}：block1 then block2。为了证明block的
+正确性，证明如下形式的引理就足够了：
 
 \begin{proposition}\label{Proposition:SequenceCorrectnessLemmaForm}
-��˳��ṹ��ȷ��������ʽ��
+（顺序结构正确性引理形式）
 \begin{enumerate}
-\item Block��preconditions������block1��preconditions��
-\item Block1��postconditions������block2��preconditions��
-\item Block2��postconditions������block��postconditions��
+\item Block的preconditions包含了block1的preconditions。
+\item Block1的postconditions包含了block2的preconditions。
+\item Block2的postconditions包含了block的postconditions。
 \end{enumerate}
 \end{proposition}
 
-����һ��block���Է�Ϊ\emph{ѡ��ṹ}��if��\emph{condition}��then true-block��
-else false-block��Ϊ��֤��block����ȷ�ԣ�֤��������ʽ���������㹻�ˣ�
+假设一个block可以分为\emph{选择结构}：if（\emph{condition}）then true-block，
+else false-block。为了证明block的正确性，证明如下形式的引理就足够了：
 
 \begin{proposition}\label{Proposition:AlternationCorrectnessLemmaForm}
-��ѡ��ṹ��ȷ����ʽ��
+（选择结构正确性形式）
 \begin{enumerate}
-\item Block��preconditions�߼���condtionΪ�������true-block��preconditions��
-\item True-block��postcondition�߼���conditionΪ�棨��true-block�����ʱ�̣�������block��postcondition��
-\item Block��preconditions�߼���condtionΪ�ٰ�����false-block��preconditions��
-\item False-block��postcondition�߼���conditionΪ�٣���false-block�����ʱ�̣�������block��postcondition��
+\item Block的preconditions逻辑与condtion为真包含了true-block的preconditions。
+\item True-block的postcondition逻辑与condition为真（在true-block进入的时刻）包含了block的postcondition。
+\item Block的preconditions逻辑与condtion为假包含了false-block的preconditions。
+\item False-block的postcondition逻辑与condition为假（在false-block进入的时刻）包含了block的postcondition。
 \end{enumerate}
 \end{proposition}
 
@@ -983,83 +983,83 @@ else false-block��Ϊ��֤��block����ȷ�ԣ�֤��������ʽ���������㹻�ˣ�
         \draw [->] (10, -0.3) -- (7.5, -0.3);
     \end{tikzpicture}
     }
-    \caption{����֤��\emph{˳��}��\emph{ѡ��}�ṹblock��preconditions���Ƶ���postconditions���Ƶ���}
+    \caption{用来证明\emph{顺序}和\emph{选择}结构block的preconditions能推导出postconditions的推导链}
     \label{Fig:TheChainsOfInferences}
 \end{figure*}
 
-ͼ\ref{Fig:TheChainsOfInferences}չʾ������\ref{Proposition:SequenceCorrectnessLemmaForm}
-��\ref{Proposition:AlternationCorrectnessLemmaForm}����ν�������Ի������
-����\ref{Proposition:GeneralCorrectnessLemmaForm}��֤����ʽ�ġ�
+图\ref{Fig:TheChainsOfInferences}展示了命题\ref{Proposition:SequenceCorrectnessLemmaForm}
+和\ref{Proposition:AlternationCorrectnessLemmaForm}是如何进行组合以获得类似
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}的证明形式的。
 
-����һ��block��һ�����̵�����ɡ�Ϊ��֤��block����ȷ�ԣ�֤��������ʽ���������㹻�ˣ�
+假设一个block由一个过程调用组成。为了证明block的正确性，证明如下形式的引理就足够了：
 \begin{proposition}\label{Proposition:ProcedureCallCorrectnessLemmaForm}
-�����̵�����ȷ��������ʽ��
+（过程调用正确性引理形式）
 \begin{enumerate}
-\item Block��preconditions��������ʵ�ʲ������ù��̵�preconditions��
-\item Block��postconditions��������ʵ�ʲ������ù��̵�postconditions��
+\item Block的preconditions包含了以实际参数调用过程的preconditions。
+\item Block的postconditions包含了以实际参数调用过程的postconditions。
 \end{enumerate}
 \end{proposition}
 
-��Ҫ����ע��Ϊ��֤���������̵��õ�block����ȷ������\emph{��}��Ҫ֤������
-���ñ�������ȷ�ԣ����̵��õ���ȷ���ǵ����Ľ����
+重要的是注意为了证明包含过程调用的block的正确性我们\emph{不}需要证明过程
+调用本身的正确性；过程调用的正确性是单独的结果。
 
-����������֤���Ľṹ����ʹ�����ǿ���֤��һ��block����ȷ�ԣ����ǻ�û��
-�������֤���ض���������ϸ�ڡ����Ǻ��м����Ժ͸��ӵ����⡣
+我们描述的证明的结构，这使得我们可以证明一个block的正确性，但是还没有
+进入如何证明特定程序语句的细节。这是很有技术性和复杂的主题。
 
-���磬�������ǿ���java��䣬��x=y+1���������֮�����ǿ���֪��ʲô�߼����
-��Ҳ����ʲô������postcondition�����ƺ�postcondtion�ǵ�ʽx=y+1������
-��������ǡ�y=y+1�������Ǽ���������һ��������С�x=y+1, y=z����
+例如，假设我们看到java语句，“x=y+1”。在语句之后我们可以知道什么逻辑语句
+（也就是什么是语句的postcondition）？似乎postcondtion是等式x=y+1。但是
+假设语句是“y=y+1”？或是假设我们有一个语句序列“x=y+1, y=z”？
 
-ʵ���У�����������common sense�� arguments����������ʽ��֤��������������ͼ
-ָ�����̴�������ʲô�߼���䣬���ǹ�ע������postcondition�Ƿ��ܵ������
-��ͼ���ڽ��۵ó�\emph{ad hoc arguments}����һ���������۸��õķ�ʽ��
+实践中，人们依赖“common sense” arguments，而不是正式的证明方法。不是试图
+指出过程代码隐含什么逻辑语句，我们关注描述的postcondition是否能到达，而且
+试图对于结论得出\emph{ad hoc arguments}。下一个主题讨论更好的方式。
 
 
-\subsection{����ֵ����}\label{Sec:ParadigmOfSingleAssignment}
-�����ڶ�֤���Ѻõı�̷����о��У��о��߷�������֤�����ѵ�����Ҫ�����ֹ��죺
-\emph{goto}����\emph{��ֵ}��䡣������ֵ����ǲ���ʵ�ʵģ��������ڵ��о���
-��ʼ����goto��䣬��������˽ṹ����̵����𡣲��ҵ��ǣ���ʹû��goto��䣬
-֤��ͨ���������ѵġ�
+\subsection{单赋值范例}\label{Sec:ParadigmOfSingleAssignment}
+在早期对证明友好的编程风格的研究中，研究者发现引起证明困难的是主要是两种构造：
+\emph{goto}语句和\emph{赋值}语句。消除赋值语句是不切实际的，所以早期的研究者
+开始消除goto语句，结果导致了结构化编程的兴起。不幸的是，即使没有goto语句，
+证明通常还是困难的。
 
-�����������ֵ�������ⱻ������������ķ������������¸�ֵ��overwriting��
-��ֵ��䡣����˵���ڱ�������֮�󣬱���ֻ��һ��ֵ��һ����ֵ֮��Ͳ��ܱ����ǡ�
-��Ȼ��������ֵ�ڱ�����������֮�ڲ��ܸı䣬��ô���ڱ�����֤�ͼ��ˡ�
-�����\emph{����ֵ����}��
+最近，消除赋值语句的问题被重新提出，出的方法是消除重新赋值（overwriting）
+赋值语句。就是说，在变量创建之后，变量只有一个值；一旦赋值之后就不能被覆盖。
+既然，变量的值在变量的生存期之内不能改变，那么关于变量论证就简单了。
+这就是\emph{单赋值范例}。
 
-�ܶ�������������һ�廯�ĵ���ֵ����Լ��������Prolog��ML��Haskell��Sisal
+很多程序设计语言有一体化的单赋值范例约束，比如Prolog、ML、Haskell、Sisal
 \footnote{for Streams and iteration in a single assignment language}
-��SAC������ֵC����
+和SAC（单赋值C）。
 
-������������������У�����C��Fortran��Java��Ҳ�����ڲ��ı�������Ϊ�����
-��ת���ɵ���ֵ������ת�����ڱ����Ż��Ͳ��д����⡣�о����ֲ��õ���ֵ��ʽ
-֮�󣬳���������Դﵽ����ĳ̶ȣ��μ����º���� Notes��References��������
-���ճ��ı�����õ���ֵ�������ŵ���
+在其他程序设计语言中，包括C、Fortran和Java，也可以在不改变程序的行为的情况
+下转换成单赋值。这种转换用于编译优化和并行代码检测。研究发现采用单赋值形式
+之后，程序分析可以达到很深的程度（参见本章后面的 Notes和References）我们能
+在日常的编程利用单赋值范例的优点吗？
 
-\emph{����ֵ����}����ͨ�ã����ǿ��Էǳ��򵥵����ڷ�ѭ���ľֲ���������ѭ���������
-�ݹ���̵��õĴ��룬����������ƻ����������ص���ֵ�������õĵز�����ʵ�ϣ�
-Sisal�ı�������\textbf{for}��\textbf{while}ѭ��ת���ɵݹ���̵��ã�������
-����ת����ĳ����в��õ���ֵ����������ǿ��ʹ���˵���ֵ������Sisal��������
-�Զ�������һ�δ�����Բ���ִ�С����ǣ�����ֵ������������ʽҲ���Ժ�
-\textbf{while}��\textbf{for}ѭ��һ��ʹ�á�
+\emph{单赋值范例}不能通用，但是可以非常简单的用于非循环的局部变量。非循环代码包含
+递归过程调用的代码，所以这个限制还不至于严重单赋值范例无用的地步。事实上，
+Sisal的编译器将\textbf{for}和\textbf{while}循环转换成递归过程调用，所以它
+能在转换后的程序中采用单赋值范例。由于强制使用了单赋值范例，Sisal编译器能
+自动分析哪一段代码可以并行执行。但是，单赋值范例的限制形式也可以和
+\textbf{while}和\textbf{for}循环一起使用。
 
-��ϰһ�±�С��ǰ���ᵽ��ʹ��֤�������ѵĸ�ֵ��䡣�ڵ���ֵ�����С�x=y+1;��
-������ʽx=y+1������������x��һ��ֵ���鷳������ǡ�y=y+1;���͡�x=y+1; y=z����
-������Υ������ֵ��������䣬��y�ڶ��θ�ֵ�ˡ�
+复习一下本小节前面提到的使得证明变困难的赋值语句。在单赋值范例中“x=y+1;”
+隐含等式x=y+1在整个程序中x有一个值。麻烦的语句是“y=y+1;”和“x=y+1; y=z”，
+这两个违反单赋值范例的语句，将y第二次赋值了。
 
-��û��ѭ���Ĺ����У�x��y�����Ǿֲ��������������ǿ���ͨ���������ľֲ�����
-�����������ļ��㡣
+在没有循环的过程中，x和y可以是局部变量，我们总是可以通过定义额外的局部变量
+做我们想做的计算。
 
 \begin{example}\mbox{}\par
-Ϊ��������䡰y=y+1;������д��y1=y+1;�������棬���ǵõ�����Ч�ĵ�ʽy1=y+1��
-Ϊ��������x=y+1;y=z�����Ǳ�����������Ч��ʽ��x=y+1��y1=z������������У�����
-�����֧�������ж�y�����ö����Ըĳ�y1����Ϊy1���޸ĺ��ֵ��
+为了修正语句“y=y+1;”我们写“y1=y+1;”来代替，我们得到了有效的等式y1=y+1。
+为了修正“x=y+1;y=z”我们必须有两个有效等式，x=y+1和y1=z。在两种情况中，过程
+这个分支后面所有对y的引用都可以改成y1，因为y1是修改后的值。
 \end{example}
 
-�����ǿ�һ������ͨ�����ѣ�һ����������ѡ��ṹһ���ķ�֧����Ÿ��£�������
-��֧����ʹ��ʱ����˷�֧�����������
+让我们看一个更普通的困难：一个变量仅在选择结构一个的分支里面才更新，但是在
+分支后面使用时混合了分支的两种情况。
 
 \begin{example}\mbox{}\par
-��������Ĵ���Ƭ��
+考虑下面的代码片段
 
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     1.if(y<0)
@@ -1067,10 +1067,10 @@ Sisal�ı�������\textbf{for}��\textbf{while}ѭ��ת���ɵݹ���̵��ã�������
     3.x=2*y;
 \end{lstlisting}
 
-��������ǰ��˵�ģ����Ǳ��붨��һ���ֲ�����y1��Ȼ�󽫵ڶ����滻�ɡ�y1=0��������
-��3���أ���Ȼ���ǲ�֪����ʹ��y����y1����������ǣ�����ֲ�������ѡ��ṹ��
-һ����֧���渳ֵ���������еķ�֧�и�����ȷ��ֵ������������£�ʹ�ö�����ֵ���
-���ǽ���һ����ֵ��佫��ִ�С��޶���ķ��ϵ���ֵ�����Ĵ�����
+根据我们前面说的，我们必须定义一个局部变量y1，然后将第二行替换成“y1=0”。但是
+第3行呢？显然我们不知道该使用y还是y1。解决方案是：如果局部变量在选择结构的
+一个分支里面赋值，则在所有的分支中赋以正确的值。在这种情况下，使用多条赋值语句
+但是仅有一条赋值语句将会执行。修订后的符合单赋值范例的代码是
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     1.if(y<0)
     2.  y1=0;
@@ -1078,40 +1078,40 @@ Sisal�ı�������\textbf{for}��\textbf{while}ѭ��ת���ɵݹ���̵��ã�������
     4.  y1=y;
     5.x=2*y1;
 \end{lstlisting}
-�������Ƕ��ڱ�������һ���������߼���ϵ��$\Rightarrow$��ʾ�Ƶ�����$\wedge$��ʾ��ȡ����
+现在我们对于变量有了一个清晰的逻辑关系（$\Rightarrow$表示推导出，$\wedge$表示合取）：
 \begin{displaymath}
 (y<0 \Rightarrow y1=0) \wedge (y\geq 0 \Rightarrow y1 =y )\wedge (x =2y1)
 \end{displaymath}
-��������������������ܻᵼ��Ч���½�������ʵ�ʵı������Ż��������׵��жϣ����
-ԭ����yû���ٱ����������Ŀռ������洢y1��
+创建额外变量的做法可能会导致效率下降，但是实际的编译器优化可以轻易的判断，如果
+原来的y没有再被引用了它的空间用来存储y1。
 \end{example}
 
-Ȼ������ס����ֵ��������Ȼ����ʹ�þֲ����������Ƕ���������ʱ�ǲ����õġ���Ҫ����
-����Ԫ���Ǻܾ��������飬��Ȼ���ǲ�����Ϊ�޸���һ��Ԫ�ؾ����¶���һ�����������顣
-��ʹ�����������ˣ����ǻ��ǻ�����ͼ�õ��κ���������״̬���߼����ʱ�������ѡ���Ҫ
-���¶����ʵ����ʱҲ������ͬ�������⡣
+然而，记住单赋值范例，虽然可以使用局部变量，但是对于有数组时是不适用的。需要更新
+数组元素是很经常的事情，显然我们不能因为修改了一个元素就重新定义一个完整的数组。
+即使我们这样做了，我们还是会在试图得到任何描述数组状态的逻辑语句时遇到困难。需要
+更新对象的实例域时也会遇到同样的问题。
 
-\subsubsection{ת��û��ѭ���Ĺ���}
-����������while��forѭ�����ñ������۵�֤�����ߣ�and the procedure is reasonably
-compact����򵥵ķ������ܾ��ǽ�ѭ��ת����һ���ݹ���̡�
+\subsubsection{转换没有循环的过程}
+如果我们相对while或for循环采用本节讨论的证明工具，and the procedure is reasonably
+compact，最简单的方法可能就是将循环转换成一个递归过程。
 
 \begin{example}\mbox{}\par
-�㷨\ref{Algo:SequentialSearch}������һ��˳����ҵĵ������̡�����Ĵ������
-�ݹ�汾������ʹ�õ���ֵ����������\ref{Proposition:GeneralCorrectnessLemmaForm}
-��\ref{Proposition:AlternationCorrectnessLemmaForm}����֤������ȷ�ԡ������ǲ�
-֤���㷨\ref{Algo:SequentialSearch}����ȷ�ԣ�����һ������������ֵ���������ĸ��ӡ���
+算法\ref{Algo:SequentialSearch}给出了一个顺序查找的迭代过程。下面的代码给出
+递归版本，并且使用单赋值范例。命题\ref{Proposition:GeneralCorrectnessLemmaForm}
+到\ref{Proposition:AlternationCorrectnessLemmaForm}用于证明其正确性。（我们不
+证明算法\ref{Algo:SequentialSearch}的正确性，它将一个变量赋予多个值导致了它的复杂。）
 \end{example}
 
 \begin{algorithm}\label{Algo:seqSearchRec}
-˳����ң��ݹ�
+顺序查找，递归
 
-���룺 E, m, num, K, ����E��һ����num��Ԫ�ص����飨������$0, \cdots, num-1$����K��
-Ҫ���ҵ�Ԫ�أ�$m \geq 0$��Ҫ���ҵ�����ε���ʾ������Ϊ�˼򻯣����Ǽٶ�K��E��Ԫ�ض�
-���������ͺ�numһ����
+输入： E, m, num, K, 这里E是一个有num个元素的数组（索引从$0, \cdots, num-1$），K是
+要查找的元素，$m \geq 0$是要查找的数组段的启示索引。为了简化，我们假定K和E的元素都
+是整数，就和num一样。
 
-�����ans��һ����E��K��λ�ã���Χ��$m \leq ans <num$������-1�����K�ڷ�Χ��û���ҵ��Ļ���
+输出：ans，一个在E中K的位置，范围是$m \leq ans <num$，或是-1，如果K在范围内没有找到的话。
 
-ע�⣺������ñ�����ans=seqSearchRec(E, 0, num, K)��
+注意：顶层调用必须是ans=seqSearchRec(E, 0, num, K)。
 
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     int seqSearchRec(int[] E, int m, int num, int K)
@@ -1130,77 +1130,77 @@ compact����򵥵ķ������ܾ��ǽ�ѭ��ת����һ���ݹ���̡�
     }
 \end{lstlisting}
 
-ע��ans������������ֵ����У����������ڲ�ͬ�ķ�֧���棬�������Ƿ��ϵ���ֵ�����ġ�
-��������������β�����֪����������֤���̵���ȷ�ԡ�
+注意ans出现在三个赋值语句中，但是他们在不同的分支里面，所以这是符合单赋值范例的。
+让我们来看看如何采用已知的命题来验证过程的正确性。
 
-���ȣ�������Ҫ��ʽ��seqSearchRec��preconditions��
+首先，我们需要公式化seqSearchRec的preconditions：
 \begin{enumerate}
 \item $m\geq 0$
-\item ����m��i< num��E[i]�ǳ�ʼ���ġ�
+\item 对于m≤i< num，E[i]是初始化的。
 \end{enumerate}
-�������Ǹ���Ŀ�����postcondition�����ڵ�7�б�����true�ġ�
+现在我们给出目标或是postcondition，即在第7行必须是true的。
 \begin{enumerate}
-\item ���$ans=-1$�������$m \leq j < num$�� $E[i]\neq K$��
-\item ���$ans \neq -1$����$m \leq  ans< num$����$E[ans]=K$��
+\item 如果$ans=-1$，则对于$m \leq j < num$， $E[i]\neq K$。
+\item 如果$ans \neq -1$，则$m \leq  ans< num$，且$E[ans]=K$。
 \end{enumerate}
-���ڣ�ʹ������\ref{Proposition:GeneralCorrectnessLemmaForm}������չʾ�����������
-seqSearchRec��ʱ��precondition������ģ�����̵��ý�����ʱ��postcondition����
-����ġ����Ƿ��ֹ��̷��뵽����ѡ������У���2,4,6�У�����۵���7�е�
-return��䡣����\ref{Proposition:AlternationCorrectnessLemmaForm}����ÿ�������
-����ÿһ��ѡ�񣬵���ѡ��������ǿ�������֤��ÿһ����֧������postcondition�Ķ������Ϣ��
+现在，使用命题\ref{Proposition:GeneralCorrectnessLemmaForm}，我们展示了如果当进入
+seqSearchRec的时候precondition是满足的，则过程调用结束的时候postcondition就是
+满足的。我们发现过程分离到三种选择情况中，第2,4,6行，最后汇聚到第7行的
+return语句。命题\ref{Proposition:AlternationCorrectnessLemmaForm}用于每种情况。
+对于每一个选择，导致选择的条件是可以用于证明每一个分支都导致postcondition的额外的信息。
 
-��������2�У����1�е�������true��$m \geq num$������2��֮��ans= -1��֮���
-���˵�7�С���ʱ����1������Ϊtrue������û�������ڷ�Χ$m \leq i < num$�ڣ�����
-����1���㡣����2Ҳ��true����Ϊ����ǰ����false����ϰ\ref{Sec:LogicElement}С�ڣ���
+如果到达第2行，则第1行的条件是true（$m \geq num$）。第2行之后，ans= -1，之后就
+到了第7行。此时，第1行条件为true包含了没有索引在范围$m \leq i < num$内，所以
+条件1满足。条件2也是true，因为它的前提是false（复习\ref{Sec:LogicElement}小节）。
 
-���Ƶģ�����ﵽ��4�У���1�е�������false������m<num�����ҵ�3�е�������true��E[m]=K����
-��4���Լ������˵�ʽ��ans=m�����ϲ���Щ������2����ȷ�ġ���ʽ��$ans=m$����precondition 1
-���Եó�postcondition 1��ǰ����false�����postcondition 1��true��
+类似的，如果达到第4行，第1行的条件是false（所以m<num），且第3行的条件是true（E[m]=K）。
+第4行自己建立了等式（ans=m）。合并这些域，条件2是正确的。等式（$ans=m$）和precondition 1
+可以得出postcondition 1的前提是false；因此postcondition 1是true。
 
-�����������6�У���1�к͵�3�е���������false������m<num$��E[m]\neq K$�������ȣ�����
-��Ҫչʾ�����ڵ�6����ʵ�Ρ���ȷ�ĵ��á���seqSearchRec������˵�������ǳ�ʼ����Щʵ��
-������ʱ��������Ҫ��֤seqSearchRec��preconditions��
+最后，如果到达第6行，第1行和第3行的条件都是false（所以m<num$且E[m]\neq K$）。首先，我们
+需要展示我们在第6行以实参“正确的调用”了seqSearchRec。就是说，当我们初始化这些实际
+参数的时候，我们需要验证seqSearchRec的preconditions：
 \begin{enumerate}
-\item ���$m \leq 0$����$m+1 \leq 0$��
-\item ��Χ$m+1, \cdots, num+1$������$m, \cdots, num-1$������E[i]�ǳ�ʼ���ġ�
+\item 如果$m \leq 0$，则$m+1 \leq 0$。
+\item 范围$m+1, \cdots, num+1$包含在$m, \cdots, num-1$，所以E[i]是初始化的。
 \end{enumerate}
-���ڣ���������\ref{Proposition:ProcedureCallCorrectnessLemmaForm}�����ǿ��Եó�����
-��6�еĹ��̵��÷�������postconditions����Ȼ��6�и���ans��ֵ���ǵ��÷��ص�ֵ����
-������õ�postcondition����ʵ��m+1������Щpostconditions�Ͳ���$E[i]\neq K$������
-��ǰ���õ�postconditions��ʵ����m���������������-1��������$E[m+1], \cdots, E[num-1]$
-��������K������$E[m], \cdots, E[num-1]$Ҳ������K������$ans \geq m+1$��Ҳ��$ans \geq m$��
+现在，根据命题\ref{Proposition:ProcedureCallCorrectnessLemmaForm}，我们可以得出结论
+第6行的过程调用符合它的postconditions。既然第6行赋予ans的值就是调用返回的值，它
+满足调用的postcondition（以实参m+1）。这些postconditions和参数$E[i]\neq K$隐含了
+当前调用的postconditions（实参是m）。例如如果返回-1，隐含了$E[m+1], \cdots, E[num-1]$
+都不包含K，所以$E[m], \cdots, E[num-1]$也不包含K。另外$ans \geq m+1$，也有$ans \geq m$。
 
-�������չʾ�����۵�7����ε����Ҫ��postconditions���ܴﵽ��ʣ�µ�Ψһ������
-�Ƿ���ڿ����Ե�7����Զ�޷���������������޵ݹ��С�
-\ref{Sec:TerminationOfRecursiveProcedures}С������������⡣
+因此我们展示了无论第7行如何到达，需要的postconditions都能达到。剩下的唯一问题是
+是否存在可能性第7行永远无法到达，即进入了无限递归中。
+\ref{Sec:TerminationOfRecursiveProcedures}小节讨论这个问题。
 \end{algorithm}
 
-��ϰ3.6Ҫ�����ʹ�ñ�С�ڵļ���֤���������������Լ����ŷ������㷨����ȷ�ԡ�
+练习3.6要求读者使用本小节的技术证明找两个整数最大公约数的欧几里得算法的正确性。
 
-\subsection{��ѭ������}\label{Sec:ProceduresWithLoop}
-����\ref{Proposition:GeneralCorrectnessLemmaForm}��
-\ref{Proposition:ProcedureCallCorrectnessLemmaForm}��������һ����û��\textbf{for}
-��\textbf{while}ѭ���������֤����ȷ�ԵĿ�ܡ�ֻҪ��ѭ��������ֵ����ͨ�����ǲ�����
-���ˣ���Ϊ���붨��һ��ѭ��������indexed both by �����е��кź�by number of passes
- through the loop to keep track of all the values taken on by the same ���������
-Then ����С�ĵ�traceÿһ���仯�е���ʷֵ��������������ڹ�񻯹��̱�����˵����
-ѭ��ת���ɵݹ������ʵ���ϸ��򵥡�
+\subsection{带循环过程}\label{Sec:ProceduresWithLoop}
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}到
+\ref{Proposition:ProcedureCallCorrectnessLemmaForm}给我们了一个在没有\textbf{for}
+和\textbf{while}循环的情况下证明正确性的框架。只要有循环，单赋值范例通常就是不可能
+的了，因为必须定义一个循环变量，indexed both by 过程中的行号和by number of passes
+ through the loop to keep track of all the values taken on by the same 程序变量。
+Then 必须小心的trace每一个变化中的历史值。我们相信相对于规格化过程本身来说，将
+循环转换成递归过程在实践上更简单。
 
-��ʵ�ϣ�һ������������ѭ���͵ݹ�汾֮��Ĺ�ϵ��ͨ��û�б�Ҫʵ�ʵ����ת����
-��Ϊһ��Ԥ�������裬���Ǳ������У�
+事实上，一旦我们理解了循环和递归版本之间的关系，通常没有必要实际的完成转换。
+作为一个预处理步骤，我们必须下列：
 \begin{enumerate}
-\item ��ѭ�����ڲ������Χ������һ���ֲ���������ѭ����ֵ����������˵����һ�ֽ�������һ��ֵ��
-\item ��Ϊ����������£����ұ���������ѭ�����棩����ѭ������սᴦ�����еĸ��¡�
+\item 在循环体内部最宽范围内申明一个局部变量，遵循单赋值范例。就是说，在一轮仅给变量一个值。
+\item 因为变量必须更新（而且必须声明在循环外面），在循环体的终结处做所有的更新。
 \end{enumerate}
-��Щ������С���˱��뿼�ǵ��Ĳ�ͬ�����������
+这些规则最小化了必须考虑到的不同情况的数量。
 
-��һ��\textbf{while}ѭ�����±�ʾ�ɵݹ��һ������ǣ�
+将一个\textbf{while}循环重新表示成递归的一般规则是：
 \begin{enumerate}
-\item ��ѭ���ڸ��µı������һ�����̵����������������ѭ����ڵĳ�ʼֵ��Ӧ����
-    �ݹ���õ�ʵ�ʲ���ֵ�����ǳ���ЩΪ\emph{�������active parameters��}.
-\item ѭ�������õĵ������ȵĶ���ģ�
+\item 在循环内更新的变量变成一个过程的输入参数。他们在循环入口的初始值对应顶层
+    递归调用的实际参数值。我们称这些为\emph{活动参数（active parameters）}.
+\item 循环中引用的但是早先的定义的，
 \end{enumerate}
-forѭ���Ĺ������ơ�
+for循环的规则类似。
 
 \begin{figure*}[!t]
     \centering
@@ -1238,107 +1238,107 @@ forѭ���Ĺ������ơ�
         return ans;
     }
     \end{lstlisting}
-    \caption{whileѭ��ת���ɵݹ麯������ת������صĻ�����ʡ���ˡ�}
+    \caption{while循环转换成递归函数。与转换不相关的花括号省略了。}
     \label{Fig:TransformationOfFactorialFunction}
 \end{figure*}
 
-��ͼ\ref{Fig:TransformationOfFactorialFunction}��չʾ��һ����ɺ�����ת����
-ע��n��һ�����ݵĲ�����
+在图\ref{Fig:TransformationOfFactorialFunction}中展示了一个结成函数的转换。
+注意n是一个传递的参数。
 
-���˵�7�У�factLoop��ѭ�����ǿ���ʹ�õ���ֵ�����ġ�������ǿ���ʹ������
-\ref{Proposition:GeneralCorrectnessLemmaForm}��
-\ref{Proposition:ProcedureCallCorrectnessLemmaForm}�ͱ���֮��ĵ�ʽ��ϵ��˼��
-ѭ���壬��ǣ�浽���ӵ�������Ҳ����Ҫ����ͨ��������һ�������ڹ���ִ������
-��ͬ�ĸ�ֵ������һֱ����7�����Ƕ�����ʹ�õ���ֵ�����Ĵ�����������ʱ������ֵ
-Ϊ��һ�֡�roll over���ˡ���һ���ģ����������visualize�����rolling over����Ϊ
-���µ�ʵ�εĹ��̣�������������е�\emph{��ԭ��С�������ģ}�����ǾͿ��Գ���
-֤��ʹ�õݹ���㷨��ʽ����������޵ĳ������棬����ֵ�����������ڴ�ѭ���Ĺ��̡�
+除了第7行，factLoop的循环体是可以使用单赋值范例的。因此我们可以使用命题
+\ref{Proposition:GeneralCorrectnessLemmaForm}到
+\ref{Proposition:ProcedureCallCorrectnessLemmaForm}和变量之间的等式关系来思考
+循环体，不牵涉到复杂的索引，也不需要处理通常碰到的一个变量在过程执行中有
+不同的赋值。至少一直到第7行我们都可以使用单赋值范例的处理方法，此时变量的值
+为下一轮“roll over”了。进一步的，如果我们能visualize这个“rolling over”作为
+带新的实参的过程，并且这个过程有的\emph{比原来小的问题规模}，我们就可以尝试
+证明使用递归的算法形式。在这个有限的场景里面，单赋值范例可以用于带循环的过程。
 
-\subsection{��ȷ��֤����Ϊ���Թ���}
-֤����ȷ������ʵ�ʼ�ֵ������ʹ�Ƿǳ�����ʽ�����㡱֤����������֤�����ڱ����
-����û�п�ʼ֮ǰ�ͳ�����ȷָ����bug���ڡ���ʱ֤��������������˳һ�¹��̵�
-preconditions��postconditions������������Ϊע��д�ڴ����С�����ʹ���֤������
-һ�������㡱����Ҳ��Ӧ���ӱ��ⲽд�ĵ��Ĺ�������
+\subsection{正确性证明作为调试工具}
+证明正确性最大的实际价值——即使是非常不正式“心算”证明——在于证明能在编码和
+测试没有开始之前就常常精确指出了bug所在。有时证明仅是完整的理顺一下过程的
+preconditions和postconditions，并把他们作为注释写在代码中。（即使你的证明将是
+一个“心算”，你也不应该逃避这步写文档的工作。）
 
-�������bugs�ǹ��̵�preconditions�͵��ù���ʱ��ʵ��������ƥ�䣬�������ֲ�ƥ��
-�Ǽ򵥺��Զ��׼��ġ�����󲿷�����Ϊpostconditions��ƥ�䡣���ִ���ͨ���ڿ���
-����\ref{Proposition:ProcedureCallCorrectnessLemmaForm}֮��ͻ��Զ��׼���
+许多程序bugs是过程的preconditions和调用过程时的实际条件不匹配，而且这种不匹配
+是简单和显而易见的。另外大部分是因为postconditions不匹配。这种错误通常在考虑
+命题\ref{Proposition:ProcedureCallCorrectnessLemmaForm}之后就会显而易见。
 
-������Ƚ�΢�һ�п��ϡ�����ȥ���ԡ����������ͼʹ��������Ϊһ��һ������
-��С��block������֤����������̾�����ÿһ��block�����������block����˻�����������
-���ʡ��������Ҫ��Щ��������������һ��block�Ƿ���ȷ�Ĵﵽ��ЩҪ��
+当问题比较微妙，一切看上“看上去都对”，你必须试图使用命题来为一个一个合适
+大小的block来构在证明。这个过程就是问每一个block，“假设这个block完成了会怎样？”，
+再问“它完成需要那些条件？”现在其一个block是否正确的达到这些要求？
 
-�����������һ��bug�������������ĺ�С�ģ�\emph{֤�������ĵط�����bug������}������˵��
-bug��������block�д����߽總�������㷢��postconditions��preconditions��ƥ��ĵط���
+如果代码中有一个bug，而且你推理的很小心，\emph{证明出错的地方就是bug的所在}。就是说，
+bug就在两个block中穿过边界附近，在你发现postconditions和preconditions不匹配的地方。
 
-���磬�ڵݹ�˳���������㷨\ref{Algo:seqSearchRec}���У������1�е�������д����
-��$m \geq num-1$������postcondition 1�ڵ�2��֮�󽫲��ܵõ���bug�Ͷ�λ�ˡ�
+例如，在递归顺序搜索（算法\ref{Algo:seqSearchRec}）中，如果第1行的条件错写成了
+（$m \geq num-1$），则postcondition 1在第2行之后将不能得到，bug就定位了。
 
-��һ�����ӣ������㷨\ref{Algo:seqSearchRec}��1-2�к�3-4�н���һ��λ�ã�����˵��
-��1�б�ɡ�if(E[m]==k)�������Ǹ�����֤���������ᵽ����䶼�ظ��к��ϵı仯��
-���ǹ�����һ��bug��Ϊ���ڼ���ڼ��ҳ�bug�����Ǳ���ע�⵽���м���һ������ʽ��
-����precondition�Ǳ���ʽ�е���������Ԫ�ض��Ѿ�����ֵ��Ҳ�������ǲ���accessδ
-��ʼ���ı�����ʵ�������m�����Ǵ���num-1���������ǲ��ܱ�֤��һ�㡣��һ�εģ�
-֤����ͼ��¶bug�����ǽ������Ǽ��ĺ���ϸ��ʱ����С������Ǹ�������ʱ����
-һ�¡�����Ԫ�س�ʼ�����𣿡���һ���ܺõ�ϰ�ߡ�
+另一个例子，假设算法\ref{Algo:seqSearchRec}中1-2行和3-4行交换一下位置，就是说，
+第1行变成“if(E[m]==k)”。我们给出的证明中所有提到的语句都重复行号上的变化，
+但是过程有一个bug。为了在检查期间找出bug，我们必须注意到所有计算一个表达式的
+语句的precondition是表达式中的所有数据元素都已经给出值，也就是我们不能access未
+初始化的变量和实例域。如果m可能是大于num-1的数，我们不能保证这一点。再一次的，
+证明试图暴露bug，但是仅在我们检查的很仔细的时候才行。在我们复查代码的时候问
+一下“数据元素初始化了吗？”是一个很好的习惯。
 
 
-\subsection{�ݹ���̵���ֹ}\label{Sec:TerminationOfRecursiveProcedures}
-����\ref{Proposition:GeneralCorrectnessLemmaForm}��\ref{Proposition:ProcedureCallCorrectnessLemmaForm}��
-\ref{Sec:ElementaryControlStructures}С���������������еݹ���̵ĳ��ϣ�չʾ
-ʲô�в�����ȷ����Ϊ����û�и��������Ƿ����ֹ��Ϊ�������ȫ��ȷ��֤����
-����չʾÿһ�εݹ���ö��õ���ԭ��ҪС�����⡣
+\subsection{递归过程的终止}\label{Sec:TerminationOfRecursiveProcedures}
+命题\ref{Proposition:GeneralCorrectnessLemmaForm}到\ref{Proposition:ProcedureCallCorrectnessLemmaForm}，
+\ref{Sec:ElementaryControlStructures}小节描述的引理等有递归过程的场合，展示
+什么叫部分正确，因为他们没有给出过程是否该终止。为了完成完全正确的证明，
+必须展示每一次递归调用都得到比原来要小的问题。
 
-��ʱ������Ҫ֤���ݹ���õ�precondition������ģ���������۴��ݸ��ݹ���õ�
-�ṹ����"�����ģ"�ȵ����ߵ�ҪС����Ϊ��һ����ȷ�����⣬ʵ��������ʹ�ú���
-��һ������ۣ������ô����������۵���ʽ��֤����
+这时首先需要证明递归调用的precondition是满足的，其次是讨论传递给递归调用的
+结构或是"问题规模"比调用者的要小。作为另一个正确性问题，实践中人们使用合理
+的一般的讨论，而不用带公理和推论的正式的证明。
 
-����������£�����Ĺ�ģ��һ���Ǹ������������ӷ�Χ��Ԫ��������������Ԫ�ص�������
-������ࡣ�������㷨\ref{Algo:seqSearchRec}�У���
-\ref{Sec:ElementaryControlStructures}С�ڡ������ģ������Ķ���Ϊn=(num-m)��
-δ���Ԫ�ص�������ÿ�εݹ����Ϊ���¼���1�����ջ���ٵ�0��
+在许多情况下，问题的规模是一个非负整数，比如子范围的元素数量，链表中元素的数量，
+诸如此类。例如在算法\ref{Algo:seqSearchRec}中，在
+\ref{Sec:ElementaryControlStructures}小节“问题规模”方便的定义为n=(num-m)，
+未检查元素的数量。每次递归调用为导致减少1，最终会减少到0。
 
-����Щ����£�����Ĺ�ģ����ֱ��ʹ�ö����ڽṹ�ϵ�partial order��ͨ��һ������
-�������ݣ�����\emph{subtree} partial order(�ο�ͼ\ref{Fig:ExampleOfSubtreePartialOrder})��
-���磬��һ�����������������У���ͼ\ref{Fig:LegthOf2-tree external}�����
-���̵������������T����T���ǻ����������T��������T��ҪС��in partial order��
-�������ʽ��ȷ�Ķ������ṹ�ϵĵݹ���̻������
+在有些情况下，问题的规模可以直接使用定义在结构上的partial order，通过一个输入
+参数传递，比如\emph{subtree} partial order(参看图\ref{Fig:ExampleOfSubtreePartialOrder})。
+例如，在一个二叉树遍历过程中，如图\ref{Fig:LegthOf2-tree external}，如果
+过程的输入参数是树T，而T不是基本情况，则T的子树比T“要小”in partial order。
+因此在形式正确的二叉树结构上的递归过程会结束。
 
-Ϊ�˼����ϵ���ȷ���ڶ����������ݹ�Ĺ��̱�����һ��precondition�����������T��
-��ȷ�Ķ�����--û�л����淶BinaryTree�������ݽṹ����һ����������ͬ������
-\ref{Sec:BinaryTreeADT}С�����ģ���ʹ����������Զ����㡣
+为了技术上的正确，在二叉树上做递归的过程必须有一个precondition，即输入参数T是
+正确的二叉树--没有环。规范BinaryTree抽象数据结构类型一个动机（如同我们在
+\ref{Sec:BinaryTreeADT}小节做的）是使得这个条件自动满足。
 
-\subsection{���ֲ��ҵ���ȷ��}\label{Sec:CorrectnessofBinarySearch}
-��������֤���ݹ����binarySearch����ȷ�ԣ����ֲ��ҵ�ϸ�ڲο�
-�㷨\ref{Algo:BinrarySearch}��������Ϊһ���ù��ɷ�֤���ݹ���̵�ʾ����һ��
-����֤��������ȫ���Ĳ���ѭ���ݹ������ȷ�ԵĻ���֮�ϣ�����˵���������ڹ��̽�����
-�Լ�������preconditions�̺���postconditions�Ļ����ϡ�������ݹ���̵���
-�����̣��������̵���ȷ��Ҫ�ڵݹ���̱�֤��֮ǰ��Ϊһ���������ӡ���
+\subsection{二分查找的正确性}\label{Sec:CorrectnessofBinarySearch}
+我们现在证明递归过程binarySearch的正确性（二分查找的细节参看
+算法\ref{Algo:BinrarySearch}）。这作为一个用归纳法证明递归过程的示范。一个
+归纳证明建立在全部的不带循环递归过程正确性的基础之上；就是说，它建立在过程结束，
+以及各它的preconditions蕴涵了postconditions的基础上。（如果递归过程调用
+子例程，则子例程的正确性要在递归过程被证明之前作为一个假设添加。）
 
-���Ƕ���binarySearch�������ģn= last -first+1��E�ڲ��ҷ�Χ�е���Ŀ��������ͼ
-\ref{Fig:ProcedureforBinarySearch}ֻ��Ϊ�˷�������һ���ظ���
+我们定义binarySearch的问题规模n= last -first+1，E在查找范围中的条目的数量。图
+\ref{Fig:ProcedureforBinarySearch}只是为了方便做的一个重复。
 
 \begin{lemma}
-����$n\geq 0$�����\textbf{binarySearch(E, first, last, K)}�����ã�����Ĺ�ģ��
-(last- first +1)=n��E[first], ��, E[last]�ڷǵݼ��ף������K����E��first, ��, last
-�ķ�Χ�з���-1���������K=E[index]����index��
+对于$n\geq 0$，如果\textbf{binarySearch(E, first, last, K)}被调用，问题的规模是
+(last- first +1)=n，E[first], …, E[last]在非递减阶，则如果K不在E中first, …, last
+的范围中返回-1，否则如果K=E[index]返回index。
 
-֤��  ֤������n������Ĺ�ģ�����������n=0����ʱ��1����true�������2�У�����-1��
+证明  证明归纳n，问题的规模。基本情况是n=0。这时第1行是true，到达第2行，返回-1。
 
-����n>0������binarySearch(E, f, l,K)��$0\leq k <n$�������ģk������������f��l��
-������������$k=l-f+1$����Ϊ$n>0$����1����false��$first \leq last$�����̵���4�У�
-Ȼ���ǵ�5�С�����ǰ���ᵽ�Ĳ���ʽ�͵�ʽ$mid=\lfloor (first+last)/2\rfloor$��
-��$first\leq mid \leq last$�����mid��������Χ�ڡ������5����true�������ڵ�6��
-�õ��˽����
+对于n>0，假设binarySearch(E, f, l,K)在$0\leq k <n$的问题规模k上满足引理，f和l是
+任意索引满足$k=l-f+1$。因为$n>0$，第1行是false，$first \leq last$，流程到第4行，
+然后是第5行。根据前面提到的不等式和等式$mid=\lfloor (first+last)/2\rfloor$，
+得$first\leq mid \leq last$。因此mid在搜索范围内。如果第5行是true，过程在第6行
+得到了结果。
 
-���ڼٶ���5����false����ǰ�����������ʽ��n�Ķ��壬�����У�����$\leq$�Ĵ����ԣ�
+现在假定第5行是false。从前面的两个不等式和n的定义，我们有（根据$\leq$的传递性）
 \begin{displaymath}
 \begin{aligned}
 &(mid-1)-first+1 \leq (n-1)\\
 &last-(mid-1)+1 \leq (n-1)
 \end{aligned}
 \end{displaymath}
-���Զ��ڵ�8�к͵�10�е������ݹ���õݹ���趼�����õġ�
+所以对于第8行和第10行的两个递归调用递归假设都是适用的。
 
 \begin{figure*}[!t]
     \centering
@@ -1362,67 +1362,67 @@ bug��������block�д����߽總�������㷢��postconditions��preconditions��ƥ��ĵط
 11  return index;
 }
     \end{lstlisting}
-    \caption{binarySearch���̣��㷨\ref{Algo:BinrarySearch}���ظ�}
+    \caption{binarySearch过程，算法\ref{Algo:BinrarySearch}的重复}
     \label{Fig:ProcedureforBinarySearch}
 \end{figure*}
 
-���ڣ������7����true����ִ�е�8�С�ֱ�ӾͿ��Է���binarySearch��precondition������
-�ģ���Ϊ��8�е�ʵ�ʲ���ֻ�е�3�������ı��ˣ������Ǳ�С�ˡ�������Ǽٶ����������
-��binarySearch��Ŀ�ꡣ�����8�еĵ��÷���һ�����������������˵�ǰ�˵����⡣���
-��8�еĵ��÷���-1������ζ��K����E�ķ�Χ$first, \cdots, mid-1$�ڡ����ǵ�7��������K����
-��Χ$mid, \cdots, last$�ڣ����Դӵ�ǰ�Ĺ��̷���-1����ȷ�ġ������7����false����ִ��
-��10�У������Ƶġ�
+现在，如果第7行是true，则执行第8行。直接就可以发现binarySearch的precondition是满足
+的，因为第8行的实际参数只有第3个参数改变了，而且是变小了。因此我们假定调用了完成
+了binarySearch的目标。如果第8行的调用返回一个正的索引，这解决了当前了的问题。如果
+第8行的调用返回-1，这意味着K不再E的范围$first, \cdots, mid-1$内。但是第7行隐含了K不在
+范围$mid, \cdots, last$内，所以从当前的过程返回-1是正确的。如果第7行是false，则执行
+第10行，是类似的。
 \end{lemma}
 
-����֤����Ҫǿ����һ���ǣ������ǣ��ܣ��ٶ���8�к͵�10�еĵ�����������ǵ�Ŀ��֮ǰ��
-������Ҫ��֤���õ�preconditions����Ȼ�����߼��������ɵ��ù��̶�û���������
-��precondition����ģ����ּ���ܽ�ʾ�ܶ�bugs��
+关于证明需要强调的一点是，在我们（能）假定地8行和第10行的调用完成了他们的目标之前，
+我们需要验证调用的preconditions。既然许多逻辑错误是由调用过程而没有满足过程
+的precondition引起的，这种检查能揭示很多bugs。
 
-\section{�ݹ��ʽ}\label{Sec:RecursiveEquation}
-�ݹ��ʽ�Ƕ�������Ȼ���ϵĺ�����$T(n)$������ֵ����ʽ����һ��������С��n��������T��
-���仰˵��$T(n)$�ǹ��ɶ���ġ������еĹ���һ������������ǵ������壬�ݹ��ʽ������
-�Ȼ���������n���������ǵ���Ҫ��Ȥ���õݹ��ʽ��Ϊһ�������㷨������ʱ�䣬�ؼ���
-�ıȽϴ�����������������Ҫ���ߣ��ĺ���ʽ���ߣ����ⲻ�ǵݹ��ʽΨһ����;��������Ȥ
-����ѧ���������õݹ��ʽ���壬����Fibonacci���У���ʽ\ref{Equa:FibonacciSeries}��
+\section{递归等式}\label{Sec:RecursiveEquation}
+递归等式是定义在自然数上的函数，$T(n)$，它的值表达式中有一项或多项是小于n的整数的T。
+换句话说，$T(n)$是归纳定义的。如所有的归纳一样，基本情况是单独定义，递归等式仅处理
+比基本情况大的n。尽管我们的主要兴趣在用递归等式作为一种描述算法（运行时间，关键字
+的比较次数，或者其他的重要工具）的函数式工具，但这不是递归等式唯一的用途。许多有趣
+的数学函数可以用递归等式定义，比如Fibonacci数列，等式\ref{Equa:FibonacciSeries}。
 
-�õݹ��ʽ�������ݹ�����Ǻ���Ȼ�����顣���ڵ�Ŀ����չʾ��δӵݹ��ʽ�Ĵ���������
-���ݹ��ʽ���������㷨��һЩ�������ֵ�patterns��\ref{Sec:RecursionTrees}��̽������
-�ν�һЩ�����ĵݹ��ʽ����Ϊ��ͬ��Դ������������Ҫ������ʱ�䣬�ռ䣬�ؼ��ֱȽϴ���
-�ȣ������ǽ�ʹ��ͨ�õ�����\emph{cost}�������ݹ��ʽ�Ľ��ޡ�
+用递归等式来描述递归过程是很自然的事情。本节的目的是展示如何从递归等式的代码中衍生
+出递归等式，并描述算法中一些经常出现的patterns。\ref{Sec:RecursionTrees}节探索了如
+何解一些常见的递归等式。因为不同资源的数量可能需要度量（时间，空间，关键字比较次数
+等），我们将使用通用的术语\emph{cost}来给出递归等式的界限。
 
-��������Ҫָ��һ�ֶ�����������������Ҫ��ĵݹ���̵������ģ�����ģ��n���ݹ��ʽ
-��߽���T(n)��Ϊ�˹����ݹ��ʽ���ұ�������Ҫ���Ƶݹ�����ж��ٲ�ͬ�Ŀ飬��Щ��
-��cost��n�ĺ�����ϵ��������Щ���cost�ǳ�����We can just call all constants 1
+我们首先要指定一种度量方法来度量，需要解的递归过程的问题规模：令规模是n。递归等式
+左边将是T(n)。为了构建递归等式的右边我们需要估计递归过程有多少不同的块，这些块
+的cost与n的函数关系。经常有些块的cost是常数。We can just call all constants 1
 if we are satisfied with an answer that is within a constant factor.
 
-�����ǵ�����ѧ�У�\emph{�����̣�subroutine��}������Ĺ��̣��Ҳ��ݹ��������Ҫ����
-�Ĺ��̣�����˵���������еĵ������в�����һ�������Լ��ġ�����������ص�����һ���
-�Ǳ�S����ݹ������ص�����һ����Ǳ�R��
+在我们的术语学中，\emph{子例程（subroutine）}是任意的过程，且不递归调用我们要分析
+的过程；就是说，子例程中的调用序列不能有一个调用自己的。与子例程相关的数量一般带
+角标S。与递归调用相关的数量一般带角标R。
 
-�������û��ѭ�����ϲ�ÿһ��������������Ǽ򵥵ġ�
+如果过程没有循环，合并每一个块的最坏情况分析是简单的。
 \begin{enumerate}
-\item ���ڿ��\emph{����}��\emph{����}������cost
-\item ���ڿ�ѡ�Ŀ飬�������������ȡѡ������\emph{����}��
-\item �������������̵��ã�ָ��ʵ�ʲ�����n�ĺ�����ϵ��Ϊ�˼����⣬����ֻ��Ҫ
-        һ��������ģ����Ϊ$n_s(n)$��������Ҫ֪�������̵�cost����$T_s$�������
-        ���õĵ�cost��$T_s(n_s(n))$��
-\item ���������ݹ���ã�ָ��ʵ�ʲ�����n�ĺ�����ϵ����Ϊ$n_r(n)$����ݹ����
-        ��cost��$T_r(n_r(n))$�������T��ݹ��ʽ��ߵ�һ����
+\item 对于块的\emph{序列}，\emph{增加}单独的cost
+\item 对于可选的块，包括基本情况，取选择项中\emph{最大的}。
+\item 如果块包含子例程调用，指出实际参数与n的函数关系。为了简化问题，假设只需要
+        一个参数规模，称为$n_s(n)$。我们需要知道子例程的cost函数$T_s$。则这个
+        调用的的cost是$T_s(n_s(n))$。
+\item 如果块包含递归调用，指出实际参数与n的函数关系，称为$n_r(n)$。则递归调用
+        的cost是$T_r(n_r(n))$。这里的T与递归等式左边的一样。
 \end{enumerate}
 \noindent
-��ʽ�ұ߳��ֵĲ�������T����ʽ��ߵģ��Ĳ��ֳ�Ϊ\emph{�ǵݹ�cost}��Ҫ�����cost��
-���̵����ܵ�cost���ֳ����������ܵ�costҲ����T��
+等式右边出现的不含函数T（等式左边的）的部分称为\emph{非递归cost}。要把这个cost和
+过程调用总的cost区分出来，过程总的cost也包含T。
 
-�ϲ����ƽ����Ϊ������Ҫ����ĶԴ�\emph{��ѡ}��construct���������п�ѡ��Ӧ����
-��ѧ������Also��if the size of subproblems��$n_r(n)$��$n_s(n)$��can vary for
-different inputs�������̵�cost�͵ݹ���õ�cost��Ҫƽ�����������ԭ��ƽ����Ϊ
-����ͨ����Ϊ����������Ҫ�ѡ�
+合并块的平均行为分许需要区别的对待\emph{可选}的construct。对于所有可选项应该求
+数学期望。Also，if the size of subproblems（$n_r(n)$和$n_s(n)$）can vary for
+different inputs，子例程的cost和递归调用的cost需要平均。由于这个原因，平均行为
+分析通常认为比最坏情况分析要难。
 
 \begin{example}\mbox{}\par
-���ڼ�Ӧ�õĹ��򣬿����㷨\ref{Algo:seqSearchRec}�ĵݹ麯��
+对于简单应用的规则，考虑算法\ref{Algo:seqSearchRec}的递归函数
 seqSearchRec(E, m, num, K)
 
-Ϊ�˷����������ظ�һ�£�
+为了方便在这里重复一下：
 \begin{lstlisting}[language={Java}, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}]
     1. if(m$\geq$num)
     2.  ans=-1;
@@ -1433,10 +1433,10 @@ seqSearchRec(E, m, num, K)
     7.return ans;
 \end{lstlisting}
 
-����ָ�������ģΪҪ����E��Ԫ�ظ��������n=num-m������m��num�ǵ�ǰ���õ�
-��2���͵�3�������������ǽ����̷ֽ�Ϊ�飬�����Ϳ��Բ��ù����ˡ������ͨ��
-�кŵķ�Χ������������������1-7�����Բ��������diagram��"OR"��ʾ\emph{��ѡ��}��
-"��"��ʾ\emph{����}��
+我们指定问题规模为要数组E的元素个数。因此n=num-m，这里m和num是当前调用的
+第2个和第3个参数。让我们将过程分解为块，这样就可以采用规则了。块可以通过
+行号的范围来描述。整个过程是1-7。可以参照下面的diagram，"OR"表示\emph{可选项}，
+"；"表示\emph{序列}。
 
 \begin{center}
     \begin{tikzpicture}[scale=1]
@@ -1463,124 +1463,124 @@ seqSearchRec(E, m, num, K)
 \end{center}
 
 
-��������ǿ�2-2�����������Ҫ�ų��ڵݹ��ʽ֮�⣬�ݹ��ʽֻ���Ƿǻ��������
-����������Ŀ�s���Ǽ���䣬����6-6����cost������ʱ��ʱ�����Ǽ�������
-��Ҫ����������ʱ�䣬����1�������ⳣ��ʱ�䣨����1+1=1������cost��ĳЩ�ض�����
-������ʱ���������Ҫ������For definiteness�����ǽ�����cost������Ԫ�رȽϵ�
-��������˵�3��cost��1���������costģ�������������û��cost��
+基本情况是块2-2，基本情况需要排除在递归等式之外，递归等式只考虑非基本情况。
+所有最里面的块s都是简单语句，除了6-6。当cost是运行时间时，我们假设简单语句
+需要常量的运行时间，并用1代表任意常量时间（于是1+1=1）。当cost是某些特定操作
+的数量时，则操作需要计数。For definiteness，我们将假设cost是数组元素比较的
+次数。因此第3行cost是1，而在这个cost模型下其他简单语句没有cost。
 
-ע���㷨\ref{Algo:seqSearchRec}�еĵ�6�еĵ��ã����ǿ���ʵ�ʲ����ĵ�2����
-��3����m+1��num���������������ģ��num-(m+1)=m-1�����ԣ�6-6��cost��T(n-1)��
-�������cost�������ֹ��ɣ��ϲ���ѡ���������ϲ����п顣��2-2��Ϊһ��
-��ѡ��ų���ע��1-7��1-6��7-7�ĺͣ�����seqSearchRec�ݹ��ʽ���ұ�
+注意算法\ref{Algo:seqSearchRec}中的第6行的调用，我们看到实际参数的第2个和
+第3个是m+1和num，所以它的问题规模是num-(m+1)=m-1。所以，6-6的cost是T(n-1)。
+整个块的cost由两部分构成，合并可选语句的最大项，合并序列块。块2-2作为一个
+可选项被排除。注意1-7是1-6和7-7的和，给出seqSearchRec递归等式的右边
 \end{example}
 
 \begin{example}
-�����������ӣ����Ƕ�����ң��㷨\ref{Algo:BinrarySearch}����
-\ref{Sec:CorrectnessofBinarySearch}С�����ظ��������ģ��n=last-first+1��
-���ĵĶ����ǹؼ��ֱȽϣ����Ե�5��������1����8�к͵�10�еĵݹ���õ������ģ
-��n/2��(n-1)/2���������ǿ�ѡ�ģ�������ϲ�������ȡ���ֵ�����������ߵĺ͡�
-ʣ�µ������û�йؼ��ֱȽϣ����Եݹ��ʽ��
+对于其他例子，考虑二叉查找，算法\ref{Algo:BinrarySearch}，在
+\ref{Sec:CorrectnessofBinarySearch}小节有重复。问题规模是n=last-first+1。
+消耗的度量是关键字比较，所以第5行消耗是1。第8行和第10行的递归调用的问题规模
+是n/2和(n-1)/2，但是这是可选的，所以其合并的消耗取最大值，而不是两者的和。
+剩下的语句中没有关键字比较，所以递归等式是
 \begin{displaymath}
 T(n)=T(m/2)+1
 \end{displaymath}
-����������У����������εݹ����ʵ����ֻ��һ�Ρ��ڵ�4�����ǽ�����������̣�
-��Щ�����������εݹ���ã����ǵĵݹ��ʽ���ұ߻���ÿһ�εݹ���ô������
+在这个过程中，出现了两次递归调用实际上只有一次。在第4章我们将遇到排序过程，
+有些排序中有两次递归调用，他们的递归等式的右边会有每一次递归调用代表的项。
 \end{example}
 
-�����ģ$n_r(n)$��$n_s(n)$���Ǻ�����������µ����⡣���磬��n���ڵ�Ķ�����
-�����У�\ref{Sec:BinaryTreeADT}С�ڣ�������֪�����������������ܹ���n-1���ڵ㣬
-�������ǲ�֪�����߸��Ƕ��١�������������������r��ʾ�������Ĺ�ģ��������
-�õ��ݹ��ʽ
+如果规模$n_r(n)$或$n_s(n)$不是很清楚就有了新的问题。例如，在n个节点的二叉树
+遍历中（\ref{Sec:BinaryTreeADT}小节），我们知道左子树和右子树总共有n-1个节点，
+但是我们不知道两边各是多少。假设我们引入额外变量r表示右子树的规模。则我们
+得到递归等式
 \begin{displaymath}
 T(n)=T(n-1-r)+T(r)+1, T(0)=1
 \end{displaymath}
-�ɺϵ��ǣ�����ͨ�����뷨��֪�������ʽΪ$T(n)=2n+1$����ʹ���ǲ�֪��r��һ��
-����û����ô���ˣ����Ҷ��ڲ�ͬ��r���ܽ����һ������������ڿ��������о�
-�����ˣ�\ref{Sec:AnalysisofQuickSort}С�ڣ���
+巧合的是，我们通过代入法能知道这个等式为$T(n)=2n+1$，即使我们不知道r。一般
+我们没有这么幸运，而且对于不同的r可能结果不一样。这个问题在快速排序中就
+出现了（\ref{Sec:AnalysisofQuickSort}小节）。
 
 
-\subsubsection{��ͨ�ݹ��ʽ}
-����������������ݹ��ʽ�����Ǿ�����������ͨ����׼���������ĳ�̶ֳ��ϣ���
-����������¡������⡱ָ��Ҫ����Ƚ�С��ʵ������Ҫ�ݹ����ġ�����b��c�ǳ�����
+\subsubsection{普通递归等式}
+我们能描述许多类递归等式，他们经常遇到且能通过标准方法解决（某种程度上）。
+在所有情况下“子问题”指主要问题比较小的实例，需要递归解决的。符号b和c是常量。
 
 \noindent
-{\textbf{�ֶ���֮��}}�ڷֶ���֮��������������У�������Ĵ�С��n/2��n����ĳ���̶��ı�����
-���������Ѿ������Ķ��ֲ��ң�\ref{Sec:SearchInOrderArray}�ڣ��������ڵ�
-\ref{Sec:Chapter:Sort}��Ҫѧϰ�ģ��鲢��\ref{Sec:Mergesort}�ڣ���
-�Ѳ�����{Sec:FixHeap}С�ڣ���ʹ��\ref{Sec:Mergesort}�ڵĹ鲢��Ϊ���ӣ��鲢
-�������ıȽ���Ŀ�ǣ�
+{\textbf{分而治之：}}在分而治之范例的许多情况中，子问题的大小是n/2或n乘以某个固定的比例。
+例如我们已经看过的二分查找（\ref{Sec:SearchInOrderArray}节），我们在第
+\ref{Sec:Chapter:Sort}章要学习的：归并（\ref{Sec:Mergesort}节）和
+堆操作（{Sec:FixHeap}小节）。使用\ref{Sec:Mergesort}节的归并作为例子，归并
+排序做的比较数目是：
 \begin{equation}\label{Equ:3_2}
 T_{MS}(n)=T_{MS}(n/2)+T_{MS}(n/2)+M(n), T_{MS}(1)=0
 \end{equation}
-M(n)�������ǹ鲢�����̲����ġ��������ܽ��TMS(n)֮ǰ��������Ҫ֪��M(n)��ʲô��
+M(n)的消耗是归并子例程产生的。在我们能解决TMS(n)之前，我们需要知道M(n)是什么。
 
-һ����ڷֶ���֮�������⣬��ģn����������Էֽ�Ϊb����$b \geq 1$����ģ��n/c��$c>1$��
-�������⡣����һ���ַǵݹ�����$f(n)$��Ϊ�˷ֽ����⣬��/��ϲ�������Ľ⵽�����⣩��
+一般对于分而治之类型问题，规模n的主问题可以分解为b个（$b \geq 1$）规模是n/c（$c>1$）
+的子问题。还有一部分非递归消耗$f(n)$（为了分解问题，且/或合并子问题的解到主问题）。
 
 \begin{equation}\label{Equ:3_3}
 T(n)=bT(\frac{n}{c})+f(n)
 \end{equation}
-���ǳ�b��\emph{��֧����}��
+我们称b是\emph{分支因子}。
 
-{\textbf{Chip and Conquer��}}��ģn����������ԡ��е�һ���֡���һ����ģ��n-c
-�������⣨$c>0$�����ٴ�һ��$f(n)$�ķǵݹ����ģ�Ϊ�˷ֽ����⣬��/��ϲ�������
-�Ľ⵽�����⣩��
+{\textbf{Chip and Conquer：}}规模n的主问题可以“切掉一部分”成一个规模是n-c
+的子问题（$c>0$），再带一个$f(n)$的非递归消耗（为了分解问题，且/或合并子问题
+的解到主问题）。
 \begin{equation}\label{Equ:3_4}
 T(n)=T(n-c)+f(n)
 \end{equation}
 
-{\textbf{Chip and Be Conquered��}}��ģn����������ԡ��е�һ���֡���b����b>1��
-��ģ��n-c�������⣨c>0�����ٴ�һ��f(n)�ķǵݹ����ģ�Ϊ�˷ֽ����⣬��/��ϲ�������Ľ�
-�������⣩�����ǳ�b��\emph{��֧����}��
+{\textbf{Chip and Be Conquered：}}规模n的主问题可以“切掉一部分”成b个（b>1）
+规模是n-c的子问题（c>0），再带一个f(n)的非递归消耗（为了分解问题，且/或合并子问题的解
+到主问题）。我们称b是\emph{分支因子}。
 \begin{equation}\label{Equ:3_5}
 T(n)=bT(n-c)+f(n)
 \end{equation}
 
-����������в�ͬ�Ĺ�ģ���������е��������ģ����n-cmax��n-cmin֮�䣬�����
-���Էֱ�ʹ��$c_{max}$��$c_{min}$����c���������������ϰ3.11�п��ǡ�
+如果子问题有不同的规模，但是所有的子问题规模都在n-cmax到n-cmin之间，责低限
+可以分别使用$c_{max}$，$c_{min}$代替c来求。这种情况在练习3.11中考虑。
 
-��һ������̽������ѧ����������Щ���͵ĵݹ��ʽ��
+下一节我们探讨用数学方法分析这些典型的递归等式。
 
-\section{�ݹ���}\label{Sec:RecursionTrees}
-�ݹ����ṩ��һ�ַ���������֪�ݹ��ʽ�ĵݹ���̵����ĵĹ��ߣ�����ʱ�䣬�ؼ���
-�Ƚϴ�����������������ʽ�����������ǽ���һ������չʾ��δӵݹ��ʽ����һ��
-�ݹ�����Ȼ�����ǽ�����һ��Ĺ��̡���һ������У����ǽ�������������һ���
-�������������3.14������3.15������3.15������3.17����ʽ3.12��3.13������Щ���
-������������ʵ���㷨�����г��ֵĵݹ��ʽ�����ҵ������������ϱ�׼��ʽ�ĵݹ��ʽ
-ʱ����������Ϊһ�����Ե�guide��It is not necessary to follow all of the
+\section{递归树}\label{Sec:RecursionTrees}
+递归树提供了一种分析我们已知递归等式的递归过程的消耗的工具（运行时间，关键字
+比较次数或是其他测量方式）。首先我们将以一个例子展示如何从递归等式生成一个
+递归树，然后我们将描述一般的过程。从一般过程中，我们将能派生出几种一般的
+解决方案（引理3.14，引理3.15，定理3.15，定理3.17，等式3.12和3.13）。这些解决
+方案覆盖许多实际算法分析中出现的递归等式，而且当遇到并不符合标准形式的递归等式
+时，他们能作为一个粗略的guide。It is not necessary to follow all of the
 technical details in this section to be able to apply the general solutions
 mentioned.
 
-ÿһ���ݹ����Ľڵ���������\emph{size}��\emph{�ǵݹ�cost��}��һ���ڵ��ʾ���£�
+每一个递归树的节点有两个域，\emph{size}和\emph{非递归cost域}。一个节点表示如下：
 
 \begin{center}
 \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=15mm}]
     \node (P6)  at (0,0) [place] {T(size)};
-    \node (P5)  at (1.5,0) [place] {�ǵݹ�cost};
+    \node (P5)  at (1.5,0) [place] {非递归cost};
 \end{tikzpicture}
 \end{center}
 
-��ģ���������ڵ㴦T��ʵ�ʲ��������Ǽ��ϵݹ�����T���������ǹ�ģ����cost��
+规模域代表这个节点处T的实际参数。我们加上递归名字T来提醒我们规模域不是cost。
 
 
 \begin{example}\label{Example:3_10}
-�򵥵ķֶ���֮�ĵݹ���
+简单的分而治之的递归树
 
-���ǵݹ��ʽ��
+考虑递归等式：
 \begin{displaymath}
 T(n)=T(\frac{n}{2})+T(\frac{n}{2})+n
 \end{displaymath}
-���ǵ�ʽ\ref{Equ:3_3}�����������b=2��c=2�����ǹ鲢�����һ����΢�򵥵���ʽ����
-���ںܶ�ط����֡����ǽ�һ��һ���Ĺ������Ӧ�ĵݹ�������һ�������Ը���������
-д��ʽ���ڵݹ��������һ�����Ƶĸ������������������ڱ����滻�������ǳ����
-�ݹ��ʽΪ���ǵ�\emph{��������}��
+这是等式\ref{Equ:3_3}的特殊情况，b=2和c=2。这是归并排序的一个稍微简单的形式，它
+会在很多地方出现。我们将一步一步的构造出相应的递归树。第一步，是以辅助变量重
+写等式（在递归假设中有一个类似的辅助变量），这有助于避免替换错误。我们称这个
+递归等式为我们的\emph{工作拷贝}。
 
 \begin{equation}\label{Equ:3_6}
 T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 \end{equation}
-ֻҪ�ڵ��size��֪����һ���ڵ�Ϳ��Դ����ˣ�֮�����ǾͿ�����size������
-�ݹ����ĵ�ֵ������׼������T(n)�ݹ�����root�ڵ㣻����size=n��
+只要节点的size域知道了一个节点就可以创建了；之后我们就可以用size域计算非
+递归消耗的值。我们准备创建T(n)递归树的root节点；这里size=n。
 
 \begin{center}
 \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm}]
@@ -1590,9 +1590,9 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 \end{center}
 \end{example}
 
-�����ǵݹ�cost���û����ɺ��ӽڵ�Ĺ��̽���չ�ڵ㡣���ǽ��ڵ�Ĺ�ģ������
-׼����չ��������n���滻�����ǹ�������k����ʽ��3.6�����ұ߳�ΪT(n/2)+T(n/2)+n��
-���д�T�Ĳ��ֱ�ɺ��ӽڵ㣬ʣ�µĲ��ֱ�ɽڵ�ķǵݹ�cost������
+决定非递归cost域和没有完成孩子节点的过程叫扩展节点。我们将节点的规模域添上
+准备扩展，这里是n，替换掉我们工作拷贝k，等式（3.6）。右边成为T(n/2)+T(n/2)+n。
+所有带T的部分变成孩子节点，剩下的部分变成节点的非递归cost，如下
 \begin{center}
     \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm}]
     \node (P6)  at (0,0) [place] {T(n)};
@@ -1607,9 +1607,9 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
     \end{tikzpicture}
 \end{center}
 
-��Ȼͬ����ȵ����нڵ㿴��ȥһ�������ǿ����ڷ�֧�в������ǡ�һ������£�ÿһ��
-����ȫ�ڵ��������Լ��Ĺ�ģ��������������й�ģ����n/2������������n/2����
-��ʽ\ref{Equ:3_6}�е�k���������ǿ����ұ�Ӧ����T(n/4)+T(n/4)+n/2����������������
+既然同样深度的所有节点看上去一样，我们可以在分支中产生他们。一般情况下，每一个
+不完全节点必须根据自己的规模域产生。这里所有规模域都是n/2，所以我们用n/2代入
+等式\ref{Equ:3_6}中的k，而且我们看到右边应该是T(n/4)+T(n/4)+n/2。所以现在我们有
 
 \begin{center}
 
@@ -1640,12 +1640,12 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
 
 \end{center}
 
-���ǿ��Լ�����һ�㣬ֱ�����ǿ�������ģʽ��ͼ3.9չʾ������չ������һ�㣻��8��
-δ��ɺ��ӣ���ϸ��û����ʾ�������������ǿ��Կ��������Ϊ�����Ĺ�ģ����, n/2d��
-�ǵݹ�costǡ��Ҳ��n/2d������ϰ�£�Ϊ�˷��㣬���ǽ�������ȶ���Ϊ0�����������
-�������У���ͬ����������нڵ㶼��һ�µģ������ⲻ���ǳ����ġ�
+我们可以继续下一层，直到我们看出数的模式。图3.9展示了数扩展到另外一层；有8个
+未完成孩子，其细节没有显示出来。这里我们可以看到以深度为函数的规模参数, n/2d，
+非递归cost恰好也是n/2d。（复习下，为了方便，我们将根的深度定义为0）。在这个简单
+的例子中，有同样数深度所有节点都是一致的，但是这不总是成立的。
 
-��������һҳ�ܽ�����һ�ŵݹ����Ĺ���(s)��
+我们在下一页总结生成一颗递归树的规则(s)。
 
 \begin{figure*}[!t]
     \centering
@@ -1692,40 +1692,40 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
     \draw (P22.south)--(P23.north);
     \draw (P12.south)--(P13.north);
     \end{tikzpicture}
-    \caption{����ݹ�����8��δ��ɺ��ӵĹ�ģ��û����ʾ��}
+    \caption{三层递归树。8个未完成孩子的规模域没有显示。}
     \label{Fig:BasicControlStructure}
 \end{figure*}
 
 \begin{definition}
-�ݹ�������
+递归树规则
 
 \begin{enumerate}
-\item �ݹ��ʽ��\emph{��������}ʹ�ú�ԭ����ͬ�ı�������Ϊ����������������k��
-    \emph{��������}��ԭ���ݹ��ʽ����ߣ�������T(n)����ɵݹ������ڵ�Ĺ�ģ��
-\item һ��δ��ɽڵ���һ����ģ�򣬵���û�зǵݹ�cost��
-\item �������ݹ�cost��δ��ɽڵ㺢�ӵĹ��̳�Ϊ\emph{��չ}�ڵ㡣����ȡ������չ�ڵ�
-    �Ĺ�ģ������ݹ��ʽ�ĸ�������k�С����ұ߰���T�Ĳ��ֱ�ɽڵ�ĺ��ӣ�����
-    ʣ�µĲ��ֳ�Ϊ�ڵ�ķǵݹ���á�
-\item ��չ������������ǵݹ���ã����ڻ������û�к��ӡ�
+\item 递归等式的\emph{工作拷贝}使用和原来不同的变量；称为辅助变量。这里令k是
+    \emph{辅助变量}。原来递归等式的左边（假设是T(n)）变成递归树根节点的规模域。
+\item 一个未完成节点有一个规模域，但是没有非递归cost。
+\item 决定给递归cost和未完成节点孩子的过程称为\emph{扩展}节点。我们取出待扩展节点
+    的规模，代入递归等式的辅助变量k中。在右边包含T的部分变成节点的孩子；所有
+    剩下的部分称为节点的非递归调用。
+\item 扩展基本情况给出非递归调用，对于基本情况没有孩子。
 \end{enumerate}
-Ϊ�˼򻯱�ʾ��ʽ�����Ǽٶ��ݹ��ʽ�Ļ��������cost��Ϊ0�������ʽ�Ļ������
-��cost��0�����ǿ���ֻ������С�Ĳ�Ϊ0�����������Ϊ���������
+为了简化表示形式，我们假定递归等式的基本情况的cost不为0。如果等式的基本情况
+的cost是0，我们可以只计算最小的不为0情况，将它作为基本情况。
 
-��ʵ�ϣ����Ǿ����ٶ��������cost��1��for definiteness�������Ҫ�������䶯��
+事实上，我们经常假定基本情况cost是1，for definiteness。如果必要可以做变动。
 \end{definition}
 
-������ݹ������������棬����ĵ�ʽ������
+在任意递归树的子树里面，下面的等式成立：
 \begin{equation}\label{Equ:3_7}
-\mbox{���Ĺ�ģ}=\sum\mbox{��չ�ڵ�ķǵݹ�cost} + \sum\mbox{δ��ɽڵ�Ĺ�ģ}
+\mbox{根的规模}=\sum\mbox{扩展节点的非递归cost} + \sum\mbox{未完成节点的规模}
 \end{equation}
-��������ɹ��ɷ�֤�����ڻ�������£�T(n)=T(n)��һ����չ�󣬸��ڵ㱻��չ��
-��������δ��ɵģ�����ʽ\ref{Equ:3_7}��������ԭʼ�ĵݹ��ʽ���Դ����ơ�
+这很容易由归纳法证明。在基本情况下，T(n)=T(n)。一次扩展后，根节点被扩展，
+而孩子是未完成的，所以式\ref{Equ:3_7}给出的是原始的递归等式，以此类推。
 
 \begin{example}
-�ݹ���
+递归树
 
-������\ref{Example:3_10}��7���ڵ�ݹ����У���4��δ��ɽڵ㣩��ʽ\ref{Equ:3_7}
-��ʾΪ$T(n)=n+2(n/2)+4T(n/4)=2n+4T(n/4)$��
+在例子\ref{Example:3_10}的7个节点递归树中（带4个未完成节点），式\ref{Equ:3_7}
+表示为$T(n)=n+2(n/2)+4T(n/4)=2n+4T(n/4)$。
 \end{example}
 
 \begin{figure*}[!t]
@@ -1780,136 +1780,136 @@ T(k)=T(\frac{k}{2})+T(\frac{k}{2})+k
     \draw (7.2,-4.5)--(7.8, -4.5);
     \node (Px6)  at (7.5,-4.8)  {n};
     \end{tikzpicture}
-    \caption{�ݹ����зǵݹ�cost�ĺ͡�ͷ3�е��к������ұ�}
+    \caption{递归树中非递归cost的和。头3行的行和列在右边}
     \label{Fig:RowSumExample}
 \end{figure*}
 
-����ݹ����ļ����ǣ����ȼ���ÿһ������нڵ�ǵݹ�cost�ĺͣ���Ϊ����һ��
-��\emph{�кͣ�row-sum��}��Ȼ����������к͵ĺ͡�����ͼ3.9�����ӣ���Щ�к��Ѿ�
-չʾ��ͼ\ref{Fig:RowSumExample}���ˡ�
+计算递归树的技术是：首先计算每一深度所有节点非递归cost的和；称为树这一层
+的\emph{行和（row-sum）}。然后计算所有行和的和。继续图3.9的例子，有些行和已经
+展示在图\ref{Fig:RowSumExample}中了。
 
-Ϊ�˼����к͵��ܺͣ���ͨ������Ҫ֪���ݹ����������ȡ�Ҳ���ǹ�ģԼ��
-����������Ĳ�����
+为了计算行和的总和，（通常）需要知道递归树的最大深度。也就是规模约简
+到基本情况的层数。
 
 \begin{example}\label{Example:3_12}
-�ݹ�������
+递归树计算
 
-��������\ref{Example:3_10}���ο�ͼ\ref{Fig:RowSumExample}�����ǹ۲��ģ��ڵ���ȵ�
-������$n/2^d$�����Ի������������$d=\lg(n)$����Ȼÿһ�еĺ���n������
-�ܺ���$T(n)=n\log(n)$��
+对于例子\ref{Example:3_10}（参看图\ref{Fig:RowSumExample}）我们观察规模与节点深度的
+函数是$n/2^d$，所以基本情况发生在$d=\lg(n)$。既然每一行的和是n，树的
+总和是$T(n)=n\log(n)$。
 \end{example}
 
-\subsection{�ֶ���֮�� һ�����}
-ʹ������\ref{Example:3_10}������\ref{Example:3_12}ͬ���Ĳ��裬�����ܹ���
-һ��ֶ���֮�ݹ��ʽ����ʽ\ref{Equ:3_3}��Ϊ�˷��������ظ�һ�£����Եõ�T(n)�Ľ����ס�
+\subsection{分而治之， 一般情况}
+使用例子\ref{Example:3_10}到例子\ref{Example:3_12}同样的步骤，我们能估计
+一般分而治之递归等式（等式\ref{Equ:3_3}，为了方便这里重复一下），以得到T(n)的渐进阶。
 \begin{equation}\label{Equ:3_8}
 T(n)=bT(\frac{n}{c})+f(n)
 \end{equation}
-��С�ڵõ����ּ��������������Ͷ������Ա����⣬���ҿ��Ա�����ʹ�á�
+这小节得到这种技术，但是引理和定理可以被理解，而且可以被单独使用。
 
-���ȣ����ǿ��Կ�����ģ����������cÿ�εݼ���������c=2Ϊ��������˻������
-������$(n/c^D)=1$ʱ������D�ǻ�������ڵ����ȡ��ⷽ�̵�
-$D=\lg(n)/\lg(c)\in \Theta(\log(n))$��Ȼ�������Ǳ��������������
-�кͶ�һ���������
+首先，我们可以看到规模参数以因数c每次递减（我们令c=2为例）。因此基本情况
+发生在$(n/c^D)=1$时，这里D是基本情况节点的深度。解方程得
+$D=\lg(n)/\lg(c)\in \Theta(\log(n))$。然而，我们必须跳出所有深度
+行和都一样的情况。
 
-֪����\emph{�ж���}Ҷ���Ǻ����õġ���֧������b���������D�Ľڵ���
-��$L=b^D$��Ϊ�˷��㣺$\lg(L)=D\lg(b)=(\lg(b)/\lg(c))\lg(n)$��ϵ��
-$lg(n)$�������֣����Ǹ���һ�����֡�
+知道树\emph{有多少}叶子是很有用的。分支因数是b，所以深度D的节点数
+是$L=b^D$。为了方便：$\lg(L)=D\lg(b)=(\lg(b)/\lg(c))\lg(n)$。系数
+$lg(n)$经常出现，我们给它一个名字。
 
 \begin{definition}\label{Def:CriticalExponent}
-�ٽ�ָ��
+临界指数
 
-���ڵ�ʽ\ref{Equ:3_3}�е�b��c�����Ƕ����ٽ�ָ��Ϊ
+对于等式\ref{Equ:3_3}中的b和c，我们定义临界指数为
 \begin{displaymath}
 E=\frac{\lg(b)}{\lg(c)}
 \end{displaymath}
 \end{definition}
 
-ͨ������\ref{Lemma:3_1}����8���֣�����E������ʽ�Ķ�������ʹ�����ⷽ��ĵף�ֻҪ
-���ӷ�ĸͬʱ�����С���������ţ�������������
+通过引理\ref{Lemma:3_1}，第8部分，对于E这样形式的对数可以使用任意方便的底，只要
+分子分母同时还就行。以这个符号，有如下引理：
 
 \begin{lemma}
-��ʽ\ref{Equ:3_8}�ݹ�����Ҷ������������$L=n^E$������E�Ƕ���
-\ref{Def:CriticalExponent}�ж�����ٽ�ָ����
+等式\ref{Equ:3_8}递归树的叶子数量近似是$L=n^E$，这里E是定义
+\ref{Def:CriticalExponent}中定义的临界指数。
 \end{lemma}
 
-����Ҷ���еķǵݹ�cost��1���������������cost������nE����ʹҶ�ӵ�
-�ǵݹ�cost��0����Ҷ�ӵ��ϲ�Ҳ�϶����з�0��cost�Ľڵ㣨���߼��������
-Ҷ��֮���г������0���������������Ȼ��$\Theta(n^E)$�ڵ㣬���Ա��ֵ�
-$\Omega(n^E)$���ޡ�
+假设叶子中的非递归cost是1，这告诉我们树的cost至少是nE。即使叶子的
+非递归cost是0，在叶子的上层也肯定会有非0的cost的节点（或者极端情况下
+叶子之上有常数层非0）。但是这层中仍然是$\Theta(n^E)$节点，所以保持的
+$\Omega(n^E)$底限。
 
-�������ܽ���Ŀǰ�õ��Ľ��ۡ�
+让我们总结下目前得到的结论。
 \begin{lemma}\label{Lemma:3_15}
-��ǰ��ʹ�õķ��ţ����ǽ����У�
+用前面使用的符号，我们近似有：
 
 \begin{enumerate}
-\item �ݹ��������$D=\lg(n)/\lg(c)$�������������к͡�
-\item ��0����к���$f(n)$�������ķǵݹ�cost��
-\item ��D���к���$n^E$��������������1������$\Theta(n^E)$��in any event��
-\item T(n)��ֵ��Ҳ���ǵ�ʽ\ref{Equ:3_8}�Ľ⣬���������зǵݹ�cost�ĺͣ�Ҳ���������к͵ĺ͡�
+\item 递归树有深度$D=\lg(n)/\lg(c)$，所以有许多行和。
+\item 第0层的行和是$f(n)$，即根的非递归cost。
+\item 第D层行和是$n^E$，假设基本情况是1，或者$\Theta(n^E)$，in any event。
+\item T(n)的值，也就是等式\ref{Equ:3_8}的解，是树中所有非递归cost的和，也就是所有行和的和。
 \end{enumerate}
 \end{lemma}
 
-������ʵ������У��к���ʽ��һ�����ζ���ʽ�����߽��Ƶ����½綼�Ƕ���ʽ����
-���ζ���ʽ����ʽ ��\ref{Sec:Calculous}С�ڣ�������r��Ϊ���ʡ�Quit a few simplification occur
-in practice that are based on the principle of ����\ref{Theorem:1_13}�ĵ�2���֣�which stated
-that, for a ���ζ���ʽ whose ���ʲ���1��the sum is in $\Theta$ of its largest term��
-���������������\ref{Lemma:3_15}�����ǿ��Եó����ۣ�
+在许多实际情况中，行和形式是一个几何多项式（或者近似的上下界都是多项式）。
+几何多项式的形式 （\ref{Sec:Calculous}小节）。常量r称为比率。Quit a few simplification occur
+in practice that are based on the principle of 定理\ref{Theorem:1_13}的第2部分，which stated
+that, for a 几何多项式 whose 比率不是1，the sum is in $\Theta$ of its largest term。
+由这个定理和引理\ref{Lemma:3_15}，我们可以得出结论：
 
 \begin{theorem}\label{Theorem:LittleMasterTheorem}
-��Little Master Theorem����ǰ�����۵ķ��ţ��͵�ʽ\ref{Equ:3_8}�����T(n)��
+（Little Master Theorem）以前面讨论的符号，和等式\ref{Equ:3_8}定义的T(n)：
 
 \begin{enumerate}
-\item ����к������һ�����ζ���ʽ���ӵ�0�����Ķ��㿪ʼ��������E�Ƕ���\ref{Def:InductionProofSchema}�����
-    �ٽ�ָ��������˵��cost��ݹ�����Ҷ�������ɱ�����
-\item ����кͱ��ֳ�����$T(n)\in \Theta(f(n)\log(n))$��
-\item ����к����һ���ݼ����ζ���ʽ����$T(n)\in \Theta(f(n))$����͸���cost�ɱ�����
+\item 如果行和组成了一个几何多项式（从第0行数的顶层开始），这里E是定义\ref{Def:InductionProofSchema}定义的
+    临界指数。就是说，cost与递归树的叶子数量成比例。
+\item 如果行和保持常量，$T(n)\in \Theta(f(n)\log(n))$。
+\item 如果行和组成一个递减几何多项式，则$T(n)\in \Theta(f(n))$，这和根的cost成比例。
 \end{enumerate}
 
-\noindent{\emph{\textbf{֤��}}} �����1�к������һ��֧�䡣�����2��
-���൱��$\Theta(\log(n))$��������3�к������һ��֧�䡣
+\noindent{\emph{\textbf{证明}}} 在情况1中和由最后一项支配。在情况2中
+有相当于$\Theta(\log(n))$的项。在情况3中和由最后一项支配。
 \end{theorem}
 
-Ϊ�˸��������÷�Χ���㣬��������������������Ǻ����õģ�����ʽ\ref{Equ:3_8}�еĺ���
-ǣ�浽����ʱ����Ϊ֮���кͿ��ܲ��Ǻ����ࡣ�����ڸ�һ��İ汾���μ���ϰ3.9����
+为了更抽象适用范围更广，将这个定理泛化。泛化是很有用的，当等式\ref{Equ:3_8}中的函数
+牵涉到对数时，因为之后行和可能不是很整洁。（对于更一般的版本，参见练习3.9。）
 
 \begin{theorem}\label{Theorem:MasterTheorem}
-��Master Theorem����ǰ�����۵�����ݹ��ʽ�Ľ�
+（Master Theorem）以前面讨论的术语，递归等式的解
 
 \begin{equation}
 T(n)=bT(\frac{n}{c})+f(n)
 \end{equation}
-���ظ���ʽ\ref{Equ:3_3}��\ref{Equ:3_8}�������½����ʽ������$E=\lg(b)/\lg(c)$��
-����\ref{Def:CriticalExponent}������ٽ�ָ����
+（重复等式\ref{Equ:3_3}和\ref{Equ:3_8}）有如下解的形式，这里$E=\lg(b)/\lg(c)$是
+定义\ref{Def:CriticalExponent}定义的临界指数。
 
 \begin{enumerate}
-\item ������������$\varepsilon$���$f(n) \in ��(n^{E-\varepsilon})$����
-    $T(n)\in\Theta(n^E)$����ݹ�����Ҷ�������ɱ�����
-\item ���$f(n)\in��(n^E)$����$T(n)\in\Theta(f(n)\log(n))$��as all node
-    depths contribute about equally��
-\item ������������$\varepsilon$���$f(n)\in\Omega(n^{E-\varepsilon})$������
-    ����$\sigma\geq\varepsilon$��$f(n)\in��(n^{E+\varepsilon})$����$T(n)\in\Theta(f(n))$��
-    ��ݹ������ĵķǵݹ�cost�ɱ�����
+\item 对于任意正数$\varepsilon$如果$f(n) \in Ο(n^{E-\varepsilon})$，则
+    $T(n)\in\Theta(n^E)$，与递归树的叶子数量成比例。
+\item 如果$f(n)\inΟ(n^E)$，则$T(n)\in\Theta(f(n)\log(n))$，as all node
+    depths contribute about equally。
+\item 对于任意正数$\varepsilon$如果$f(n)\in\Omega(n^{E-\varepsilon})$，并且
+    对于$\sigma\geq\varepsilon$有$f(n)\inΟ(n^{E+\varepsilon})$，则$T(n)\in\Theta(f(n))$，
+    与递归树根的的非递归cost成比例。
 \end{enumerate}
-������û��һ����������õġ���
+（可能没有一种情况是适用的。）
 
-\noindent{\emph{\textbf{֤��}}} ���d�Ľڵ���$b^d$���ڵ㣬ÿһ������
-�ǵݹ�cost $f(n/c^d)$��������Ƕ��ڵ�ʽ\ref{Equ:3_8}�Ľ��������ͨ�ñ���ʽ��
+\noindent{\emph{\textbf{证明}}} 深度d的节点有$b^d$个节点，每一个都有
+非递归cost $f(n/c^d)$。因此我们对于等式\ref{Equ:3_8}的解有下面的通用表达式：
 \begin{equation}
 T(n)=\sum_{d=0}^{\lg(n)/lg(c)}b^df(\frac{n}{c^d})
 \end{equation}
-���ǽ�ֻ����һ�����֤��������ѭ����\ref{Theorem:LittleMasterTheorem}�������ɡ�
-���ο�Notes��References����ȫ��֤�����������3������ϵ��������ĳЩ����$\varepsilon$��
-f(n)����$nE+\varepsilon$������
+我们将只给出一个框架证明，它遵循定理\ref{Theorem:LittleMasterTheorem}给的理由。
+（参看Notes和References有完全的证明）考虑情况3。忽略系数，对于某些正数$\varepsilon$，
+f(n)关于$nE+\varepsilon$。所以
 \begin{displaymath}
 f(\frac{n}{c^d})\approx\frac{n^{E+\varepsilon}}{(c^d)^{E+\varepsilon}\approx\frac{f(n)}{c^{Ed+\varepsilon d}}}
 \end{displaymath}
-��$b^df(n/c^d)$��$f(n)b^d/(c^{Ed}c^{\varepsilon d})$������$c^E=b$�����ڱ�׼�ı�ʶ����
-���Է�ĸ��$c^{Ed}$�ͷ���$b^d$�����������$f(n)/c^\varepsilon d$����dһ���ݼ�
-�ļ��ζ���ʽ����������ķ������ơ�
+则$b^df(n/c^d)$是$f(n)b^d/(c^{Ed}c^{\varepsilon d})$。但是$c^E=b$，由于标准的标识符，
+所以分母是$c^{Ed}$和分子$b^d$。我们最后有$f(n)/c^\varepsilon d$，给d一个递减
+的几何多项式。其他情况的分析类似。
 \end{theorem}
 
-\subsection{Chip and Conquer������Be Conquered}
+\subsection{Chip and Conquer，或者Be Conquered}
 \begin{figure*}[!t]
     \centering
     \begin{tikzpicture}[scale=1,place/.style={rectangle,draw, fill=white,inner sep=0pt,minimum size=12mm},
@@ -1963,30 +1963,30 @@ f(\frac{n}{c^d})\approx\frac{n^{E+\varepsilon}}{(c^d)^{E+\varepsilon}\approx\fra
 
     \node (Px6)  at (7.5,-4.8)  {$\Theta(2^n/c)$};
     \end{tikzpicture}
-    \caption{��һ��chip-and-be-conquered �ݹ����ķǵݹ�cost�ĺ͡�}
+    \caption{在一个chip-and-be-conquered 递归树的非递归cost的和。}
     \label{Fig:SummingNonrecursiveCosts}
 \end{figure*}
 
-һ����ͬ��ͼƬ�ں��˵�ʽ\ref{Equ:3_4}��\ref{Equ:3_5}�������֧���Ӵ���1������
-�е�ʽ\ref{Equ:3_5}������Ϊ�˷����ظ�һ�£�
+一个不同的图片融合了等式\ref{Equ:3_4}和\ref{Equ:3_5}。如果分支因子大于1，我们
+有等式\ref{Equ:3_5}，这里为了方便重复一下：
 
-\subsection{*Ϊʲô�ݹ����ܹ���}\label{Sec:WhyCanRecursiveTreeWork}
-��С�������һ�������ݹ��ʽ�����ĵݹ�������ϵ���Լ���д�õ���������
-�ݹ��ĺ��������߿����Թ����ڣ������ᶪʧ�κ������ԡ�
+\subsection{*为什么递归树能工作}\label{Sec:WhyCanRecursiveTreeWork}
+这小结给出了一个给定递归等式和它的递归树的联系，以及编写好的用来计算
+递归解的函数。读者可以略过本节，而不会丢失任何连续性。
 
-һ�ֿ��ӻ��ݹ����ķ�ʽ����������ʵ���ϱ�д��һ���򵥵ĵݹ麯������
-ΪevalT(k)��������ݹ��ʽ��ֵ�������ʽ\ref{Equ:3_2}����ʽ\ref{Equ:3_5}��
-���������activation���ǳ���ȷ�Ķ�Ӧ�˵ݹ������ݹ��ʽ����ȥ��
-$T(k)=f(k)+\cdots $����T��������Ǽ������ǵĵݹ麯��evalT��һ������
-k�����������ģ������һ���ֲ�����nonrecCost���洢�ǵݹ�cost��ֵ
-��Ҳ����f(k)�������Ի������������evalT��
-�������£�
-\indent   nonrecCost=f(k)��
-\indent   return nonrecCost+ �� ����evalT���
-�����evalT����ֻ��ģ���˵ݹ��ʽ�ұߴ�T���
+一种可视化递归树的方式是想象我们实际上编写了一个简单的递归函数（称
+为evalT(k)）来计算递归等式的值，比如等式\ref{Equ:3_2}到等式\ref{Equ:3_5}。
+这个函数的activation树非常精确的对应了递归树。递归等式看上去如
+$T(k)=f(k)+\cdots $（带T的项）。我们假设我们的递归函数evalT有一个参数
+k（代表问题规模），而一个局部变量nonrecCost来存储非递归cost的值
+（也就是f(k)）。忽略基本情况，假设evalT的
+代码如下：
+\indent   nonrecCost=f(k)；
+\indent   return nonrecCost+ … （带evalT的项）
+这里带evalT的项只是模仿了递归等式右边带T的项。
 
-�ݹ��ʽ�ĵݹ�������T(n)Ϊ��������evalT(n)��activation�����������
-�ǵݹ�cost����f(k)�����ü������㡣\footnote{��ע����û�к������á�}��
+递归等式的递归树，以T(n)为根，将是evalT(n)的activation树。（这假设
+非递归cost函数f(k)可以用简单语句计算。\footnote{译注：即没有函数调用。}）
 
-���Կ�������������nonrecCostֵ�ú;��Ƕ�����÷��ص�ֵ�����Ǽٶ�����
-����ʱevalT(n)������Ϊ�˼���ݹ��ʽT(n)��ֵ��
+可以看出，整个树的nonrecCost值得和就是顶层调用返回的值。我们假定顶层
+调用时evalT(n)，就是为了计算递归等式T(n)的值。

@@ -1,54 +1,54 @@
-\chapter{���ݱհ���������������·��}\label{Sec:Chapter9}
-\section{����}
-����ѧϰ������ص����⣬������������Է���ʽ������Ϊ������������
-һ��ͼ������\emph{�����}������Ĵ𰸣�
+\chapter{传递闭包、任意两点的最短路径}\label{Sec:Chapter9}
+\section{概述}
+本章学习两个相关的问题，这两个问题可以非正式的描述为下面两个关于
+一个图的所有\emph{顶点对}的问题的答案：
 \begin{enumerate}
-\item u��v��·����
-\item u��v��\emph{���}·����
+\item u到v有路径吗？
+\item u到v的\emph{最短}路径？
 \end{enumerate}
 
-�ڵ����º͵ڰ������Ǽ�����������������������������һ��������ָ��
-�ģ����ڶ������������ͼ�����ⶥ�㡣�����У�����ѧϰ��ȫ������⡣
+在第七章和第八章我们见过了这两个问题的特殊情况，即第一个顶点是指定
+的，仅第二个顶点可以是图中任意顶点。本章中，我们学习更全面的问题。
 
-���±��ֵ���Ҫ�㷨˼���зǳ��㷺��Ӧ�á�Klneene��Ϊ���ۺ�����
-���ԣ�����û���漰����Warshall��Ϊ�˴��ݱհ�����Floyd��Ϊ�����ж�
-�����·�������Զ����ĴӲ�ͬ��Ӧ�÷��ֱ��µ��㷨˼�롣ͨ��������Ϊ
-Kleene-Floyd-Warshall�㷨�������������ⶼ���Գ�Ϊ
-\emph{semi-ring closure}���⡣�ⳬ���˱���ķ�Χ���Ķ����º����
-ע�ͺ��������׵õ���һ����Ϣ
+本章表现的主要算法思想有非常广泛的应用。Klneene（为了综合正则
+语言，本书没有涉及），Warshall（为了传递闭包），Floyd（为了所有对
+的最短路径）各自独立的从不同的应用发现本章的算法思想。通常，被称为
+Kleene-Floyd-Warshall算法。整个这类问题都可以称为
+\emph{semi-ring closure}问题。这超出了本书的范围。阅读本章后面的
+注释和引用文献得到进一步信息
 
-\section{��Ԫ��ϵ�Ĵ��ݱհ�}
-�����У����Ƕ��������Ԫ��ϵ�Ĵ��ݱհ����������ǵĹ�ϵ��������ͼ
-��·��������Ҳ����һЩ����ʹ�õķ��š����ȼ��һ�ַǳ�ֱ�ӵ���
-���ݱհ��ķ�����֮����и��ӵķ�����
+\section{二元关系的传递闭包}
+本节中，我们定义术语二元关系的传递闭包，并将他们的关系看作有向图
+的路径。我们也引入一些本章使用的符号。首先检查一种非常直接的算
+传递闭包的方法，之后会有复杂的方法。
 
-\subsection{����ͱ���}
-��S��Ԫ��$s_1$��$s_2$��...�ļ��ϡ���ϰ\ref{Sec:SetTupleRelation}С�ڣ�S��
-�Ķ�Ԫ��ϵ��һ��S��S�Ӽ�����ΪA����� �����ǳ�si��sj�й�ϵA��ʹ�÷���siAsj��ʾ��
+\subsection{定义和背景}
+令S是元素$s_1$、$s_2$、...的集合。复习\ref{Sec:SetTupleRelation}小节，S上
+的二元关系是一个S×S子集，称为A。如果 ，我们称si与sj有关系A，使用符号siAsj表示。
 
-����S��n��Ԫ�ء���ϵA���Ա�ʾ$n\times n$��������
+假设S有n个元素。关系A可以表示$n\times n$布尔矩阵
 \begin{displaymath}
 a_{ij}=\left\{\begin{array}{l}
-                   true \qquad\mbox{��� } s_iAs_j\\
-                   \raggedleft false \qquad\mbox{����}
+                   true \qquad\mbox{如果 } s_iAs_j\\
+                   \raggedleft false \qquad\mbox{其他}
                  \end{array}\right.
 \end{displaymath}
-��ʼ���������ֱ�ʾ��ʽ����������Ҳ����ʹ��1��0����\emph{true}��\emph{false}��
-ͼ����Ҳ��ʾΪ1��0�����ڲ�����������\emph{0����}����ʾΪ0����ζ�ž�������
-��Ԫ�ض���\emph{false}��\emph{��λ����}����ʾΪI����ζ�ž���Խ��ߵ�
-Ԫ����true��������Ԫ�ض���false��
+开始我们用这种表示方式，后来我们也考虑使用1，0代替\emph{true}和\emph{false}；
+图表中也显示为1，0。对于布尔矩阵，术语\emph{0矩阵}，表示为0，意味着矩阵所有
+的元素都是\emph{false}；\emph{单位矩阵}，表示为I，意味着矩阵对角线的
+元素是true，其他的元素都是false。
 
-ͼ�ж��㼯��֮����ڽӹ�ϵ
-\section{���ݱհ���Warshall's �㷨}
-\section{ͼ��������������·��}\label{Sec:AllParisShortestPathsinGraphs}
-�ڵ�8���У�����ѧϰ��Dijkstra's�㷨���㷨8.2�������ڴ�Ȩͼ���ҵ����ض�
-Դ���㵽�������������һ�����·���;��롣�㷨ʹ���ڽӱ��ṹ����
-������������ ʱ�䡣�������ǿ�����������⣺
+图中顶点集合之间的邻接关系
+\section{传递闭包的Warshall's 算法}
+\section{图的任意两点的最短路径}\label{Sec:AllParisShortestPathsinGraphs}
+在第8章中，我们学习了Dijkstra's算法（算法8.2），其在带权图中找到了特定
+源顶点到所有其他顶点的一条最短路径和距离。算法使用邻接表结构，在
+最坏情况下运行在 时间。现在我们考虑下面的问题：
 
 \begin{problem}
-����������֮������·��
+任意两顶点之间的最短路径
 
-������ȨͼG=(V, E, W)���ж���$V={v_1, \cdots, v_n}$��ͼ������Ȩ�����ʾ
+给出带权图G=(V, E, W)，有顶点$V={v_1, \cdots, v_n}$，图用如下权矩阵表示
 \begin{equation}
 w_{ij})=\left\{\begin{array}{ll}
                    W(v_iv_j)           &v_iv_j \in E\\
@@ -59,26 +59,26 @@ w_{ij})=\left\{\begin{array}{ll}
         \right.
 \end{equation}
 
-����$n\times n$����D������$d_{ij}$��ʾ$v_i$��$v_j$����̾��롣��\emph{����}����
-��СȨ·����Ȩ����
+计算$n\times n$矩阵D，其中$d_{ij}$表示$v_i$到$v_j$的最短距离。（\emph{距离}就是
+最小权路径的权）。
 \end{problem}
 
-ͼ9.3�Ǹ����ӡ����������չ����Ҫ���·����·�ɱ���������ڸ�Ȩ�Ļ�����
-��Щ����֮��ľ��벻������̵�·��--�ڻ���������Ȧ�õ���·�����С��
+图9.3是个例子。问题可以扩展成需要最短路径的路由表。如果存在负权的环，则
+有些顶点之间的距离不会是最短的路径--在环上绕任意圈得到的路径会更小。
 
-����D�ģ����Gû�и�Ȩ��һ���뷨�Ƕ�ÿһ������ʹ���㷨8.2�����ǣ����ǿ���
-ʹ����չ��Warshall's�㷨������R.W.Floyed������㷨���������������㷨8.2��
-���ݽṹ��
+计算D的（如果G没有负权）一个想法是对每一个顶点使用算法8.2。但是，我们可以
+使用扩展的Warshall's算法，就是R.W.Floyed。这个算法更精简，它消除了算法8.2的
+数据结构。
 
 
-������μ���D[i][j]�����·������������˳�򾭹������������㡣������
-Warshall's�㷨�еģ�������·���м��������ߵĶ���������·�����ο�����9.2����
+我们如何计算D[i][j]？最短路径可能以任意顺序经过任意其他顶点。就像在
+Warshall's算法中的，我们以路径中间的数字最高的顶点来分类路径（参看定义9.2）。
 
-�ع�����8.5�е����·�����ԣ����vi��vj�����·�������м䶥��vk����·����
-$v_i$��$v_k$�е�С�κ�$v_k$��$v_j$�е�С�ηֱ������·�����������ѡ��k��Ϊ
-$v_i$��$v_j$·��������������м䶥�㣨����·������һ�����ϵıߣ�������ֵ�
-ÿһ��С����������ֵ��м䶥���������Ȼ��С��k�����ο�ͼ9.2����չʾ��
-Warshall's�㷨һ����˼�롣������ʾ��ѭ���м������D��������ĵݹ��ʽ��
+回顾引理8.5中的最短路径属性：如果vi到vj的最短路径经过中间顶点vk，则路径中
+$v_i$到$v_k$中的小段和$v_k$到$v_j$中的小段分别都是最短路径。如果我们选择k作为
+$v_i$到$v_j$路径中最高索引的中间顶点（假设路径包含一条以上的边），则出现的
+每一个小段中最高数字的中间顶点的索引必然都小于k。（参看图9.2，其展示了
+Warshall's算法一样的思想。）这提示在循环中计算矩阵D，以下面的递归等式。
 \begin{equation}
 \begin{aligned}
 &D^{(0)}[i][j]=w_{ij} \\
@@ -86,27 +86,27 @@ Warshall's�㷨һ����˼�롣������ʾ��ѭ���м������D��������ĵݹ��ʽ��
 \end{aligned}
 \end{equation}
 
-����$w_{ij}$�ڵ�ʽ��9.2���ж��塣ͨ��ǰ������·�����ԵĹ۲죬ͬ����
-�۵�����������9.1�У��������������֤����֤��������ϰ�У���
+这里$w_{ij}$在等式（9.2）中定义。通过前面对最短路径属性的观察，同样的
+观点用在了引理9.1中，下面的引理可以证明（证明留在练习中）。
 
 \begin{lemma}
-����ÿһ��$0,\cdots,n$�е�k����$d_{ij}^{(k)}$��$v_i$��$v_j$�����м䶥��$v_k$
-�ļ�·������СȨ����$D^{(k)}[i][j]$�ɵ�ʽ��9.3�����塣��$D^{(k)}[i][j]\leq d_{ij}^{(k)}$ ��
+对于每一个$0,\cdots,n$中的k，令$d_{ij}^{(k)}$是$v_i$到$v_j$经过中间顶点$v_k$
+的简单路径的最小权，令$D^{(k)}[i][j]$由等式（9.3）定义。则$D^{(k)}[i][j]\leq d_{ij}^{(k)}$ 。
 \end{lemma}
 
 \begin{example}
- ����������
+ 计算距离矩阵
 \end{example}
 
-��ʽ��9.3��������һ���������У�$D^{(0)},D^{(1)},\cdots, D^{(n)}$����Ȼ����
-$D^{(k)}$���õ���$D^{(k-1)}$������û��Ҫ�洢ǰ��ľ���ֻ��Ҫ����$n\times n$
-����Ϳ����ˡ���ʵ�ϣ���Ҫһ������������ھ���D�ڽ��С���Ȼ�����Ԫ�ؽ��ܲ���
-��С���������$D^{(k-1)}[i][j]$��ʹ���ˣ�����$D^{(k)}[i][j]$���Դ�������λ�ã�
-������$D^{(k)}[i][j] \leq D^{(k-1)}[i][j] \leq d_{ik}^{(k-1)}$��������̻�
-�ҵ����õ�·���ġ�
+等式（9.3）计算了一个矩阵序列：$D^{(0)},D^{(1)},\cdots, D^{(n)}$。既然计算
+$D^{(k)}$仅用到了$D^{(k-1)}$，我们没必要存储前面的矩阵，只需要两个$n\times n$
+矩阵就可以了。事实上，仅要一个；计算可以在矩阵D内进行。既然矩阵的元素仅能不断
+变小，如果假设$D^{(k-1)}[i][j]$被使用了，但是$D^{(k)}[i][j]$可以代替它的位置，
+我们令$D^{(k)}[i][j] \leq D^{(k-1)}[i][j] \leq d_{ik}^{(k-1)}$，计算过程会
+找到更好的路径的。
 
 \begin{algorithm}
-��Floyed��������������·��
+（Floyed）任意两点间最短路径
 \end{algorithm}
 
-\section{ͨ������������㴫�ݱհ�}
+\section{通过矩阵操作计算传递闭包}

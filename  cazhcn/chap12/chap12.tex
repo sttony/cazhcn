@@ -1,51 +1,51 @@
-\chapter{����ʽ�;���}
-\section{����}
-��һ��Ҫ���۵������Ƕ���ʽ��ֵ�����Ͳ���Ԥ����ϵ����������ʽ�˷�����Ϊһ��
-��ɢ����Ҷ�任�����ӣ��;��������˷�����Щ�������õ��Ĳ���һ���ǳ˺ͼӡ���
-�ɼ�����ϣ��˷��ȼӷ�Ҫ���ܶ๤������Щ�㷨��ͨ������һЩ����ļӷ�������
-�˷��������Դˡ���ߡ��ٶȡ�������ǵ�ֵ�����ڳ˷��ͼӷ�����Դ��ۡ�������
-�㷨�õ��Ǽ��������ֲ��������������ڳ����͵����룩��
+\chapter{多项式和矩阵}
+\section{概述}
+这一章要讨论的问题是多项式估值（带和不带预处理系数），多项式乘法（作为一个
+离散傅立叶变换的例子）和矩阵向量乘法。这些任务所用到的操作一般是乘和加。在
+旧计算机上，乘法比加法要做很多工作，有些算法是通过增加一些额外的加法来减少
+乘法的数量以此“提高”速度。因此他们的值依赖于乘法和加法的相对代价。其他的
+算法用的是减少这两种操作的数量（对于超大型的输入）。
 
-�����е������㷨ʹ�÷ֶ���֮���ԣ���Ԥ����ϵ���Ĺ�ֵ����ʽ��12.2.3С�ڣ���Strassen's
-������㷨��12.3.4С�ڣ����Ϳ��ٸ���Ҷ�任��12.4�ڣ���
+本章中的许多算法使用分而治之策略：带预处理系数的估值多项式（12.2.3小节），Strassen's
+矩阵乘算法（12.3.4小节），和快速傅立叶变换（12.4节）。
 
-�������������ĵ��޶���ֱ�Ӹ�����û�и���֤�����ο����º����ע�ͺ���������
-�õ���Щ����ĸ���һ������Ϣ��
-
-
-\section{�������ʽ������ֵ}
-���Ƕ���ʽ$p(x)=a_nx_n + a_{n-1}x_{n-1} + \cdots + a_1x + a_0$��ϵ����ʵ����
-$n \geq 1$�����裬ϵ��$a_0, a_1, \cdots a_n$��x�����������Ǽ���$p(x)$��ֵ��
-\subsection{�㷨}
-���ֲ������ͽ��ֱ���Ϊ$*/$��$\pm$��
+本章中许多结果的底限都是直接给出，没有给出证明。参考本章后面的注释和引用文献
+得到这些结果的更进一步的信息。
 
 
+\section{计算多项式函数的值}
+考虑多项式$p(x)=a_nx_n + a_{n-1}x_{n-1} + \cdots + a_1x + a_0$，系数是实数，
+$n \geq 1$。假设，系数$a_0, a_1, \cdots a_n$和x给出，问题是计算$p(x)$的值。
+\subsection{算法}
+两种操作类型将分别标记为$*/$和$\pm$。
 
-\subsection{�������ʽ�ĵ���}
 
-\subsection{����������ĵ���}
 
-\section{ʸ���;���˷�}
+\subsection{计算多项式的底限}
 
-\section{���ٸ���Ҷ�任�;���}
-����Ҷ�任�ڹ��̡�������ѧ����ѧ�й㷺ʹ�á�������ɢ�汾Ӧ�����ڲ�ֵ���⣬��
-ƫ΢�ַ��̵Ľ⣬��·��ƣ��쾧���У����źŴ�����Ӧ�÷ǳ��㷺����ɢ����Ҷ�任
-�������ʹ�÷ֶ���֮���Կ������㷨��ֱ�����Ľ�����Ҫ�͵����⡣�Ľ����㷨
-�п��ٸ���Ҷ�任��
+\subsection{计算多赏析的底限}
 
-����㷨����Զ��Ӱ�죬��Ϊ������������ѧ�����ܱ�ʾΪĳ����ʽ�ĸ���Ҷ�任��
-��Щ����½�ԭ��������ת���ɸ���Ҷ�任�������������ֱ�ӽ��ԭ��������Ҫ�졣
-������������һ�����ӡ�
+\section{矢量和矩阵乘法}
+
+\section{快速傅立叶变换和卷积}
+傅立叶变换在工程、物理科学和数学中广泛使用。它的离散版本应用在内插值问题，求
+偏微分方程的解，电路设计，检晶仪中，在信号处理中应用非常广泛。离散傅立叶变换
+是最早的使用分而治之策略开发的算法比直接求解的渐进阶要低的问题。改进的算法
+叫快速傅立叶变换。
+
+这个算法有深远的影响，因为许多其他的数学计算能表示为某种形式的傅立叶变换。
+有些情况下将原来的问题转换成傅立叶变换问题来解决，比直接解决原来的问题要快。
+卷积就是这样一个例子。
 
 \begin{definition}
-����
+卷积
 
-��U��V��nά������������0��n-1��U��V��\emph{����}����ʾΪU*V������Ϊnά����W��
-����$W_i=\sum_{j=0}^{n-1}u_jv_{i-j} $������$0\leq i \leq n-1$���ұߵ�������n
-Ϊģ��
+另U和V是n维向量，索引是0到n-1。U和V的\emph{卷积}，表示为U*V，定义为n维变量W，
+其中$W_i=\sum_{j=0}^{n-1}u_jv_{i-j} $，其中$0\leq i \leq n-1$且右边的索引以n
+为模。
 \end{definition}
 
-���磬����n=5��
+例如，对于n=5，
 \begin{displaymath}
 \begin{aligned}
 w_0&=u_0v_0+u_1v_4+u_2v_3+u_3v_2+u_4v_1 \\
@@ -54,32 +54,32 @@ w_2&=u_0v_1+u_1v_0+u_2v_4+u_3v_3+u_4v_2 \\
 w_4&=u_0v_4+u_1v_3+u_2v_2+u_3v_1+u_4v_0
 \end{aligned}
 \end{displaymath}
-���������������������⾭���ڸ������⣬���̣�����������������������۵ķ���
-����ʽ�˷���һ���������㡣
+计算两个向量卷积的问题经常在概率问题，工程，和其他领域提出。本章讨论的符号
+多项式乘法是一个卷积运算。
 
-��nά��������ɢ����Ҷ�任������nά�����ľ����ж�������ֱ�ӵķ�ʽ����Ҫ
-$n^2$�γ˷���������$n^2$�μӷ������ǽ�չʾ������ɢ����Ҷ�任�ķֶ���֮�㷨��
-ֻ��$\Theta(n\log n)$�������㡣����㷨�����и��ֱ��壩���ǿ��ٸ���Ҷ�任
-FFT���������ǽ�ʹ��FFT��$\Theta(n\log n)$ʱ���ڼ�����������ʱ���ʡ�Ǻܿɹ۵ġ�
+在n维变量的离散傅立叶变换和两个n维变量的卷积中都可以用直接的方式求，需要
+$n^2$次乘法和略少于$n^2$次加法。我们将展示计算离散傅立叶变换的分而治之算法，
+只用$\Theta(n\log n)$算术运算。这个算法（它有各种变体）就是快速傅立叶变换
+FFT。后面我们将使用FFT在$\Theta(n\log n)$时间内计算卷积。这个时间节省是很可观的。
 
-�ᴩ�������еľ������������������0��Ϊ�����Ŀ�ʼ�������ĵ�λ��
-��roots to unity�������ǵ�һЩ�������Խ���FFT��ʹ�á������������Ҫ��������
-���ڵĸ�¼�и�ϰ�ˣ�12.4.3С�ڣ����Ը������ǵ�n����λ�����Ǻ���Ϥ�Ķ���Ӧ��
-�ȶ�һ�¸�¼��
+贯穿本节所有的矩阵、数组和向量都是以0作为索引的开始。复数的单位根
+（roots to unity）和他们的一些基本属性将在FFT中使用。基本定义和需要的属性在
+本节的附录中复习了（12.4.3小节）。对复数或是第n个单位根不是很熟悉的读者应该
+先读一下附录。
 
-\subsection{���ٸ���Ҷ�任}
-��ɢ����Ҷ�任��һ��nά��������Ҳ����Ԫ�ض��Ǹ�����nά�������任����һ��nά
-���������任nάʵ������������Ϊ���鲿����0��nά��������
+\subsection{快速傅立叶变换}
+离散傅立叶变换将一个n维复向量（也就是元素都是复数的n维向量）变换成另一个n维
+复向量。变换n维实向量，可以认为是虚部都是0的n维复向量。
 
 \begin{definition}
-���ٸ���Ҷ�任�;���
+快速傅立叶变换和矩阵
 
-����$n \geq 1$����$\omega$ be a primitive nth root of 1\footnote{��ע����$\omega^k \neq 1$��
-����$k=1,2,3,4, \cdots,n-1$}����$F_n$��$n\times n$������Ԫ����$f_{ij}=\omega_{ij}$��
-����$0\leq i$, $j\leq n-1$��nά����$P=(p_0,p_1,\cdots, p_{n-1})$����ɢ����Ҷ�任
-�ǳ˻�$F_nP$��
+对于$n \geq 1$，令$\omega$ be a primitive nth root of 1\footnote{译注：即$\omega^k \neq 1$，
+其中$k=1,2,3,4, \cdots,n-1$}，令$F_n$是$n\times n$矩阵其元素是$f_{ij}=\omega_{ij}$，
+这里$0\leq i$, $j\leq n-1$。n维向量$P=(p_0,p_1,\cdots, p_{n-1})$的离散傅立叶变换
+是乘积$F_nP$。
 \end{definition}
-$F_nP$�ķ�����
+$F_nP$的分量是
 \begin{displaymath}
 \begin{aligned}
 &\omega^0p_0 + \omega^0p_1 + \cdots + \omega^0p_{n-2} + \omega^0p_{n-1}\\
@@ -90,55 +90,55 @@ $F_nP$�ķ�����
 &\omega^0p_0 + \omega^{n-1}p_1 + \cdots + \omega^{(n-1)(n-2)}p_{n-2} + \omega^{(n-1)(n-1)}p_{n-1}\\
 \end{aligned}
 \end{displaymath}
-��΢�ı�һ����ʽ����i�������ǣ�
+稍微改变一下形式，第i个分量是：
 \begin{displaymath}
 p_{n-1}(\omega^i)^{n-1}+p_{n-2}(\omega^i)^{n-2}+\cdots+p_1\omega^i+p_0
 \end{displaymath}
-���������ǽ�P�ķ�������Ϊ����ʽ$p(x)=p_{n-1}x_{n-1}+ + p_{n-2}x_{n-2} + \cdots + p_1x + p_0$
-��ϵ�������i��������$p(\omega^i)$��������P����ɢ����Ҷ�任��Ч�������ʽ$p(x)$
-��$\omega_0, \omega_1, \omega_2, \cdots, \omega_{n-1}$��ֵ��Ҳ����ÿһ��1��
-��n�ظ������ǽ������ֹ۵�����������⡣���ǽ����ȿ���һ�ֶַ���֮�ĵĵݹ��㷨
-����ϸ�Ż���ȥ���ݹ顣���ǽ��ٶ�n��2���������ݡ������ڲ��ǵ�������Ե����㷨����
+因而如果我们将P的分量解释为多项式$p(x)=p_{n-1}x_{n-1}+ + p_{n-2}x_{n-2} + \cdots + p_1x + p_0$
+的系数，则第i个分量是$p(\omega^i)$，而计算P的离散傅立叶变换等效计算多项式$p(x)$
+在$\omega_0, \omega_1, \omega_2, \cdots, \omega_{n-1}$的值，也就是每一个1的
+第n重根。我们将以这种观点讨论这个问题。我们将首先开发一种分而治之的的递归算法
+再仔细优化它去掉递归。我们将假定n是2的整数次幂。（对于不是的情况可以调整算法。）
 
-�ֶ���֮�����ǽ�һ������ֽ��С��ʵ�������֮����Сʵ���Ľ���ϳ�ԭ��ʵ����
-���Ϊ�˼���p��n���㣬���Ǽ�������С��ԭ���ļ����Ӽ��Ķ���ʽ���ʵ��ĺϲ�
-�������ϰ$\omega^{n/2}=-1$�Լ�$0\leq j\leq (n/2)-1$��$\omega^{n/2+j}=-\omega^j$��
-��p(x)������ָ����ż��ָ����Ϊ���飺
+分而治之策略是将一个问题分解成小的实例，解决之，用小实例的解组合成原来实例。
+这里，为了计算p的n个点，我们计算两个小的原来的集合子集的多项式再适当的合并
+结果。复习$\omega^{n/2}=-1$以及$0\leq j\leq (n/2)-1$，$\omega^{n/2+j}=-\omega^j$。
+将p(x)按奇数指数和偶数指数分为两组：
 \begin{displaymath}
 p(x)=\sum_{i=0}^{n-1}p_ix^i=\sum_{i=0}^{n/2-1}p_{2i}x^{2i}+x\sum_{i=0}^{n/2-1}p_{2i+1}x^{2i}
 \end{displaymath}
-����
+定义
 \begin{displaymath}
 p_{even}(x)=\sum_{i=0}^{n/2-1}p_{2i}x^{2i} \qquad p_{odd}(x)=\sum_{i=0}^{n/2-1}p_{2i+1}x^{i}
 \end{displaymath}
-��
+则
 \begin{equation}
 p(x)=p_{even}(x^2)+xp_{odd}(x^2) \qquad  p(x)=p_{even}(x^2)- xp_{odd}(x^2)
 \end{equation}
-��ʽ��12.4��չʾΪ�˼���
-$1, \omega, \cdots, \omega^{(n/2)-1}, -1, -\omega, \cdots, -\omega^{(n/2)-1}$��p��
-�㷨��Ҫ����$1, \omega^2, \cdots, (\omega^{(n/2)-1})^2$��$p_{even}$��$p_{odd}$��
-Ȼ����n/2�γ˷�������$xp_{odd}(x^2)$����n�μӼ���������ʽ$p_{even}$��$p_{odd}$����
-��ͬ���Ĳ��Եݹ���������˵�������Ƕ�Ϊn/2-1�Ķ���ʽ��������n/2�ظ����㣺
-$1, \omega^2, \cdots, (\omega^{(n/2)-1})^2$����Ȼ��Ҫ����Ķ���ʽ��һ��������ʱ��
-����Ҫ��������
+等式（12.4）展示为了计算
+$1, \omega, \cdots, \omega^{(n/2)-1}, -1, -\omega, \cdots, -\omega^{(n/2)-1}$的p，
+算法需要计算$1, \omega^2, \cdots, (\omega^{(n/2)-1})^2$的$p_{even}$和$p_{odd}$，
+然后做n/2次乘法（计算$xp_{odd}(x^2)$）和n次加减法。多项式$p_{even}$和$p_{odd}$可以
+以同样的策略递归解决。就是说，他们是度为n/2-1的多项式，可以在n/2重根计算：
+$1, \omega^2, \cdots, (\omega^{(n/2)-1})^2$。显然当要计算的多项式是一个常量的时候，
+不需要做工作。
 
-�ݹ��㷨���¡�
-�㷨12.4 ���ٸ���Ҷ�任���ݹ�汾��
-�㷨12.5 ���ٸ���Ҷ�任
-���룺 ����$P=p_0, p_1, \cdots, p_{n-1}$��n��Ԫ�ص�Complex���飬n=2k������k>0����Ϊ�˴���float���飬���Խ��俽����Complex����P��ʵ�������鲿ȫ����Ϊ0����
-����� n��Ԫ�ص�Complex����transform��P����ɢ����Ҷ�任��������Ϊ����������㷨���֮��
-ע�⣺���Ǽ�����Complex�ṩ�˸��������������Լ����ǵ�α���롣�������Java���ǲ����ڵġ�
+递归算法如下。
+算法12.4 快速傅立叶变换（递归版本）
+算法12.5 快速傅立叶变换
+输入： 向量$P=p_0, p_1, \cdots, p_{n-1}$是n个元素的Complex数组，n=2k；整数k>0。（为了处理float数组，可以将其拷贝到Complex数组P的实部，将虚部全部设为0。）
+输出： n个元素的Complex数组transform，P的离散傅里叶变换。数组作为输入参数，算法填充之。
+注意：我们假设类Complex提供了复数的算术运算以简化我们的伪代码。这个类在Java中是不存在的。
 
-���Ǽ���omega��һ��ȫ�ֵ�Complex���飬���а���1��n�ظ���
-$\omega^0, \omega, \cdots, \omega^{n-1}$��
-Complex����transform��ʼ��Ϊ������k-1���ֵ������Ҷ�ӣ�
-�ο�ͼ12.5��$\pi_k$��${0, 1, \cdots, n-1}$�����С�
+我们假设omega是一个全局的Complex数组，其中包含1的n重根：
+$\omega^0, \omega, \cdots, \omega^{n-1}$。
+Complex数组transform初始化为包含第k-1层的值，不是叶子，
+参看图12.5。$\pi_k$是${0, 1, \cdots, n-1}$的排列。
 
-\subsection{����}
-\subsection{��¼�������͵�λ��Roots of Unity}
-��������\textbf{C}�ǽ��i��������λ��-1��ƽ��������ʵ��\textbf{R}����õ��ġ�
-$C=R(i)={a+bi| a,b R}$�����$z=a+bi$��a����z��ʵ����b����z�鲿��������z1=a1+b1i��z2=a2+b2i�����壬
+\subsection{卷积}
+\subsection{附录：复数和单位根Roots of Unity}
+复数的域\textbf{C}是结合i（虚数单位，-1的平方根）和实数\textbf{R}的域得到的。
+$C=R(i)={a+bi| a,b R}$。如果$z=a+bi$，a叫做z的实部，b叫做z虚部。另在在z1=a1+b1i，z2=a2+b2i。则定义，
 \begin{displaymath}
 \begin{aligned}
 &z_1+z_2=(a_1+a_2)+(b_1+b_2)i\\
@@ -146,13 +146,13 @@ $C=R(i)={a+bi| a,b R}$�����$z=a+bi$��a����z��ʵ����b����z�鲿��������z1=a1+b1i�
 &\frac{1}{z_1}=\frac{a_1}{a_1^2+b_1^2}-\frac{b_1i}{a_1^2+b_1^2} \qquad z_1 \neq  0+0i
 \end{aligned}
 \end{displaymath}
-�����ͼ�������������ĵ�ʽ�򵥵��Ƶ��õ���
+除法和减法可以用上面的等式简单的推导得到。
 
-\emph{Java������ʾ��}Ϊ�����㷨��α�����м򻯸����ı�ʾ�����㣬����
-�ٶ�Complex���ʹ��ڣ����ҿ�������������*/+��-������������Java
-�в����ڣ�������C++��Fortran��֧�����ֱ�ʾ�������Լ򵥵Ķ�����
-������ʵ����re��im��float��double���͡�����ѧ���г�����дre��
-im����ʾ������re��im���֡������ǣ�����Ա���뽫�������������
-�ɺ�������̬����������ʵ�ʴ�����ʹ�ú������ö�������������ʽ��
+\emph{Java语言提示：}为了在算法的伪代码中简化复数的表示和运算，我们
+假定Complex类型存在，而且可以做算术运算*/+和-；这样的类在Java
+中不存在，但是在C++和Fortran中支持这种表示法。可以简单的定义类
+有两个实例域，re和im，float或double类型。（数学书中常用缩写re和
+im来表示复数的re和im部分。）但是，程序员必须将算术运算符定义
+成函数（静态方法），在实际代码中使用函数调用而不是算术表达式。
 
-һ���������Ա�ʾ��ƽ���ϵ�������
+一个复数可以表示复平面上的向量。

@@ -1,39 +1,42 @@
-\documentclass[a4paper]{book}
-\usepackage{ctex} %ÖĞÎÄÖ§³Ö
-%\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% ÓÃgeometryºê°üÉèÖÃÒ³±ß¾à
-%\usepackage[top=4.5cm,bottom=3.5cm]{geometry} %% ÓÃgeometryºê°üÉèÖÃÒ³±ß¾à
-\usepackage[T1]{fontenc} %¶Ô×Ö·ûµÄÖ§³Ö < > µÈµÈ
-\usepackage[caption=false,font=footnotesize]{subfig} % ¶Ô×Ó²åÍ¼µÄÖ§³Ö
-\usepackage{amsmath} %¶Ô¹«Ê½µÄÀ©Õ¹Ö§³Ö
-\usepackage{listings} %Ô´´úÂëÖ§³Ö
-\usepackage{xcolor} %Ê¹ÓÃÑÕÉ«ºê°ü
-\usepackage{pgf,tikz} %»­Í¼Ö§³Ö
+\documentclass[UTF8]{book}
+\usepackage[hyperref, UTF8]{ctex} %ä¸­æ–‡æ”¯æŒ
+%\usepackage[top=3.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} %% ç”¨geometryå®åŒ…è®¾ç½®é¡µè¾¹è·
+%\usepackage[top=4.5cm,bottom=3.5cm]{geometry} %% ç”¨geometryå®åŒ…è®¾ç½®é¡µè¾¹è·
+\usepackage[T1]{fontenc} %å¯¹å­—ç¬¦çš„æ”¯æŒ < > ç­‰ç­‰
+\usepackage[caption=false,font=footnotesize]{subfig} % å¯¹å­æ’å›¾çš„æ”¯æŒ
+\usepackage{amsmath} %å¯¹å…¬å¼çš„æ‰©å±•æ”¯æŒ
+\usepackage{listings} %æºä»£ç æ”¯æŒ
+\usepackage{xcolor} %ä½¿ç”¨é¢œè‰²å®åŒ…
+\usepackage{pgf,tikz} %ç”»å›¾æ”¯æŒ
 \usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes,calc}
-\usepackage{threeparttable}%±í¸ñÄÚ½Å×¢Ö§³Ö
-\usepackage{multirow} %ÔöÇ¿±í¸ñ
+\usepackage{threeparttable}%è¡¨æ ¼å†…è„šæ³¨æ”¯æŒ
+\usepackage{multirow} %å¢å¼ºè¡¨æ ¼
 
-%------ ÊéÇ©´úÂë-----------
+%------ ä¹¦ç­¾ä»£ç -----------
+\usepackage{hyperref}
+%\hypersetup{pdftex,colorlinks=true,allcolors=blue}
+%\usepackage{hypcap}
 %\usepackage[CJKbookmarks=true,dvipdfm,
 %\usepackage[CJKbookmarks=true,dvips,
 %          hyperindex=true,
 %          pdfstartview=FitH,
 %          bookmarksnumbered=true,
 %          bookmarksopen=true,
-%          %colorlinks=true, %×¢ÊÍµô´ËÏîÔò½»²æÒıÓÃÎª²ÊÉ«±ß¿ò(½«colorlinksºÍpdfborderÍ¬Ê±×¢ÊÍµô)
-%          %pdfborder=001,   %×¢ÊÍµô´ËÏîÔò½»²æÒıÓÃÎª²ÊÉ«±ß¿ò
+%          %colorlinks=true, %æ³¨é‡Šæ‰æ­¤é¡¹åˆ™äº¤å‰å¼•ç”¨ä¸ºå½©è‰²è¾¹æ¡†(å°†colorlinkså’ŒpdfborderåŒæ—¶æ³¨é‡Šæ‰)
+%          %pdfborder=001,   %æ³¨é‡Šæ‰æ­¤é¡¹åˆ™äº¤å‰å¼•ç”¨ä¸ºå½©è‰²è¾¹æ¡†
 %          citecolor=blue
 %          ]{hyperref}
 %\AtBeginDvi{\special{pdf:tounicode GBK-EUC-UCS2}} % GBK -> Unicode
-%--------·Ö¸îÏß----------
+%--------åˆ†å‰²çº¿----------
 
-\newtheorem{example}{Àı}[chapter]
-\newtheorem{definition}{¶¨Òå}[chapter]
-\newtheorem{theorem}{¶¨Àí}[chapter]
-\newtheorem{lemma}[theorem]{ÒıÀí}
-\newtheorem{corollary}[theorem]{ÍÆÂÛ}
-\newtheorem{proposition}[theorem]{ÃüÌâ}
-\newtheorem{problem}{ÎÊÌâ}[chapter]
-\newtheorem{algorithm}{Ëã·¨}[chapter]
+\newtheorem{example}{ä¾‹}[chapter]
+\newtheorem{definition}{å®šä¹‰}[chapter]
+\newtheorem{theorem}{å®šç†}[chapter]
+\newtheorem{lemma}[theorem]{å¼•ç†}
+\newtheorem{corollary}[theorem]{æ¨è®º}
+\newtheorem{proposition}[theorem]{å‘½é¢˜}
+\newtheorem{problem}{é—®é¢˜}[chapter]
+\newtheorem{algorithm}{ç®—æ³•}[chapter]
 
 %-------Begin    document
 \begin{document}
@@ -42,7 +45,7 @@ commentstyle=\color{red!50!green!50!blue!50},
 rulesepcolor=\color{red!20!green!20!blue!20}, escapeinside=``}
 
 \frontmatter
-\title{¼ÆËã»úËã·¨}
+\title{è®¡ç®—æœºç®—æ³•}
 %\maketitle
 \tableofcontents
 \mainmatter
@@ -54,10 +57,10 @@ rulesepcolor=\color{red!20!green!20!blue!20}, escapeinside=``}
 \include{chap06/chap06}
 \include{chap07/chap07}
 \include{chap08/chap08}
-\include{chap09/chap09}
-\include{chap10/chap10}
-\include{chap11/chap11}
-\include{chap12/chap12}
-\include{chap13/chap13}
-\include{chap14/chap14}
+%\include{chap09/chap09}
+%\include{chap10/chap10}
+%\include{chap11/chap11}
+%\include{chap12/chap12}
+%\include{chap13/chap13}
+%\include{chap14/chap14}
 \end{document}
